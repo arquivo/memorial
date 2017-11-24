@@ -4,6 +4,7 @@ from flask import render_template
 app = Flask(__name__)
 app.config.from_object('config')
 
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def redirect(path):
