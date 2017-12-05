@@ -11,6 +11,7 @@ app.config.from_object('config')
 global versions_dict
 versions_dict = defaultdict()
 versions_dict["www.umic.pt"] = "20170822151328"
+versions_dict["www.english.umic.pt"] = "20170831175908"
 
 
 @app.route('/', defaults={'path': ''})
@@ -24,4 +25,4 @@ def redirect(path):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
