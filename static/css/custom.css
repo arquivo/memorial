@@ -75,3 +75,13 @@
 .language-div{
     float:  right;
 }
+.first-language{
+    padding-right: 8px;
+}
+.second-language{
+    padding-right:  3px;
+}
+
+.center-text{
+    text-align: center
+}
