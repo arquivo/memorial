@@ -19,7 +19,7 @@ def redirect(path):
         template = app.config['TEMPLATES'][request.host]
     else:
         template = 'redirect.html'
-    return render_template(template, context=redirect_url)
+    return render_template(template, origin_url=request.url, redirect_url=redirect_url)
 
 
 if __name__ == '__main__':
