@@ -29,12 +29,33 @@
     max-width: 100%; float: left; padding-top: 15px;
 }
 
+.img-logo-1 {
+    max-width: 100%; padding-top: 15px;
+}
+
 .p-description-2{
     padding-bottom: 15px;
 }
 
 .p-description-1{
-    clear:both;padding-top: 25px;
+    clear:both;padding-top: 5px;
+}
+
+.myButtonDefault{
+    -moz-box-shadow: 0px 10px 14px -7px #0c819e;
+    -webkit-box-shadow: 0px 10px 14px -7px #0c819e;
+    box-shadow: 0px 6px 14px -6px #0c819e;
+    background-color: #2484C3;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    border-radius: 8px;
+    display: inline-block;
+    cursor: pointer;
+    color: #ffffff;
+    font-size: 14px;
+    padding: 8px 12px;
+    text-decoration: none;
+    text-shadow: 0px 1px 0px #3d768a;
 }
 
 .myButton {
