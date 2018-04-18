@@ -19,7 +19,7 @@ def fix_not_closed_metatags(tag):
 
 
 def extract_metadata(redirect_url):
-    r = requests.get("http://arquivo.pt/wayback/20170803133931/http://www.gridcomputing.pt/")
+    r = requests.get(redirect_url)
     html = r.content
 
     soup = BeautifulSoup(html, "html.parser")
