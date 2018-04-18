@@ -17,7 +17,7 @@ TEMPLATES = {
     "www.english.umic.pt": "redirectEN.html",
     "english.umic.pt": "redirectEN.html",
     "gridcomputing.pt": "redirect_default.html",
-    "www.gridcomputing.pt:5000": "redirect_default.html",
+    "www.gridcomputing.pt": "redirect_default.html",
     "www.e-u.pt": "redirect_default.html",
     "e-u.pt": "redirect_default.html",
     "creativecommons.pt": "redirect_default.html",
