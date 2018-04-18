@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.config.from_object('config')
 
 
-# gridcomputing.pt case
+# for instance, this happen with gridcomputing.pt.
 def fix_not_closed_metatags(tag):
     fix_tag = str(tag).split(">")[0]
     if fix_tag.endswith('/'):
@@ -53,11 +53,11 @@ def redirect(path):
 
     if template == 'redirect_default.html':
         title, metadata = extract_metadata(redirect_url)
+        return render_template(template, title=title, metatags=metadata, origin_host=request.host,
+                               origin_url=request.url,
+                               redirect_url=redirect_url)
     else:
-        title, metadata = None
-
-    return render_template(template, title=title, metatags=metadata, origin_host=request.host, origin_url=request.url,
-                           redirect_url=redirect_url)
+        return render_template(template, origin_host=request.host, origin_url=request.url, redirect_url=redirect_url)
 
 
 if __name__ == '__main__':
