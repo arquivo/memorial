@@ -4,7 +4,7 @@ ARCHIVE_VERSIONS = {
     "umic.pt:": "20170822151328",
     "www.english.umic.pt": "20170831175908",
     "english.umic.pt": "20170831175908",
-    "www.gridcomputing.pt:5000": "20170803133931",
+    "www.gridcomputing.pt": "20170803133931",
     "gridcomputing.pt": "20170803133931",
     "www.e-u.pt": "20171228124550",
     "e-u.pt": "20171228124550",
