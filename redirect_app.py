@@ -1,9 +1,40 @@
+import requests
+from bs4 import BeautifulSoup
 from flask import Flask
 from flask import render_template
 from flask import request
 
 app = Flask(__name__)
 app.config.from_object('config')
+
+
+# gridcomputing.pt case
+def fix_not_closed_metatags(tag):
+    fix_tag = str(tag).split(">")[0]
+    if fix_tag.endswith('/'):
+        fix_tag += ">"
+    else:
+        fix_tag += "/>"
+    return fix_tag
+
+
+def extract_metadata(redirect_url):
+    r = requests.get("http://arquivo.pt/wayback/20170803133931/http://www.gridcomputing.pt/")
+    html = r.content
+
+    soup = BeautifulSoup(html, "html.parser")
+
+    meta_list = []
+
+    valid_meta_names = ['description', 'keywords', 'author']
+
+    for name in valid_meta_names:
+        for tag in soup.find_all('meta', {'name': name}):
+            meta_list.append(fix_not_closed_metatags(tag))
+
+    title = soup.find('title')
+
+    return title, meta_list
 
 
 @app.route('/', defaults={'path': ''})
@@ -19,7 +50,14 @@ def redirect(path):
         template = app.config['TEMPLATES'][request.host]
     else:
         template = 'redirect.html'
-    return render_template(template, origin_host=request.host, origin_url=request.url, redirect_url=redirect_url)
+
+    if template == 'redirect_default.html':
+        title, metadata = extract_metadata(redirect_url)
+    else:
+        title, metadata = None
+
+    return render_template(template, title=title, metatags=metadata, origin_host=request.host, origin_url=request.url,
+                           redirect_url=redirect_url)
 
 
 if __name__ == '__main__':

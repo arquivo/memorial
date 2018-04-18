@@ -30,7 +30,7 @@
 }
 
 .img-logo-1 {
-    max-width: 100%; padding-top: 15px;
+    max-width: 50%; padding-top: 15px;
 }
 
 .p-description-2{
@@ -38,7 +38,7 @@
 }
 
 .p-description-1{
-    clear:both;padding-top: 5px;
+    clear:both;padding-top: 15px;
 }
 
 .myButtonDefault{
