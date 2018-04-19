@@ -19,22 +19,25 @@ def fix_not_closed_metatags(tag):
 
 
 def extract_metadata(redirect_url):
-    r = requests.get(redirect_url)
-    html = r.content
+    try:
+        r = requests.get(redirect_url)
+        html = r.content
 
-    soup = BeautifulSoup(html, "html.parser")
+        soup = BeautifulSoup(html, "html.parser")
 
-    meta_list = []
+        meta_list = []
 
-    valid_meta_names = ['description', 'keywords', 'author']
+        valid_meta_names = ['description', 'keywords', 'author']
 
-    for name in valid_meta_names:
-        for tag in soup.find_all('meta', {'name': name}):
-            meta_list.append(fix_not_closed_metatags(tag))
+        for name in valid_meta_names:
+            for tag in soup.find_all('meta', {'name': name}):
+                meta_list.append(fix_not_closed_metatags(tag))
 
-    title = soup.find('title')
+        title = soup.find('title')
 
-    return title, meta_list
+        return title, meta_list
+    except Exception:
+        return None, None
 
 
 @app.route('/', defaults={'path': ''})
