@@ -53,6 +53,7 @@ def redirect(path):
 
     if template == 'redirect_default.html':
         title, metadata = extract_metadata(redirect_url)
+
         return render_template(template, title=title, metatags=metadata, origin_host=request.host,
                                origin_url=request.url,
                                redirect_url=redirect_url)
@@ -61,4 +62,4 @@ def redirect(path):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
