@@ -30,7 +30,7 @@
 }
 
 .img-logo-1 {
-    max-width: 50%; padding-top: 15px;
+    max-width: 40%; padding-top: 45px;
 }
 
 .p-description-2{
@@ -90,6 +90,23 @@
 
 .myButton:visited{
     color: #ffffff;
+    text-decoration: none;
+}
+
+.myButtonDefault:hover{
+        color:#ffffff;
+        background-color: #2484C3;
+        text-decoration: none;
+}
+
+.myButtonDefault:active{
+        position:relative;
+        text-decoration: none;
+        color:#ffffff;
+}
+
+.myButtonDefault:visited{
+      color: #ffffff;
     text-decoration: none;
 }
 
