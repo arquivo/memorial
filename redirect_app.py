@@ -58,8 +58,7 @@ def redirect(path):
         title, metadata = extract_metadata(redirect_url)
 
         return render_template(template, title=title, metatags=metadata, origin_host=request.host,
-                               origin_url=request.url,
-                               redirect_url=redirect_url)
+                               origin_url=request.url, redirect_url=redirect_url)
     else:
         return render_template(template, origin_host=request.host, origin_url=request.url, redirect_url=redirect_url)
 
