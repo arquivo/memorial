@@ -4,9 +4,6 @@ from flask import Flask
 from flask import render_template
 from flask import request
 
-import sys
-reload(sys)
-sys.setdefaultencoding('utf8')
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -19,7 +16,7 @@ def fix_not_closed_metatags(tag):
         fix_tag += "/>"
     else:
         fix_tag += ">"
-    return fix_tag
+    return fix_tag.decode('utf-8')
 
 
 def extract_metadata(redirect_url):
