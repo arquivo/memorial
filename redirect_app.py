@@ -4,6 +4,10 @@ from flask import Flask
 from flask import render_template
 from flask import request
 
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
+
 app = Flask(__name__)
 app.config.from_object('config')
 
@@ -11,10 +15,10 @@ app.config.from_object('config')
 # for instance, this happen with gridcomputing.pt.
 def fix_not_closed_metatags(tag):
     fix_tag = str(tag).split(">")[0]
-    if fix_tag.endswith('/'):
-        fix_tag += ">"
-    else:
+    if not fix_tag.endswith('/'):
         fix_tag += "/>"
+    else:
+        fix_tag += ">"
     return fix_tag
 
 
