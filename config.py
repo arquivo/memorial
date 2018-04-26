@@ -4,12 +4,14 @@ ARCHIVE_VERSIONS = {
     "umic.pt:": "20170822151328",
     "www.english.umic.pt": "20170831175908",
     "english.umic.pt": "20170831175908",
-    "www.gridcomputing.pt": "20170803133931",
+    "www.gridcomputing.pt:5000": "20170803133931",
     "gridcomputing.pt": "20170803133931",
     "www.e-u.pt": "20171228124550",
     "e-u.pt": "20171228124550",
     "www.creativecommons.pt": "20170905135630",
-    "creativecommons.pt": "20170905135630"
+    "creativecommons.pt": "20170905135630",
+    "www.ligarportugal.pt": "20170628163113",
+    "ligarportugal.pt": "20170628163113"
 }
 TEMPLATES = {
     "www.umic.pt": "redirect.html",
@@ -21,5 +23,7 @@ TEMPLATES = {
     "www.e-u.pt": "redirect_default.html",
     "e-u.pt": "redirect_default.html",
     "creativecommons.pt": "redirect_default.html",
-    "www.creativecommons.pt": "redirect_default.html"
+    "www.creativecommons.pt": "redirect_default.html",
+    "ligarportugal.pt": "redirect_default.html",
+    "www.ligarportugal.pt": "redirect_default.html"
 }
