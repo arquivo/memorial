@@ -11,8 +11,14 @@ ARCHIVE_VERSIONS = {
     "www.creativecommons.pt": "20170905135630",
     "creativecommons.pt": "20170905135630",
     "www.ligarportugal.pt": "20170628163113",
-    "ligarportugal.pt": "20170628163113"
+    "ligarportugal.pt": "20170628163113",
+    "jeremias.com.pt": "20180504070838",
+    "www.consultorioct.mctes.pt": "20180504071337",
+    "cla.fccn.pt": "20180504071206",
+    "www.ipv6-tf.com.pt": "20180504071045",
+    "www.cidadesdigitais.pt": "20180430171300"
 }
+
 TEMPLATES = {
     "www.umic.pt": "redirect.html",
     "umic.pt": "redirect.html",
@@ -25,5 +31,10 @@ TEMPLATES = {
     "creativecommons.pt": "redirect_default.html",
     "www.creativecommons.pt": "redirect_default.html",
     "ligarportugal.pt": "redirect_default.html",
-    "www.ligarportugal.pt": "redirect_default.html"
+    "www.ligarportugal.pt": "redirect_default.html",
+    "jeremias.com.pt": "redirect_default.html",
+    "www.consultorioct.mctes.pt": "redirect_default.html",
+    "cla.fccn.pt": "redirect_default.html",
+    "www.ipv6-tf.com.pt": "redirect_default.html",
+    "www.cidadesdigitais.pt": "redirect_default.html"
 }
