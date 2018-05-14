@@ -16,7 +16,9 @@ ARCHIVE_VERSIONS = {
     "www.consultorioct.mctes.pt": "20180504071337",
     "cla.fccn.pt": "20180504071206",
     "www.ipv6-tf.com.pt": "20180504071045",
-    "www.cidadesdigitais.pt": "20180430171300"
+    "www.cidadesdigitais.pt": "20180430171300",
+    "empregabilidadedigital.pt": "20180511140028",
+    "www.empregabilidadedigital.pt": "20180511140028"
 }
 
 TEMPLATES = {
@@ -36,5 +38,8 @@ TEMPLATES = {
     "www.consultorioct.mctes.pt": "redirect_default.html",
     "cla.fccn.pt": "redirect_default.html",
     "www.ipv6-tf.com.pt": "redirect_default.html",
-    "www.cidadesdigitais.pt": "redirect_default.html"
+    "www.cidadesdigitais.pt": "redirect_default.html",
+    "cidadesdigitais.pt": "redirect_default.html",
+    "empregabilidadedigital.pt": "redirect_default.html",
+    "www.empregabilidadedigital.pt": "redirect_default.html"
 }
