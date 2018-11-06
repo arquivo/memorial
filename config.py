@@ -1,4 +1,4 @@
-WAYBACK_SERVER = 'http://arquivo.pt/wayback/'
+WAYBACK_SERVER = 'https://arquivo.pt/wayback/'
 ARCHIVE_VERSIONS = {
     "www.umic.pt": "20170822151328",
     "umic.pt:": "20170822151328",
