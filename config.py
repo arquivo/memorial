@@ -19,7 +19,7 @@ ARCHIVE_VERSIONS = {
     "www.cidadesdigitais.pt": "20180430171300",
     "empregabilidadedigital.pt": "20180511140028",
     "www.empregabilidadedigital.pt": "20180511140028",
-    "icolc.fccn.pt": "20180831131331"
+    "icolc.fccn.pt": "20180831131331",
 }
 
 TEMPLATES = {
@@ -43,5 +43,5 @@ TEMPLATES = {
     "cidadesdigitais.pt": "redirect_default.html",
     "empregabilidadedigital.pt": "redirect_default.html",
     "www.empregabilidadedigital.pt": "redirect_default.html",
-    "icolc.fccn.pt": "redirect_default.html"
+    "icolc.fccn.pt": "redirect_default.html",
 }
