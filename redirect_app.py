@@ -38,7 +38,7 @@ def extract_metadata(redirect_url):
 
         return title, meta_list
     except Exception:
-        return None, None
+        return None, meta_list
 
 
 @app.route('/', defaults={'path': ''})
