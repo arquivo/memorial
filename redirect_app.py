@@ -1,9 +1,10 @@
+from __future__ import unicode_literals
+
 import requests
 from bs4 import BeautifulSoup
 from flask import Flask
 from flask import render_template
 from flask import request
-
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -16,7 +17,7 @@ def fix_not_closed_metatags(tag):
         fix_tag += "/>"
     else:
         fix_tag += ">"
-    return fix_tag.decode('utf-8')
+    return fix_tag
 
 
 def extract_metadata(redirect_url):
