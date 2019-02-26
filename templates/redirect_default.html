@@ -24,7 +24,11 @@
           gtag('config', 'UA-21825027-8');
         </script> 
         <script type="text/javascript">
-            ga('send', 'event', 'Memorial', 'redirect_default', window.location.href );
+            gtag('event', 'Memorial', {
+                  'event_category': 'redirect_default',
+                  'event_label': window.location.href,
+                  'value': 1
+                });    
         </script>           
     </head>
     <body>
