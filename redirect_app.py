@@ -54,7 +54,7 @@ def redirect(path):
     if app.config['TEMPLATES'].get(request.host, None):
         template = app.config['TEMPLATES'][request.host]
     else:
-        template = 'redirect.html'
+        template = 'redirect_default.html'
 
     if template == 'redirect_default.html':
         title, metadata = extract_metadata(redirect_url)
