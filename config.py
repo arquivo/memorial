@@ -21,6 +21,8 @@ ARCHIVE_VERSIONS = {
     "empregabilidadedigital.pt": "20180511140028",
     "www.empregabilidadedigital.pt": "20180511140028",
     "icolc.fccn.pt": "20180831131331",
+    "votoelectronico.pt": "20040616012455",
+    "www.votoelectronico.pt": "20040616012455",
 }
 
 TEMPLATES = {
@@ -46,4 +48,6 @@ TEMPLATES = {
     "empregabilidadedigital.pt": "redirect_default.html",
     "www.empregabilidadedigital.pt": "redirect_default.html",
     "icolc.fccn.pt": "redirect_default.html",
+    "votoelectronico.pt": "redirect_default.html",
+    "www.votoelectronico.pt": "redirect_default.html",
 }
