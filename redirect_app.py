@@ -51,14 +51,10 @@ def redirect(path):
     else:
         redirect_url = "{}{}".format(app.config['WAYBACK_SERVER'], request.url)
 
-    if app.config['TEMPLATES'].get(request.host, None):
-        template = app.config['TEMPLATES'][request.host]
-    else:
-        template = 'redirect_default.html'
+    template = app.config['TEMPLATES'].get(request.host, 'redirect_default.html')
 
     if template == 'redirect_default.html':
         title, metadata = extract_metadata(redirect_url)
-
         return render_template(template, title=title, metatags=metadata, origin_host=request.host,
                                origin_url=request.url, redirect_url=redirect_url)
     else:
