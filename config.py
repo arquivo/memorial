@@ -1,5 +1,7 @@
 WAYBACK_SERVER = 'https://arquivo.pt/wayback/'
 ARCHIVE_VERSIONS = {
+    "mundonaescola.pt": "20190315160356",
+    "www.mundonaescola.pt": "20190315160356",
     "icolc.fccn.pt": "20180831131331",
     "www.icolc.fccn.pt": "20180831131331",
     "empregabilidadedigital.pt": "20180511135909",
