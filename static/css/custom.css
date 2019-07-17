@@ -33,9 +33,9 @@
     max-width: 40%; padding-top: 45px;
 }
 
-.p-description-2{
+/*.p-description-2{
     padding-bottom: 15px;
-}
+}*/
 
 .p-description-1{
     clear:both;padding-top: 25px;
@@ -56,6 +56,7 @@
     padding: 8px 12px;
     text-decoration: none;
     text-shadow: 0px 1px 0px #3d768a;
+    margin-top: 15px;
 }
 
 .myButton {
@@ -73,6 +74,7 @@
     padding: 8px 12px;
     text-decoration: none;
     text-shadow: 0px 1px 0px #3d768a;
+    margin-top: 15px;
 }
 
 .myButton:hover {
@@ -122,4 +124,15 @@
 
 .center-text{
     text-align: center
+}
+
+.message {
+    border: 1px solid #ccc;
+    padding: 20px;
+}
+
+.header {
+    font-weight: bold;
+    clear:both;
+    padding-top: 25px;
 }

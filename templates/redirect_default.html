@@ -35,8 +35,11 @@
         <div class="container">
             <div class="row col-xs-8 col-xs-offset-2 col-sm-6 col-sm-offset-3 center-text" >
                 <img src="/static/img/color_vertical.png" class="center-block img-logo-1">
-                <p class="text-center p-description-1"> O site {{ origin_host }} foi desativado. </p>
-                <p class="text-center p-description-2"> O <a href="https://arquivo.pt">Arquivo.pt</a> preservou o seu conteúdo.</a> </p>
+                <h4 class="text-center header"> O site {{ origin_host }} foi desativado. </h4>
+                {% if message %}
+                    <p class="text-center message">{{ message }}</p>
+                {% endif %}
+                <p class="text-center"> O <a href="https://arquivo.pt">Arquivo.pt</a> preservou o seu conteúdo.</a> </p>
                 <a id="redirectButton" class="myButtonDefault" href="{{ redirect_url }}">Ver no Arquivo.pt</a>
             </div>
         </div>

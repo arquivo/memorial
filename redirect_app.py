@@ -45,20 +45,34 @@ def extract_metadata(redirect_url):
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def redirect(path):
-    if app.config['ARCHIVE_VERSIONS'].get(request.host, None):
-        redirect_url = "{}{}/{}".format(app.config['WAYBACK_SERVER'], app.config['ARCHIVE_VERSIONS'][request.host],
-                                        request.url)
-    else:
-        redirect_url = "{}{}".format(app.config['WAYBACK_SERVER'], request.url)
+    origin_host = request.host
+    host_without_www = origin_host.replace('www.','')
+    wayback_server_url = app.config['WAYBACK_SERVER']
+    template = 'redirect_default.html'
+    message= None
+    version = None
 
-    template = app.config['TEMPLATES'].get(request.host, 'redirect_default.html')
+    host_config = app.config['ARCHIVE_CONFIG'].get(host_without_www, None)
+    
+    if host_config:
+        template = host_config.get('template', template)
+        message = host_config.get('message', message)
+        version = host_config.get('version', version)
+
+    if message: 
+    	message = message.decode('utf-8')
+
+    if version:
+        redirect_url = "{}{}/{}".format(wayback_server_url, version, request.url)
+    else:
+        redirect_url = "{}{}".format(wayback_server_url, request.url)
 
     if template == 'redirect_default.html':
         title, metadata = extract_metadata(redirect_url)
-        return render_template(template, title=title, metatags=metadata, origin_host=request.host,
-                               origin_url=request.url, redirect_url=redirect_url)
+        return render_template(template, title=title, metatags=metadata, origin_host=origin_host,
+                               origin_url=request.url, redirect_url=redirect_url, message=message)
     else:
-        return render_template(template, origin_host=request.host, origin_url=request.url, redirect_url=redirect_url)
+        return render_template(template, origin_host=origin_host, origin_url=request.url, redirect_url=redirect_url)
 
 
 if __name__ == '__main__':
