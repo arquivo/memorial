@@ -47,7 +47,7 @@ def extract_metadata(redirect_url):
 def redirect(path):
     origin_host = request.host
     host_without_www = origin_host.replace('www.','')
-    wayback_server_url = app.config['WAYBACK_SERVER']
+    wayback_server_url = app.config.get('WAYBACK_SERVER', 'https://arquivo.pt/wayback/')
     template = 'redirect_default.html'
     message = None
     version = None
