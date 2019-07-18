@@ -49,7 +49,7 @@ def redirect(path):
     host_without_www = origin_host.replace('www.','')
     wayback_server_url = app.config['WAYBACK_SERVER']
     template = 'redirect_default.html'
-    message= None
+    message = None
     version = None
 
     host_config = app.config['ARCHIVE_CONFIG'].get(host_without_www, None)
@@ -58,9 +58,6 @@ def redirect(path):
         template = host_config.get('template', template)
         message = host_config.get('message', message)
         version = host_config.get('version', version)
-
-    if message: 
-    	message = message.decode('utf-8')
 
     if version:
         redirect_url = "{}{}/{}".format(wayback_server_url, version, request.url)
