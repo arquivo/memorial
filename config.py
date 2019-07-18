@@ -3,7 +3,7 @@
 # It should be updated using update-from-sheets.sh script that is located on this repository base folder.
 
 ARCHIVE_CONFIG = {
-    'mundonaescola.pt': {'version': '20190315160356'},
+    'mundonaescola.pt': {'version': '20190315160356', 'message': 'O Mundo na Escola foi um programa de divulgação científica criado pelo Ministério da Educação e Ciência que funcionou entre abril de 2012 e novembro de 2015 com o objetivo de aproximar os profissionais das várias áreas do saber da comunidade escolar.'},
     'icolc.fccn.pt': {'version': '20180831131331'},
     'empregabilidadedigital.pt': {'version': '20180511135909'},
     'semplanos.com': {'version': '20180627151035'},
