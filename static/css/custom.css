@@ -1,3 +1,21 @@
+body {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #333;
+}
+
+a {
+    color: #428bca;
+    text-decoration: none;
+}
+
+.container {
+    text-align: center;
+    margin: auto;
+    max-width: 350px;
+}
+
 .myButtonStyle{
     background-color: white!important;
     border: 1px solid #d0d0d0!important;
@@ -26,19 +44,22 @@
 }
 
 .img-logo {
-    max-width: 100%; float: left; padding-top: 15px;
+    max-height: 100px;
+    padding-top: 15px;
 }
 
-.img-logo-1 {
-    max-width: 40%; padding-top: 45px;
+.img-logo {
+    max-height: 100px;
+    padding-top: 45px;
 }
 
-/*.p-description-2{
-    padding-bottom: 15px;
-}*/
+.p-description-2{
+    padding-top: 15px;
+}
 
 .p-description-1{
-    clear:both;padding-top: 25px;
+    clear: both;
+    padding-top: 25px;
 }
 
 .myButtonDefault{
@@ -126,9 +147,17 @@
     text-align: center
 }
 
-.message {
-    border: 1px solid #ccc;
-    padding: 20px;
+.customMessage {
+    text-align: left;
+}
+
+.defaultMessage {
+    text-align: center
+}
+
+.button-previous-message{
+    padding-top: 15px;
+    margin-bottom: 0px;
 }
 
 .header {
