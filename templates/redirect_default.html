@@ -28,18 +28,41 @@
                   'event_label': window.location.href,
                   'value': 1
                 });    
-        </script>           
+        </script>
+        <script>
+            function changeLanguage(languageLink, languageCode) {
+                document.querySelectorAll('[data-lang-'+languageCode+']').forEach(function(element) { 
+                    element.textContent = element.getAttributeNode('data-lang-'+languageCode).value; 
+                });
+            }
+        </script>
     </head>
     <body>
         <div class="container">
+            {% if not message %}
+            <div class="language-div-default">
+                <a class="language-link" href="#" onclick="changeLanguage(this, 'pt')" data-lang-pt='' data-lang-en='Português'></a>
+                <a class="language-link" href="#" onclick="changeLanguage(this, 'en')" data-lang-pt='English' data-lang-en=''>English</a>
+            </div>
+            {% endif %}
             <img src="/static/img/color_vertical.png" class="center-block img-logo">
             {% if message %}
                 <p class="customMessage">{{ message }}</p>
             {% else %}
-                <p class="defaultMessage">O site {{ origin_host }} foi desativado.</p>
+                <p class="defaultMessage">
+                    <span data-lang-pt='O site ' data-lang-en='The site '>O site </span>
+                    {{ origin_host }}
+                    <span data-lang-pt=' foi desativado.' data-lang-en=' has been disabled.'> foi desativado.</span>
+                </p>
             {% endif %}
-            <p class="button-previous-message"> O <a href="https://arquivo.pt">Arquivo.pt</a> preservou o seu conteúdo.</a> </p>
-            <a id="redirectButton" class="myButtonDefault" href="{{ redirect_url }}">Ver no Arquivo.pt</a>
+            <p class="button-previous-message">
+                <span data-lang-pt="O " data-lang-en="">O </span>
+                <a href="https://arquivo.pt">Arquivo.pt</a>
+                <span data-lang-pt=" preservou o seu conteúdo." data-lang-en=" preserved its content."> preservou o seu conteúdo.</a></span>
+            </p>
+            <a id="redirectButton" class="myButtonDefault" href="{{ redirect_url }}">
+                <span data-lang-pt="Ver no Arquivo.pt" data-lang-en="Browse on Arquivo.pt">Ver no Arquivo.pt</a></span>
+            </a>
         </div>
 
 </body></html>

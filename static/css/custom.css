@@ -125,6 +125,14 @@ a {
     text-decoration: none;
 }
 
+.language-div-default {
+    height: 20px;
+}
+
+.language-link{
+    float:  right;
+}
+
 .language-div{
     float:  right;
 }
