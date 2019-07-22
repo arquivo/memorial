@@ -63,9 +63,9 @@ a {
 }
 
 .myButtonDefault{
-    -moz-box-shadow: 0px 10px 14px -7px #0c819e;
-    -webkit-box-shadow: 0px 10px 14px -7px #0c819e;
-    box-shadow: 0px 6px 14px -6px #0c819e;
+    -moz-box-shadow: 0px 10px 14px -7px #777;
+    -webkit-box-shadow: 0px 10px 14px -7px #777;
+    box-shadow: 0px 6px 14px -6px #777;
     background-color: #2484C3;
     -moz-border-radius: 8px;
     -webkit-border-radius: 8px;
@@ -76,8 +76,8 @@ a {
     font-size: 14px;
     padding: 8px 12px;
     text-decoration: none;
-    text-shadow: 0px 1px 0px #3d768a;
     margin-top: 15px;
+    opacity:1;
 }
 
 .myButton {
@@ -99,16 +99,15 @@ a {
 }
 
 .myButton:hover {
-        color:#ffffff;
-        background-color:#408c99;
-        text-decoration: none;
-
+    color:#ffffff;
+    background-color:#408c99;
+    text-decoration: none;
 }
 
 .myButton:active {
-        position:relative;
-        text-decoration: none;
-        color:#ffffff;
+    position:relative;
+    text-decoration: none;
+    color:#ffffff;
 }
 
 .myButton:visited{
@@ -117,19 +116,12 @@ a {
 }
 
 .myButtonDefault:hover{
-        color:#ffffff;
-        background-color: #2484C3;
-        text-decoration: none;
+    text-decoration: none;
+    opacity:0.9;
 }
 
 .myButtonDefault:active{
-        position:relative;
-        text-decoration: none;
-        color:#ffffff;
-}
-
-.myButtonDefault:visited{
-      color: #ffffff;
+    position:relative;
     text-decoration: none;
 }
 
