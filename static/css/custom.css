@@ -45,12 +45,8 @@ a {
 
 .img-logo {
     max-height: 100px;
-    padding-top: 15px;
-}
-
-.img-logo {
-    max-height: 100px;
     padding-top: 45px;
+    max-width: 100%;
 }
 
 .p-description-2{

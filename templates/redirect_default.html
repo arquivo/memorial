@@ -47,7 +47,7 @@
                 <a class="language-link" href="#" onclick="changeLanguage(this, 'en')" data-lang-pt='English' data-lang-en=''>English</a>
             </div>
             {% endif %}
-            <img src="/static/img/color_vertical.png" class="center-block img-logo">
+            <img src="{{ logo if logo else '/static/img/color_vertical.png' }}" class="center-block img-logo">
             {% if message %}
                 <p class="customMessage">{{ message }}</p>
             {% else %}
