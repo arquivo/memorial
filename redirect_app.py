@@ -51,6 +51,7 @@ def redirect(path):
     template = 'redirect_default.html'
     message = None
     version = None
+    button_color = None
 
     host_config = app.config['ARCHIVE_CONFIG'].get(host_without_www, None)
     
@@ -58,6 +59,7 @@ def redirect(path):
         template = host_config.get('template', template)
         message = host_config.get('message', message)
         version = host_config.get('version', version)
+        button_color = host_config.get('button_color', button_color)
 
     if version:
         redirect_url = "{}{}/{}".format(wayback_server_url, version, request.url)
@@ -67,7 +69,7 @@ def redirect(path):
     if template == 'redirect_default.html':
         title, metadata = extract_metadata(redirect_url)
         return render_template(template, title=title, metatags=metadata, origin_host=origin_host,
-                               origin_url=request.url, redirect_url=redirect_url, message=message)
+                               origin_url=request.url, redirect_url=redirect_url, message=message, button_color=button_color)
     else:
         return render_template(template, origin_host=origin_host, origin_url=request.url, redirect_url=redirect_url)
 
