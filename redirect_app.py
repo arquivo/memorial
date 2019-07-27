@@ -49,19 +49,27 @@ def redirect(path):
     host_without_www = origin_host.replace('www.','')
     wayback_server_url = app.config.get('WAYBACK_SERVER', 'https://arquivo.pt/wayback/')
     template = 'redirect_default.html'
-    message = None
+    default_language = 'pt'
+    message_pt = None
+    message_en = None
     version = None
     button_color = None
     logo = None
+    link_pt = None
+    link_en = None
 
     host_config = app.config['ARCHIVE_CONFIG'].get(host_without_www, None)
     
     if host_config:
         template = host_config.get('template', template)
-        message = host_config.get('message', message)
+        default_language = host_config.get('default_language', default_language)
+        message_pt = host_config.get('message_pt', message_pt)
+        message_en = host_config.get('message_en', message_en)
         version = host_config.get('version', version)
         button_color = host_config.get('button_color', button_color)
         logo = host_config.get('logo', logo)
+        link_pt = host_config.get('link_pt', link_pt)
+        link_en = host_config.get('link_en', link_en)
 
     if version:
         redirect_url = "{}{}/{}".format(wayback_server_url, version, request.url)
@@ -70,9 +78,20 @@ def redirect(path):
 
     if template == 'redirect_default.html':
         title, metadata = extract_metadata(redirect_url)
-        return render_template(template, title=title, metatags=metadata, origin_host=origin_host,
-                               origin_url=request.url, redirect_url=redirect_url, message=message, 
-                               button_color=button_color, logo=logo)
+        return render_template(template, 
+            title=title, 
+            metatags=metadata, 
+            origin_host=origin_host,
+            origin_url=request.url, 
+            redirect_url=redirect_url, 
+            default_language=default_language,
+            message_pt=message_pt, 
+            message_en=message_en, 
+            button_color=button_color, 
+            logo=logo,
+            link_pt=link_pt,
+            link_en=link_en
+        )
     else:
         return render_template(template, origin_host=origin_host, origin_url=request.url, redirect_url=redirect_url)
 

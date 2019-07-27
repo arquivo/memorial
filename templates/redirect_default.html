@@ -41,15 +41,30 @@
     </head>
     <body>
         <div class="container">
-            {% if not message %}
+            {% if (not message_pt and not message_en) or (message_pt and message_en) or link_pt or link_en %}
             <div class="language-div-default">
-                <a class="language-link" href="#" onclick="changeLanguage(this, 'pt')" data-lang-pt='' data-lang-en='Português'></a>
-                <a class="language-link" href="#" onclick="changeLanguage(this, 'en')" data-lang-pt='English' data-lang-en=''>English</a>
+                {% set pt_change_link_text = {'pt' : ' ' , 'en' : 'Português'} %}
+                <a class="language-link" 
+                    href="{{ link_pt if link_pt else '#' }}" 
+                    onclick="{{ '' if link_pt else 'changeLanguage(this, \'pt\')' }}" 
+                    data-lang-pt="{{ pt_change_link_text['pt'] }}" 
+                    data-lang-en="{{ pt_change_link_text['en'] }}">
+                    {{ pt_change_link_text[default_language] }}
+                </a>
+
+                {% set en_change_link_text = {'pt' : 'English' , 'en' : ' '} %}
+                <a class="language-link" 
+                    href="{{ link_en if link_en else '#' }}" 
+                    onclick="{{ '' if link_en else 'changeLanguage(this, \'en\')' }}" 
+                    data-lang-pt="{{ en_change_link_text['pt'] }}" 
+                    data-lang-en="{{ en_change_link_text['en'] }}">
+                    {{ en_change_link_text[default_language] }}
+                </a>
             </div>
             {% endif %}
             <img src="{{ logo if logo else '/static/img/color_vertical.png' }}" class="center-block img-logo">
-            {% if message %}
-                <p class="customMessage">{{ message }}</p>
+            {% if message_pt and default_language == 'pt' or message_en and default_language == 'en' %}
+                <p class="customMessage">{{ (message_pt|safe) if default_language == 'pt' else (message_en|safe) }}</p>
             {% else %}
                 <p class="defaultMessage">
                     <span data-lang-pt='O site ' data-lang-en='The site '>O site </span>
@@ -58,12 +73,17 @@
                 </p>
             {% endif %}
             <p class="button-previous-message">
-                <span data-lang-pt="O " data-lang-en="">O </span>
+                {% set button_prev_m_lang = {'pt' : 'O ' , 'en' : ''} %}
+                <span data-lang-pt="{{ button_prev_m_lang['pt'] }}" data-lang-en="{{ button_prev_m_lang['en'] }}">{{ button_prev_m_lang[default_language] }}</span>
+                
                 <a href="https://arquivo.pt">Arquivo.pt</a>
-                <span data-lang-pt=" preservou o seu conteúdo." data-lang-en=" preserved its content."> preservou o seu conteúdo.</a></span>
+                
+                {% set button_prev_m_lang_2 = {'pt' : ' preservou o seu conteúdo.' , 'en' : ' preserved its content.'} %}
+                <span data-lang-pt="{{ button_prev_m_lang_2['pt'] }}" data-lang-en="{{ button_prev_m_lang_2['en'] }}">{{ button_prev_m_lang_2[default_language] }}</a></span>
             </p>
             <a id="redirectButton" class="myButtonDefault" style="background-color: #{{ button_color if button_color is defined else '2484C3' }}" href="{{ redirect_url }}">
-                <span data-lang-pt="Ver no Arquivo.pt" data-lang-en="Browse on Arquivo.pt">Ver no Arquivo.pt</a></span>
+                {% set view_on_arquivo_langs = {'pt' : 'Ver no Arquivo.pt' , 'en' : 'Browse on Arquivo.pt'} %}
+                <span data-lang-pt="{{ view_on_arquivo_langs['pt'] }}" data-lang-en="{{ view_on_arquivo_langs['en'] }}">{{ view_on_arquivo_langs[default_language] }}</a></span>
             </a>
         </div>
 
