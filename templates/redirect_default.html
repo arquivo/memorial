@@ -64,7 +64,7 @@
             {% endif %}
             <img src="{{ logo if logo else '/static/img/color_vertical.png' }}" class="center-block img-logo">
             {% if message_pt and default_language == 'pt' or message_en and default_language == 'en' %}
-                <p class="customMessage">{{ (message_pt|safe) if default_language == 'pt' else (message_en|safe) }}</p>
+                <p class="customMessage" data-lang-pt='{{ message_pt|safe }}' data-lang-en='{{ message_en|safe }}'>{{ (message_pt|safe) if default_language == 'pt' else (message_en|safe) }}</p>
             {% else %}
                 <p class="defaultMessage">
                     <span data-lang-pt='O site ' data-lang-en='The site '>O site </span>
