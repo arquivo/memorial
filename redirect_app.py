@@ -34,11 +34,17 @@ def extract_metadata(redirect_url):
         for name in valid_meta_names:
             for tag in soup.find_all('meta', {'name': name}):
                 meta_list.append(fix_not_closed_metatags(tag))
+        
+        valid_link_rels = ['author', 'home', 'shortcut icon', 'alternate']
+        for rel_value in valid_link_rels:
+            for tag in soup.find('head').find_all('link', attrs={'rel': rel_value}):
+                meta_list.append(fix_not_closed_metatags(tag))
 
         title = soup.find('title')
 
         return title, meta_list
-    except Exception:
+    except Exception as e:
+        print('Failed to extract metadata for redirect url: '+ redirect_url + ' with exception: '+ str(e))
         return None, meta_list
 
 
