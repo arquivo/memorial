@@ -1,1 +1,170 @@
-../static/css/custom.css
+body {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #333;
+}
+
+a {
+    color: #428bca;
+    text-decoration: none;
+}
+
+.container {
+    text-align: center;
+    margin: auto;
+    max-width: 350px;
+}
+
+.myButtonStyle{
+    background-color: white!important;
+    border: 1px solid #d0d0d0!important;
+    border-radius: 0!important;
+    margin-bottom: 30px!important;
+    outline: none!important;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    cursor: pointer;
+    word-wrap: break-word;
+    max-width: 250px;
+    margin: auto;
+    text-align: center;
+}
+.myButtonStyle:active{
+    background-color: #efefef!important;
+}
+.myButtonStyle:focus{
+    outline: none;
+}
+.greyFont {
+    font-size: 17px;
+    color: #555;
+}
+
+.img-logo {
+    max-height: 350px;
+    padding-top: 45px;
+    max-width: 100%;
+}
+
+.p-description-2{
+    padding-top: 15px;
+}
+
+.p-description-1{
+    clear: both;
+    padding-top: 25px;
+}
+
+.myButtonDefault{
+    -moz-box-shadow: 0px 10px 14px -7px #777;
+    -webkit-box-shadow: 0px 10px 14px -7px #777;
+    box-shadow: 0px 6px 14px -6px #777;
+    background-color: #2484C3;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    border-radius: 8px;
+    display: inline-block;
+    cursor: pointer;
+    color: #ffffff;
+    font-size: 14px;
+    padding: 8px 12px;
+    text-decoration: none;
+    margin-top: 15px;
+    opacity:1;
+}
+
+.myButton {
+    -moz-box-shadow: 0px 10px 14px -7px #0c819e;
+    -webkit-box-shadow: 0px 10px 14px -7px #0c819e;
+    box-shadow: 0px 6px 14px -6px #0c819e;
+    background-color: #599bb3;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    border-radius: 8px;
+    display: inline-block;
+    cursor: pointer;
+    color: #ffffff;
+    font-size: 14px;
+    padding: 8px 12px;
+    text-decoration: none;
+    text-shadow: 0px 1px 0px #3d768a;
+    margin-top: 15px;
+}
+
+.myButton:hover {
+    color:#ffffff;
+    background-color:#408c99;
+    text-decoration: none;
+}
+
+.myButton:active {
+    position:relative;
+    text-decoration: none;
+    color:#ffffff;
+}
+
+.myButton:visited{
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.myButtonDefault:hover{
+    text-decoration: none;
+    opacity:0.9;
+}
+
+.myButtonDefault:active{
+    position:relative;
+    text-decoration: none;
+}
+
+.language-div-default {
+    height: 20px;
+}
+
+.language-link{
+    float:  right;
+}
+
+.language-div{
+    float:  right;
+}
+.first-language{
+    padding-right: 8px;
+}
+.second-language{
+    padding-right:  3px;
+}
+
+.center-text{
+    text-align: center
+}
+
+.customMessage {
+    text-align: left;
+}
+
+.defaultMessage {
+    text-align: center
+}
+
+.button-previous-message{
+    padding-top: 15px;
+    margin-bottom: 0px;
+}
+
+.header {
+    font-weight: bold;
+    clear:both;
+    padding-top: 25px;
+}
+
+@media only screen and (max-width:500px) {
+  .img-logo {
+    padding-top: 10px;
+  }
+}
+
