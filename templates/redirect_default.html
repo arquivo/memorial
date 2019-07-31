@@ -81,7 +81,7 @@
                 {% set button_prev_m_lang_2 = {'pt' : ' preservou o seu conteúdo.' , 'en' : ' preserved its content.'} %}
                 <span data-lang-pt="{{ button_prev_m_lang_2['pt'] }}" data-lang-en="{{ button_prev_m_lang_2['en'] }}">{{ button_prev_m_lang_2[default_language] }}</a></span>
             </p>
-            <a id="redirectButton" class="myButtonDefault" style="background-color: #{{ button_color if button_color is defined else '2484C3' }}" href="{{ redirect_url }}">
+            <a id="redirectButton" class="myButtonDefault" style="background-color: {{ button_color if button_color is defined else '2484C3' }}" href="{{ redirect_url }}">
                 {% set view_on_arquivo_langs = {'pt' : 'Ver no Arquivo.pt' , 'en' : 'Browse on Arquivo.pt'} %}
                 <span data-lang-pt="{{ view_on_arquivo_langs['pt'] }}" data-lang-en="{{ view_on_arquivo_langs['en'] }}">{{ view_on_arquivo_langs[default_language] }}</a></span>
             </a>
