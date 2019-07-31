@@ -14,4 +14,6 @@ pip install -r requirements.txt --upgrade
 ```
 
 ## Run
+```
 uwsgi --ini uwsgi.ini --py-autoreload 1
+```
