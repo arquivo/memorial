@@ -20,8 +20,6 @@ ARCHIVE_CONFIG = {
     },
     'visibilidade.net': {
         'version': '20180628130711',
-        'logo': 'https://arquivo.pt/wayback/20180628130712im_/http://visibilidade.net/img/logotipoVisibilidade.net.jpg',
-        'button_color': '01A6E0',
     },
     'cidadesdigitais.pt': {
         'version': '20180430171300',
@@ -43,21 +41,19 @@ ARCHIVE_CONFIG = {
     },
     'english.umic.pt': {
         'version': '20170831175908',
-        'template': 'redirectEN.html',
         'default_language': 'en',
         'message_en': 'UMIC - Knowledge Society Agency was a public institute that existed from January 2005 to February 2012, whose functions were transferred to <a href=https://www.fct.pt/dsi/index.phtml.en>FCT, I.P.</a>',
         'link_pt': 'http://www.umic.pt',
-        'logo': '/static/img/umic.gif',
-        'button_color': '599bb3',
+        'logo': 'https://arquivo.pt/wayback/20170831203454im_/http://www.english.umic.pt/templates/umic_geral/images/logo.gif',
+        'button_color': '#599bb3',
     },
     'umic.pt': {
         'version': '20170831104506',
-        'template': 'redirect.html',
         'default_language': 'pt',
         'message_pt': 'A UMIC – Agência para a Sociedade do Conhecimento, foi um Instituto Público que existiu de janeiro de 2005 a fevereiro de 2012, cujas funções transitaram para a <a href=https://www.fct.pt/dsi/>FCT, I.P.</a>',
         'link_en': 'http://www.english.umic.pt',
         'logo': '/static/img/umic.gif',
-        'button_color': '599bb3',
+        'button_color': '#599bb3',
     },
     'gridcomputing.pt': {
         'version': '20170803133931',
