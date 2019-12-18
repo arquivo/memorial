@@ -3,6 +3,11 @@
 # It should be updated using update-from-sheets.sh script that is located on this repository base folder.
 
 ARCHIVE_CONFIG = {
+
+    'minema.di.fc.ul.pt': {
+        'version': '20191126170837',
+    },
+
     'knetworks.gov.pt': {
         'version': '20190424165218',
         'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
@@ -10,12 +15,14 @@ ARCHIVE_CONFIG = {
         'logo': 'https://drive.google.com/uc?export=view&id=15bUn4GGpuz3KccoC0shVXdfJEsAsZuEW',
         'button_color': '#777',
     },
+
     'disaster-recovery.gov.pt': {
         'version': '20190424165203',
         'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
         'logo': 'https://drive.google.com/uc?export=view&id=1haI3haNZmzPTxG---UCHjRfbFQu6M1xF',
         'button_color': '#777',
     },
+
     'redesdoconhecimento.gov.pt': {
         'version': '20190424170738',
         'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
@@ -23,42 +30,54 @@ ARCHIVE_CONFIG = {
         'logo': 'https://drive.google.com/uc?export=view&id=1XBCxf-dOEefRIq2Dg7itwPABAResGWNx',
         'button_color': '#777',
     },
+
     'mundonaescola.pt': {
         'version': '20190315160356',
         'default_language': 'pt',
         'message_pt': 'O Mundo na Escola foi um programa de divulgação científica criado pelo Ministério da Educação e Ciência que funcionou entre abril de 2012 e novembro de 2015 com o objetivo de aproximar os profissionais das várias áreas do saber da comunidade escolar.',
         'message_en': 'The Mundo na Escola was an outreach program of the Portuguese Ministry of Education and Science that ran from April 2012 to November 2015 to get closer to the knowledge areas of the school community.',
     },
+
     'icolc.fccn.pt': {
         'version': '20180831131331',
     },
+
     'empregabilidadedigital.pt': {
         'version': '20180511135909',
     },
+
     'semplanos.com': {
         'version': '20180627151035',
     },
+
     'visibilidade.net': {
         'version': '20180628130711',
     },
+
     'cidadesdigitais.pt': {
         'version': '20180430171300',
     },
+
     'cla.fccn.pt': {
         'version': '20180504071206',
     },
+
     'consultorioct.mctes.pt': {
         'version': '20180504071337',
     },
+
     'ipv6-tf.com.pt': {
         'version': '20180504071040',
     },
+
     'jeremias.com.pt': {
         'version': '20180504070838',
     },
+
     'ligarportugal.pt': {
         'version': '20170628163113',
     },
+
     'english.umic.pt': {
         'version': '20170831175908',
         'default_language': 'en',
@@ -67,6 +86,7 @@ ARCHIVE_CONFIG = {
         'logo': 'https://arquivo.pt/wayback/20170831203454im_/http://www.english.umic.pt/templates/umic_geral/images/logo.gif',
         'button_color': '#599bb3',
     },
+
     'umic.pt': {
         'version': '20170831104506',
         'default_language': 'pt',
@@ -75,10 +95,13 @@ ARCHIVE_CONFIG = {
         'logo': '/static/img/umic.gif',
         'button_color': '#599bb3',
     },
+
     'gridcomputing.pt': {
         'version': '20170803133931',
     },
+
     'e-u.pt': {
         'version': '20171228124550',
     },
 }
+
