@@ -3,6 +3,28 @@
 # It should be updated using update-from-sheets.sh script that is located on this repository base folder.
 
 ARCHIVE_CONFIG = {
+    'knetworks.gov.pt': {
+        'version': '20190424165218',
+        'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
+        'message_en': 'This page is digitally preserved by the Arquivo.pt, under a collaboration protocol with the Centro de Gestão da Rede Informática do Governo.',
+        'link_en': 'http://www.knetworks.gov.pt/knetworks/en/index.html',
+        'logo': 'https://drive.google.com/uc?export=view&id=15bUn4GGpuz3KccoC0shVXdfJEsAsZuEW',
+        'button_color': '#777',
+    },
+    'disaster-recovery.gov.pt': {
+        'version': '20190424165203',
+        'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
+        'logo': 'https://drive.google.com/uc?export=view&id=1haI3haNZmzPTxG---UCHjRfbFQu6M1xF',
+        'button_color': '#777',
+    },
+    'redesdoconhecimento.gov.pt': {
+        'version': '20190424170738',
+        'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
+        'message_en': 'This page is digitally preserved by the Arquivo.pt, under a collaboration protocol with the Centro de Gestão da Rede Informática do Governo.',
+        'link_en': 'http://www.redesdoconhecimento.gov.pt/rc/en/index.html',
+        'logo': 'https://drive.google.com/uc?export=view&id=1XBCxf-dOEefRIq2Dg7itwPABAResGWNx',
+        'button_color': '#777',
+    },
     'mundonaescola.pt': {
         'version': '20190315160356',
         'default_language': 'pt',
