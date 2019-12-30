@@ -31,6 +31,27 @@ ARCHIVE_CONFIG = {
         'button_color': '#777',
     },
 
+    'diadomar.mdn.gov.pt': {
+        'version': '20061117092548',
+        'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
+        'logo': 'https://drive.google.com/uc?export=view&id=1pAd9OLqATeczve6WZXfpdQLR7ENjnxm8',
+        'button_color': '#777',
+    },
+
+    'missaovenezuela.gov.pt': {
+        'version': '20160211010406',
+        'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
+        'logo': 'https://drive.google.com/uc?export=view&id=1RlB_LiYzc6z_kknDtLffiEhYR4XikwWz',
+        'button_color': '#777',
+    },
+
+    'religare.gov.pt': {
+        'version': '20191204111700',
+        'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
+        'logo': 'https://drive.google.com/uc?export=view&id=1CxVDi1O-6RUi_jGpAlgHszg2yvmrqfnP',
+        'button_color': '#777',
+    },
+
     'mundonaescola.pt': {
         'version': '20190315160356',
         'default_language': 'pt',
