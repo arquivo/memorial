@@ -1,4 +1,4 @@
-# RedirectApp
+# memorial
 
 ## Local development
 This requires python3, so on an ubuntu linux machine install this package, using:
