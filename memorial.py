@@ -4,7 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 from flask import Flask
 from flask import render_template
-from flask import request
+from flask import request, send_from_directory
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -48,6 +48,11 @@ def extract_metadata(redirect_url):
         return None, meta_list
 
 
+@app.route('/robots.txt')
+def robots():
+    return send_from_directory('static', 'robots.txt')
+
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def redirect(path):
@@ -65,7 +70,6 @@ def redirect(path):
     link_en = None
 
     host_config = app.config['ARCHIVE_CONFIG'].get(host_without_www, None)
-    
     if host_config:
         template = host_config.get('template', template)
         default_language = host_config.get('default_language', default_language)
@@ -84,16 +88,16 @@ def redirect(path):
 
     if template == 'redirect_default.html':
         title, metadata = extract_metadata(redirect_url)
-        return render_template(template, 
-            title=title, 
-            metatags=metadata, 
+        return render_template(template,
+            title=title,
+            metatags=metadata,
             origin_host=origin_host,
-            origin_url=request.url, 
-            redirect_url=redirect_url, 
+            origin_url=request.url,
+            redirect_url=redirect_url,
             default_language=default_language,
-            message_pt=message_pt, 
-            message_en=message_en, 
-            button_color=button_color, 
+            message_pt=message_pt,
+            message_en=message_en,
+            button_color=button_color,
             logo=logo,
             link_pt=link_pt,
             link_en=link_en

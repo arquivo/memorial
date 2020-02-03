@@ -1,18 +1,12 @@
-import sys
 import unittest
 
 from bs4 import BeautifulSoup
-
-sys.path.append('.')
-from redirect_app import app
+from memorial import app
 
 
 class BasicTests(unittest.TestCase):
 
-    ############################
-    #### setup and teardown ####
-    ############################
-
+    # setup and teardown
     # executed prior to each test
     def setUp(self):
         self.app = app.test_client()
@@ -20,10 +14,6 @@ class BasicTests(unittest.TestCase):
     # executed after each test
     def tearDown(self):
         pass
-
-    ###############
-    #### tests ####
-    ###############
 
     def test_main_page(self):
         # Fake host so it properly match the template
@@ -35,7 +25,7 @@ class BasicTests(unittest.TestCase):
 
         title = soup.find('title')
         print("Title: {}".format(title.text))
-        self.assertEqual(title.text, "Umic - In\\xc3\\xadcio")
+        self.assertEqual(title.text, "Arquivo.pt")
 
         response = self.app.get('/', follow_redirects=True, headers={'Host': 'www.ligarportugal.pt'})
         self.assertEqual(response.status_code, 200)
@@ -45,7 +35,12 @@ class BasicTests(unittest.TestCase):
 
         title = soup.find('title')
         print("Title: {}".format(title.text))
-        self.assertEqual(title.text, "Ligar Portugal")
+        self.assertEqual(title.text, "Arquivo.pt")
+
+    def test_robotstxt(self):
+        # Fake host so it properly match the template
+        response = self.app.get('/robots.txt', follow_redirects=True, headers={'Host': 'www.umic.pt'})
+        self.assertEqual(response.status_code, 200)
 
 
 if __name__ == "__main__":
