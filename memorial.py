@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+import os
 
 import requests
 from bs4 import BeautifulSoup
@@ -9,6 +10,8 @@ from flask import request, send_from_directory
 app = Flask(__name__)
 app.config.from_object('config')
 
+if 'MEMORIAL_CONFIGURATION' in os.environ: 
+    app.config.from_envvar('MEMORIAL_CONFIGURATION')
 
 # for instance, this happen with gridcomputing.pt.
 def fix_not_closed_metatags(tag):
@@ -20,9 +23,9 @@ def fix_not_closed_metatags(tag):
     return fix_tag
 
 
-def extract_metadata(redirect_url):
+def extract_metadata(redirect_url_home):
     try:
-        r = requests.get(redirect_url)
+        r = requests.get(redirect_url_home)
         html = r.content
 
         soup = BeautifulSoup(html, "html.parser")
@@ -44,7 +47,7 @@ def extract_metadata(redirect_url):
 
         return title, meta_list
     except Exception as e:
-        print('Failed to extract metadata for redirect url: '+ redirect_url + ' with exception: '+ str(e))
+        print('Failed to extract metadata for redirect url: '+ redirect_url_home + ' with exception: '+ str(e))
         return None, meta_list
 
 
@@ -57,8 +60,9 @@ def robots():
 @app.route('/<path:path>')
 def redirect(path):
     origin_host = request.host
-    host_without_www = origin_host.replace('www.','')
+    host_without_www = origin_host.replace('www.','')    
     wayback_server_url = app.config.get('WAYBACK_SERVER', 'https://arquivo.pt/wayback/')
+    wayback_noframe_server_url = app.config.get('WAYBACK_NOFRAME_SERVER', 'https://arquivo.pt/noFrame/replay/')
     template = 'redirect_default.html'
     default_language = 'pt'
     message_pt = None
@@ -83,11 +87,13 @@ def redirect(path):
 
     if version:
         redirect_url = "{}{}/{}".format(wayback_server_url, version, request.url)
+        redirect_url_home = "{}{}/{}".format(wayback_noframe_server_url, version, host_without_www)
     else:
         redirect_url = "{}{}".format(wayback_server_url, request.url)
+        redirect_url_home = "{}{}".format(wayback_noframe_server_url, host_without_www)
 
     if template == 'redirect_default.html':
-        title, metadata = extract_metadata(redirect_url)
+        title, metadata = extract_metadata(redirect_url_home)
         return render_template(template,
             title=title,
             metatags=metadata,

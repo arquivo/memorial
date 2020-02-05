@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='memorial',
-    version='1.0.0',
+    version='1.0.1',
     url='https://github.com/arquivo/memorial',
     license='',
     description='Arquivo Memorial to serve preserved pages.',

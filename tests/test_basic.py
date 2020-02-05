@@ -25,7 +25,11 @@ class BasicTests(unittest.TestCase):
 
         title = soup.find('title')
         print("Title: {}".format(title.text))
-        self.assertEqual(title.text, "Arquivo.pt")
+        self.assertEqual(title.text, "Umic - In\\xc3\\xadcio")
+
+        meta = soup.find('meta', {'name': 'description'})
+        print("Description: {}".format(meta['content']))
+        self.assertEqual(meta['content'], 'UMIC - Ag\\xc3\\xaancia para a Sociedade do Conhecimento IP')
 
         response = self.app.get('/', follow_redirects=True, headers={'Host': 'www.ligarportugal.pt'})
         self.assertEqual(response.status_code, 200)
@@ -35,7 +39,7 @@ class BasicTests(unittest.TestCase):
 
         title = soup.find('title')
         print("Title: {}".format(title.text))
-        self.assertEqual(title.text, "Arquivo.pt")
+        self.assertEqual(title.text, "Ligar Portugal")
 
     def test_robotstxt(self):
         # Fake host so it properly match the template
