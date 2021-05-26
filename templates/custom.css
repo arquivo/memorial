@@ -13,7 +13,7 @@ a {
 .container {
     text-align: center;
     margin: auto;
-    max-width: 350px;
+    max-width: 450px;
 }
 
 .myButtonStyle{
@@ -144,7 +144,7 @@ a {
 }
 
 .customMessage {
-    text-align: left;
+    text-align: justify;
 }
 
 .defaultMessage {
