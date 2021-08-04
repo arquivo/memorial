@@ -58,7 +58,7 @@
         <!-- starts img container -->
         <div id="img-container">
             
-            <img src="{{ url_for('static', filename=logo if logo else 'img/color_vertical_compressed.png') }}" alt="Entity logo name here">
+            <img src="{{ logo if logo else url_for('static', filename='img/color_vertical_compressed.png') }}" alt="Entity logo name here">
         </div>
         <!-- ends img container -->
 
