@@ -63,6 +63,8 @@
 
         <!-- starts entity message -->
         {% if message_pt and default_language == 'pt' or message_en and default_language == 'en' %}
+            <p {{ style_pt }} lang="pt">{{ (message_pt|safe) }}</p>
+            <p {{ style_en }} lang="en">{{ (message_en|safe) }}</p>
         {% else %}
             <p {{ style_pt }} lang="pt">O site foi desactivado.</p>
             <p {{ style_en }} lang="en">The site has been disabled.</p>
