@@ -3,6 +3,10 @@
 <head>
     {{ title|safe if title is not none }}
      <meta name="viewport" content="width=device-width, initial-scale=1">
+     <meta name="robots" content="index, follow">
+     {% for meta in metatags %}
+        {{ meta|safe }}
+    {% endfor %}
      <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" media="screen">
      <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900&display=swap" rel="stylesheet" onload="if(media!='all')media='all'" />
      <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet" onload="if(media!='all')media='all'" />
