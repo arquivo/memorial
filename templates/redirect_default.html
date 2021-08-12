@@ -1,96 +1,93 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="">
 <head>
-        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-        <meta charset="utf-8">
-<meta name="language" content="pt">
-
-{{ title|safe if title is not none }}
-        <meta name="generator" content="Bootply">
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-        <meta name="robots" content="index, follow">
-        {% for meta in metatags %}
+    {{ title|safe if title is not none }}
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+     <meta name="robots" content="index, follow">
+     {% for meta in metatags %}
         {{ meta|safe }}
-        {% endfor %}
-        <link rel="shortcut icon" href="/static/img/logo-16.png">
-        <style>
-            {% include 'custom.css' %}
-        </style>
-        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-21825027-8"></script>
-        <script>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
+    {% endfor %}
+     <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" media="screen">
+     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900&display=swap" rel="stylesheet" onload="if(media!='all')media='all'" />
+     <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet" onload="if(media!='all')media='all'" />
+     <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet" onload="if(media!='all')media='all'" />
+     <script
+        src="https://code.jquery.com/jquery-3.6.0.slim.min.js"
+        integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI="
+        crossorigin="anonymous">
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-21825027-8"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-          gtag('config', 'UA-21825027-8', {'page_path': window.location.href});
-        </script> 
-        <script type="text/javascript">
-            gtag('event', 'Memorial', {
-                  'event_category': 'redirect_default',
-                  'event_label': window.location.href,
-                  'value': 1
-                });    
-        </script>
-        <script>
-            function changeLanguage(languageLink, languageCode) {
-                var otherLanguage = languageCode == 'pt' ? 'en' : 'pt';
-                document.querySelectorAll('[data-i18n-'+otherLanguage+']').forEach(function(element) { 
-                    element.style.display = "none";
-                });
-                document.querySelectorAll('[data-i18n-'+languageCode+']').forEach(function(element) { 
-                    element.style.display = "inline";
-                });
-            }
-        </script>
-    </head>
-    <body>
-        <div class="container">
-        {% set element_pt = ( "data-i18n-pt='' style='display: inline;'" if default_language == "pt" else "data-i18n-pt='' style='display: none'" ) | safe %}
-        {% set element_en = ( "data-i18n-en='' style='display: inline;'" if default_language == "en" else "data-i18n-en='' style='display: none'" ) | safe %}
-            {% if (not message_pt and not message_en) or (message_pt and message_en) or link_pt or link_en %}
-            <div class="language-div-default">
-                <a class="language-link" 
-                    href="{{ link_pt if link_pt else 'javascript:void(0)' }}" 
-                    {{ element_en }}
-                    onclick="{{ '' if link_pt else 'changeLanguage(this, \'pt\')' }}" >
-                    <span {{ element_en }}>Português</span>
-                </a>
+      gtag('config', 'UA-21825027-8', {'page_path': window.location.href});
+    </script>
+    <script>
+        gtag('event', 'Memorial', {
+              'event_category': 'redirect_default',
+              'event_label': window.location.href,
+              'value': 1
+            });
+    </script>
+    <script>
+        function changeLanguage(languageCode) {
+            var otherLanguage = languageCode == 'pt' ? 'en' : 'pt';
+            $("[lang='" + languageCode + "']").show();
+            $("[lang='" + otherLanguage + "']").hide();
+        }
+    </script>
+</head>
+<body>
+    <!-- starts memorial container -->
+    <div id="memorial-container" class="containers">
 
-                <a class="language-link" 
-                    href="{{ link_en if link_en else 'javascript:void(0)' }}" 
-                    {{ element_pt }}
-                    onclick="{{ '' if link_en else 'changeLanguage(this, \'en\')' }}">
-                    <span {{ element_pt }}>English</span>
-                </a>
-            </div>
-            {% endif %}
-            <img src="{{ logo if logo else '/static/img/color_vertical_compressed.png' }}" class="center-block img-logo">
-            {% if message_pt and default_language == 'pt' or message_en and default_language == 'en' %}
-                <p class="customMessage">
-                    <span {{ element_pt }}>{{ (message_pt|safe) }}</span>
-                    <span {{ element_en }}>{{ (message_en|safe) }}</span>
-                </p>
-            {% else %}
-                <p class="defaultMessage">
-                    <span {{ element_pt }}>O site </span>
-                    <span {{ element_en }}>The site </span>
-                    {{ origin_host }}
-                    <span {{ element_pt }}> foi desativado.</span>
-                    <span {{ element_en }}> has been disabled.</span>
-                </p>
-            {% endif %}
-            <p class="button-previous-message">
-                <span {{ element_pt }}>O </span>
-                <span {{ element_en }}></span>
-                <a href="https://arquivo.pt">Arquivo.pt</a>
-                <span {{ element_pt }}> preservou o seu conteúdo.</span>
-                <span {{ element_en }}> preserved its content.</span>
-            </p>
-            <a id="redirectButton" class="myButtonDefault" style="background-color: {{ button_color if button_color is defined else '2484C3' }}" href="{{ redirect_url }}">
-                <span {{ element_pt }}>Ver no Arquivo.pt</span>
-                <span {{ element_en }}>Browse on Arquivo.pt</span>
-            </a>
+        {% set style_pt = ("style='display: none'" if default_language == 'en') | safe %}
+        {% set style_en = ("style='display: none'" if default_language == 'pt') | safe %}
 
+        <!-- starts language container -->
+        {% if (not message_pt and not message_en) or (message_pt and message_en) or link_pt or link_en %}
+        <div id="language-container" class="containers">
+            <a lang="en" href="{{ link_pt if link_pt else 'javascript:void(0)' }}"
+                onclick="{{ '' if link_pt else 'changeLanguage(\'pt\');' }}"
+                {{ style_en }}>Portuguese</a>
+            <a lang="pt" href="{{ link_en if link_en else 'javascript:void(0)' }}"
+                onclick="{{ '' if link_en else 'changeLanguage(\'en\');' }}"
+                {{ style_pt }}>English</a>
         </div>
+        {% endif %}
+        <!-- ends language container -->
 
-</body></html>
+        <!-- starts img container -->
+        <div id="img-container">
+            <img src="{{ logo if logo else url_for('static', filename='img/color_vertical_compressed.png') }}">
+        </div>
+        <!-- ends img container -->
+
+        <!-- starts entity message -->
+        {% if message_pt and default_language == 'pt' or message_en and default_language == 'en' %}
+            <p {{ style_pt }} lang="pt">{{ (message_pt|safe) }}</p>
+            <p {{ style_en }} lang="en">{{ (message_en|safe) }}</p>
+        {% else %}
+            <p {{ style_pt }} lang="pt">O site foi desactivado.</p>
+            <p {{ style_en }} lang="en">The site has been disabled.</p>
+        {% endif %}
+        <!-- ends entity message -->
+
+        <!-- starts form button -->
+        <form action="{{ redirect_url }}" class="containers">
+
+            <!-- starts message from Arquivo.pt -->
+            <p {{ style_pt }} lang="pt">O <a href="https://arquivo.pt" target="_blank">Arquivo.pt</a> preservou o seu conteúdo.</p>
+            <p {{ style_en }} lang="en"><a href="https://arquivo.pt" target="_blank">Arquivo.pt</a> preserved its content.</p>
+            <!-- ends message from Arquivo.pt -->
+
+            <button {{ style_pt }} lang="pt">Ver no Arquivo.pt</button>
+            <button {{ style_en }} lang="en">Browse on Arquivo.pt</button>
+        </form>
+        <!-- ends form button -->
+    </div>
+    <!-- ends memorial container -->
+</body>
+</html>

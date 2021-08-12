@@ -10,7 +10,7 @@ from flask import request, send_from_directory
 app = Flask(__name__)
 app.config.from_object('config')
 
-if 'MEMORIAL_CONFIGURATION' in os.environ: 
+if 'MEMORIAL_CONFIGURATION' in os.environ:
     app.config.from_envvar('MEMORIAL_CONFIGURATION')
 
 # for instance, this happen with gridcomputing.pt.
@@ -37,7 +37,7 @@ def extract_metadata(redirect_url_home):
         for name in valid_meta_names:
             for tag in soup.find_all('meta', {'name': name}):
                 meta_list.append(fix_not_closed_metatags(tag))
-        
+
         valid_link_rels = ['author', 'home', 'shortcut icon', 'alternate']
         for rel_value in valid_link_rels:
             for tag in soup.find('head').find_all('link', attrs={'rel': rel_value}):
@@ -60,7 +60,7 @@ def robots():
 @app.route('/<path:path>')
 def redirect(path):
     origin_host = request.host
-    host_without_www = origin_host.replace('www.','')    
+    host_without_www = origin_host.replace('www.','')
     wayback_server_url = app.config.get('WAYBACK_SERVER', 'https://arquivo.pt/wayback/')
     wayback_noframe_server_url = app.config.get('WAYBACK_NOFRAME_SERVER', 'https://arquivo.pt/noFrame/replay/')
     template = 'redirect_default.html'
