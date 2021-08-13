@@ -26,23 +26,23 @@ a:visited {
 }
 
 .containers {
-    display: flex;    
+    display: flex;
     flex-wrap: wrap;
-    max-width: 100%;     
+    max-width: 100%;
 }
 
 #language-container {
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;  
+    justify-content: flex-end;
     margin-bottom: 20px;
 }
 
-div#memorial-container { 
+div#memorial-container {
 
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: space-evenly;
         flex-wrap: wrap;
         flex-grow: 1;
         margin: 0 auto;
@@ -55,7 +55,7 @@ div#memorial-container {
         box-sizing: border-box;
         box-shadow: 0px 4px 5px rgb(0 0 0 / 11%);
         border-radius: 5px;
-    
+
 }
 div#language-container a {
     width: fit-content;
@@ -75,7 +75,7 @@ div img {
 
 p {
     margin: 30px 0;
-    padding: 25px 0;    
+    padding: 25px 0;
     font-family: Roboto;
     font-style: normal;
     font-weight: normal;
@@ -88,7 +88,7 @@ p {
 
 div form {
     display: flex;
-    flex-direction: row;   
+    flex-direction: row;
     justify-content:space-between;
     align-items: center;
     height: auto;
@@ -96,7 +96,7 @@ div form {
 
 div form p {
     padding: 10px 0;
-    margin: 0; 
+    margin: 0;
     border: none;
 }
 
@@ -107,7 +107,7 @@ div form button {
     box-shadow: 0px 2px 4px rgb(0 0 0 / 25%);
     border-radius: 3px;
     font-family: Roboto;
-    font-style: normal;    
+    font-style: normal;
     font-size: 12px;
     line-height: 17px;
     text-align: center;
@@ -117,13 +117,13 @@ div form button {
     transition: 0.5s;
 }
 
-div form button:hover {   
+div form button:hover {
     background-color: rgba(6, 98, 184, 0.86);
     transition: 0.5s;
 }
-    
+
 div form button:active {
-    background-color: rgba(14, 56, 95, 0.86);      
+    background-color: rgba(14, 56, 95, 0.86);
 }
 
 /* mobile MEDIA QUERIES **********************/
@@ -131,14 +131,15 @@ div form button:active {
     body {
         margin: 0;
     }
-    div#memorial-container { 
-        padding: 20px 50px 10px 50px;
+    div#memorial-container {
+        padding: 20px 30px 10px 30px;
     }
     div form button {
-        width: 100%;        
+        width: 100%;
         margin: 20px 0 30px;
     }
     p {
-        margin: 30px 0 15px 0;        
+        margin: 30px 0 15px 0;
+        font-size: 13px;
     }
 }
