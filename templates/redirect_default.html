@@ -76,7 +76,11 @@
         <!-- ends entity message -->
 
         <!-- starts form button -->
-        <form action="{{ redirect_url }}" class="containers">
+        <form action="{{ redirect_url }}" class="containers" method="GET">
+
+            {% for key, value in args %}
+                <input type="hidden" name="{{ key|e }}" value="{{ value|e }}"
+            {% endfor %}
 
             <!-- starts message from Arquivo.pt -->
             <p {{ style_pt }} lang="pt">O <a href="https://arquivo.pt" target="_blank">Arquivo.pt</a> preservou o seu conteúdo.</p>

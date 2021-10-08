@@ -86,31 +86,34 @@ def redirect(path):
         link_en = host_config.get('link_en', link_en)
 
     if version:
-        redirect_url = "{}{}/{}".format(wayback_server_url, version, request.url)
+        redirect_url = "{}{}/{}".format(wayback_server_url, version, request.base_url)
         redirect_url_home = "{}{}/{}".format(wayback_noframe_server_url, version, host_without_www)
     else:
-        redirect_url = "{}{}".format(wayback_server_url, request.url)
+        redirect_url = "{}{}".format(wayback_server_url, request.base_url)
         redirect_url_home = "{}{}".format(wayback_noframe_server_url, host_without_www)
 
     if template == 'redirect_default.html':
         title, metadata = extract_metadata(redirect_url_home)
         return render_template(template,
-            title=title,
-            metatags=metadata,
-            origin_host=origin_host,
-            origin_url=request.url,
-            redirect_url=redirect_url,
-            default_language=default_language,
-            message_pt=message_pt,
-            message_en=message_en,
-            button_color=button_color,
-            logo=logo,
-            link_pt=link_pt,
-            link_en=link_en
+            title = title,
+            metatags = metadata,
+            origin_host = origin_host,
+            origin_url = request.url,
+            redirect_url = redirect_url,
+            default_language = default_language,
+            message_pt = message_pt,
+            message_en = message_en,
+            button_color = button_color,
+            logo = logo,
+            link_pt = link_pt,
+            link_en = link_en,
+            args = request.args.items()
         )
     else:
-        return render_template(template, origin_host=origin_host, origin_url=request.url, redirect_url=redirect_url)
-
+        return render_template(template,
+            origin_host = origin_host,
+            origin_url = request.url,
+            redirect_url = redirect_url)
 
 if __name__ == '__main__':
     app.run()
