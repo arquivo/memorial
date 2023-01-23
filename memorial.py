@@ -95,7 +95,7 @@ def redirect(path):
         redirect_url_home = "{}{}".format(wayback_noframe_server_url, host_without_www)
 
     if template == 'redirect_default.html':
-        if requests.get(redirect_url_noFrame).status_code == 200:
+        if requests.head(redirect_url_noFrame).status_code == 200:
             title, metadata = extract_metadata(redirect_url_noFrame)
         else:
             title, metadata = extract_metadata(redirect_url_home)
