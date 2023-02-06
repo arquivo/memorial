@@ -23,9 +23,14 @@ def fix_not_closed_metatags(tag):
     return fix_tag
 
 
-def extract_metadata(redirect_url_home):
+def extract_metadata(redirect_url_home, redirect_url_path):
     try:
-        r = requests.get(redirect_url_home)
+        redirect_url_path_head = requests.head(redirect_url_path, allow_redirects=True)
+        if redirect_url_path_head.ok and redirect_url_path_head.headers['content-type'].startswith('text/html'):
+            r = requests.get(redirect_url_path)
+        else:
+            r = requests.get(redirect_url_home)
+
         html = r.content
 
         soup = BeautifulSoup(html, "html.parser")
@@ -87,13 +92,15 @@ def redirect(path):
 
     if version:
         redirect_url = "{}{}/{}".format(wayback_server_url, version, request.base_url)
+        redirect_url_path = "{}{}/{}".format(wayback_noframe_server_url, version, request.base_url)
         redirect_url_home = "{}{}/{}".format(wayback_noframe_server_url, version, host_without_www)
     else:
         redirect_url = "{}{}".format(wayback_server_url, request.base_url)
+        redirect_url_path = "{}{}/{}".format(wayback_noframe_server_url, request.base_url)
         redirect_url_home = "{}{}".format(wayback_noframe_server_url, host_without_www)
 
     if template == 'redirect_default.html':
-        title, metadata = extract_metadata(redirect_url_home)
+        title, metadata = extract_metadata(redirect_url_home, redirect_url_path)
         return render_template(template,
             title = title,
             metatags = metadata,
