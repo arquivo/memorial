@@ -96,7 +96,7 @@ def redirect(path):
         redirect_url_home = "{}{}/{}".format(wayback_noframe_server_url, version, host_without_www)
     else:
         redirect_url = "{}{}".format(wayback_server_url, request.base_url)
-        redirect_url_path = "{}{}/{}".format(wayback_noframe_server_url, request.base_url)
+        redirect_url_path = "{}{}".format(wayback_noframe_server_url, request.base_url)
         redirect_url_home = "{}{}".format(wayback_noframe_server_url, host_without_www)
 
     if template == 'redirect_default.html':
