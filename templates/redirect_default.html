@@ -16,12 +16,20 @@
         integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI="
         crossorigin="anonymous">
     </script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HWP6ZG7XT7"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-21825027-8"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-HWP6ZG7XT7');
+
+      gtag('config', 'UA-21825027-8', {'page_path': window.location.href});
+    </script>
+    <script>
+        gtag('event', 'Memorial', {
+              'event_category': 'redirect_default',
+              'event_label': window.location.href,
+              'value': 1
+            });
     </script>
     <script>
         function changeLanguage(languageCode) {
@@ -68,15 +76,24 @@
         <!-- ends entity message -->
 
         <!-- starts form button -->
+        {% if 'ipleiria' in redirect_url %}
+        <form action="{{ redirect_url | replace('arquivo.pt/wayback', 'arquivo.pt/noFrame/replay') }}" class="containers" method="GET">
+        {% else %}
         <form action="{{ redirect_url }}" class="containers" method="GET">
+        {% endif %}
 
             {% for key, value in args %}
                 <input type="hidden" name="{{ key|e }}" value="{{ value|e }}">
             {% endfor %}
 
             <!-- starts message from Arquivo.pt -->
+            {% if 'ipleiria' in redirect_url %}
+            <p {{ style_pt }} lang="pt">Suportado pelo <a href="https://arquivo.pt" target="_blank">Arquivo.pt</a></p>
+            <p {{ style_en }} lang="en">Supported by <a href="https://arquivo.pt" target="_blank">Arquivo.pt</a></p>
+            {% else %}
             <p {{ style_pt }} lang="pt">O <a href="https://arquivo.pt/memorial" target="_blank">Memorial do Arquivo.pt</a> preservou o seu conteúdo.</p>
             <p {{ style_en }} lang="en"><a href="https://arquivo.pt/memorialen" target="_blank">Arquivo.pt Memorial</a> preserved its content.</p>
+            {% endif %}
             <!-- ends message from Arquivo.pt -->
 
             <button {{ style_pt }} lang="pt" id="redirectButtonPT">Ver no Arquivo.pt</button>
