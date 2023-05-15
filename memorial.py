@@ -23,22 +23,26 @@ def fix_not_closed_metatags(tag):
     return fix_tag
 
 
-def extract_metadata(redirect_url_home, redirect_url_path):
+def fetch_redirect_url_content(redirect_url_home, redirect_url_path):
     try:
         redirect_url_path_head = requests.head(redirect_url_path, allow_redirects=True)
         if redirect_url_path_head.ok and redirect_url_path_head.headers['content-type'].startswith('text/html'):
-            r = requests.get(redirect_url_path)
+            return requests.get(redirect_url_path)
         else:
-            r = requests.get(redirect_url_home)
+            return requests.get(redirect_url_home)
+    except Exception as e:
+        return requests.get(redirect_url_home)
 
-        html = r.content
-
-        soup = BeautifulSoup(html, "html.parser")
-
+def extract_metadata(redirect_url_home, redirect_url_path):
+    try:
         meta_list = []
 
-        valid_meta_names = ['description', 'keywords', 'author']
+        r = fetch_redirect_url_content(redirect_url_home, redirect_url_path)
 
+        html = r.content
+        soup = BeautifulSoup(html, "html.parser")
+        
+        valid_meta_names = ['description', 'keywords', 'author']
         for name in valid_meta_names:
             for tag in soup.find_all('meta', {'name': name}):
                 meta_list.append(fix_not_closed_metatags(tag))
