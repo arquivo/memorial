@@ -25,17 +25,17 @@ def fix_not_closed_metatags(tag):
 
 def fetch_redirect_url_content(redirect_url_home, redirect_url_path):
     s = requests.Session()
-    timeout_value = 3
+    wayback_timeout = app.config.get('WAYBACK_REQUEST_TIMEOUT', 3)
     try:
-        redirect_url_path_head = s.head(redirect_url_path, allow_redirects=True, timeout=(None, timeout_value))
+        redirect_url_path_head = s.head(redirect_url_path, allow_redirects=True, timeout=(None, wayback_timeout))
         if redirect_url_path_head.ok and 'content-type' in redirect_url_path_head.headers and redirect_url_path_head.headers['content-type'].startswith('text/html'):
-            return s.get(redirect_url_path, timeout=(None, timeout_value))
+            return s.get(redirect_url_path, timeout=(None, wayback_timeout))
         else:
-            return s.get(redirect_url_home, timeout=(None, timeout_value))
+            return s.get(redirect_url_home, timeout=(None, wayback_timeout))
     except requests.exceptions.Timeout as e:
         raise e
     except Exception as e:
-        return s.get(redirect_url_home, timeout=(None, timeout_value))
+        return s.get(redirect_url_home, timeout=(None, wayback_timeout))
 
 def extract_metadata(redirect_url_home, redirect_url_path):
     try:
