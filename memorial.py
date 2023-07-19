@@ -24,14 +24,17 @@ def fix_not_closed_metatags(tag):
 
 
 def fetch_redirect_url_content(redirect_url_home, redirect_url_path):
+    timeout_value = 3
     try:
-        redirect_url_path_head = requests.head(redirect_url_path, allow_redirects=True)
-        if redirect_url_path_head.ok and redirect_url_path_head.headers['content-type'].startswith('text/html'):
-            return requests.get(redirect_url_path)
+        redirect_url_path_head = s.head(redirect_url_path, allow_redirects=True, timeout=(None, timeout_value))
+        if redirect_url_path_head.ok and 'content-type' in redirect_url_path_head.headers and redirect_url_path_head.headers['content-type'].startswith('text/html'):
+            return s.get(redirect_url_path, timeout=(None, timeout_value))
         else:
-            return requests.get(redirect_url_home)
+            return s.get(redirect_url_home, timeout=(None, timeout_value))
+    except requests.exceptions.Timeout as e:
+        raise e
     except Exception as e:
-        return requests.get(redirect_url_home)
+        return s.get(redirect_url_home, timeout=(None, timeout_value))
 
 def extract_metadata(redirect_url_home, redirect_url_path):
     try:
