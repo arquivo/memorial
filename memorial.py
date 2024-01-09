@@ -109,7 +109,7 @@ def redirect(path):
         redirect_url_noFrame = "{}{}".format(wayback_noframe_server_url, request.base_url)
         redirect_url_home = "{}{}".format(wayback_noframe_server_url, host_without_www)
 
-    redirect_url = redirect_url_noFrame if redirect_url_noFrame else redirect_url_wayback
+    redirect_url = redirect_url_noFrame if link_to_noFrame else redirect_url_wayback
 
     if template == 'redirect_default.html':
         title, metadata = extract_metadata(redirect_url_home, redirect_url_noFrame)
