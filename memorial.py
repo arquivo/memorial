@@ -98,7 +98,7 @@ def redirect(path):
         logo = host_config.get('logo', logo)
         link_pt = host_config.get('link_pt', link_pt)
         link_en = host_config.get('link_en', link_en)
-        link_to_noFrame = host.config.get('link_to_noFrame', link_to_noFrame)
+        link_to_noFrame = host_config.get('link_to_noFrame', link_to_noFrame)
 
     if version:
         redirect_url_wayback = "{}{}/{}".format(wayback_server_url, version, request.base_url)
