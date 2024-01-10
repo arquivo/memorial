@@ -85,6 +85,7 @@ def redirect(path):
     logo = None
     link_pt = None
     link_en = None
+    link_to_noFrame = False
 
     host_config = app.config['ARCHIVE_CONFIG'].get(host_without_www, None)
     if host_config:
@@ -97,18 +98,21 @@ def redirect(path):
         logo = host_config.get('logo', logo)
         link_pt = host_config.get('link_pt', link_pt)
         link_en = host_config.get('link_en', link_en)
+        link_to_noFrame = host_config.get('link_to_noFrame', link_to_noFrame)
 
     if version:
-        redirect_url = "{}{}/{}".format(wayback_server_url, version, request.base_url)
-        redirect_url_path = "{}{}/{}".format(wayback_noframe_server_url, version, request.base_url)
+        redirect_url_wayback = "{}{}/{}".format(wayback_server_url, version, request.base_url)
+        redirect_url_noFrame = "{}{}/{}".format(wayback_noframe_server_url, version, request.base_url)
         redirect_url_home = "{}{}/{}".format(wayback_noframe_server_url, version, host_without_www)
     else:
-        redirect_url = "{}{}".format(wayback_server_url, request.base_url)
-        redirect_url_path = "{}{}".format(wayback_noframe_server_url, request.base_url)
+        redirect_url_wayback = "{}{}".format(wayback_server_url, request.base_url)
+        redirect_url_noFrame = "{}{}".format(wayback_noframe_server_url, request.base_url)
         redirect_url_home = "{}{}".format(wayback_noframe_server_url, host_without_www)
 
+    redirect_url = redirect_url_noFrame if link_to_noFrame else redirect_url_wayback
+
     if template == 'redirect_default.html':
-        title, metadata = extract_metadata(redirect_url_home, redirect_url_path)
+        title, metadata = extract_metadata(redirect_url_home, redirect_url_noFrame)
         return render_template(template,
             title = title,
             metatags = metadata,
