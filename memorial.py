@@ -12,6 +12,12 @@ import httpx
 from bs4 import BeautifulSoup
 from quart import Quart, render_template, request, send_from_directory
 
+try:
+    import setproctitle
+    setproctitle.setproctitle("memorial-worker")
+except ImportError:
+    pass  # setproctitle is optional
+
 # Initialize Quart application
 app = Quart(__name__)
 
