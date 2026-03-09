@@ -193,7 +193,20 @@ memorial/
 
 ## Docker Deployment
 
-### Build and Run
+### Using Docker Compose (Recommended)
+
+```bash
+# Build and start the service
+docker compose build && docker compose up
+
+# Or run in background
+docker compose up -d
+
+# Stop the service
+docker compose stop
+```
+
+### Build and Run with Docker
 
 ```bash
 # Build the Docker image
@@ -206,20 +219,19 @@ docker run -p 127.0.0.1:8080:8080 memorial
 docker run -p 8080:8080 -v /path/to/config.py:/app/config.py memorial
 ```
 
-### Docker Compose (Optional)
+### Testing
 
-Create a `docker-compose.yml`:
-```yaml
-version: '3.8'
-services:
-  memorial:
-    build: .
-    ports:
-      - "8080:8080"
-    environment:
-      - MEMORIAL_CONFIGURATION=/app/custom_config.py
-    volumes:
-      - ./custom_config.py:/app/custom_config.py
+Test the memorial service with a site configured in `config.py`:
+
+```bash
+# Using curl with --resolve to test without DNS
+curl -v --resolve senior3045.ipportalegre.pt:80:127.0.0.1 http://senior3045.ipportalegre.pt
+
+# Or test directly with localhost
+curl -H "Host: senior3045.ipportalegre.pt" http://127.0.0.1:8080
+
+# Check specific paths
+curl -v --resolve senior3045.ipportalegre.pt:80:127.0.0.1 http://senior3045.ipportalegre.pt/about
 ```
 
 ## License
