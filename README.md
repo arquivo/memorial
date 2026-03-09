@@ -72,6 +72,7 @@ Configure archived sites in [`config.py`](config.py). Each domain can have:
 - `template`: Custom template name
 - `default_language`: Default language (`pt` or `en`)
 - `link_to_noFrame`: Whether to link to noFrame version
+- `status_code`: HTTP status code to return (default: `200`, can be `502` for Bad Gateway, etc.)
 
 **Environment Variables:**
 - `MEMORIAL_CONFIGURATION`: Path to custom configuration file

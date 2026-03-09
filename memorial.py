@@ -197,6 +197,8 @@ async def redirect(path):
     link_pt = None  # Custom links for Portuguese version
     link_en = None  # Custom links for English version
     link_to_noFrame = False  # Whether to use noFrame version
+    status_code = 502  # Default to 502 Bad Gateway if the archived site is not configured
+    archived_site_status_code = 200  # HTTP status code (200=OK, 502=Bad Gateway, etc.)
 
     # Look up custom configuration for this specific host
     # Configuration is defined in config.py ARCHIVE_CONFIG dictionary
@@ -213,6 +215,7 @@ async def redirect(path):
         link_pt = host_config.get("link_pt", link_pt)
         link_en = host_config.get("link_en", link_en)
         link_to_noFrame = host_config.get("link_to_noFrame", link_to_noFrame)
+        status_code = host_config.get("status_code", archived_site_status_code)  # HTTP status code
 
     # Construct Wayback Machine URLs
     # If a specific version timestamp is configured, use it; otherwise use latest
@@ -236,25 +239,31 @@ async def redirect(path):
         # This provides context about what the preserved site contained
         title, metadata = await extract_metadata(redirect_url_home, redirect_url_noFrame)
 
-        return render_template(
-            template,
-            title=title,  # Original page title
-            metatags=metadata,  # Meta tags from original page
-            origin_host=origin_host,  # The domain that was requested
-            origin_url=request.url,  # Full original URL
-            redirect_url=redirect_url,  # Where to find the archived version
-            default_language=default_language,  # UI language (pt/en)
-            message_pt=message_pt,  # Custom Portuguese message
-            message_en=message_en,  # Custom English message
-            button_color=button_color,  # Custom button styling
-            logo=logo,  # Custom logo URL
-            link_pt=link_pt,  # Additional Portuguese links
-            link_en=link_en,  # Additional English links
-            args=request.args.items(),  # Query string parameters
+        return (
+            render_template(
+                template,
+                title=title,  # Original page title
+                metatags=metadata,  # Meta tags from original page
+                origin_host=origin_host,  # The domain that was requested
+                origin_url=request.url,  # Full original URL
+                redirect_url=redirect_url,  # Where to find the archived version
+                default_language=default_language,  # UI language (pt/en)
+                message_pt=message_pt,  # Custom Portuguese message
+                message_en=message_en,  # Custom English message
+                button_color=button_color,  # Custom button styling
+                logo=logo,  # Custom logo URL
+                link_pt=link_pt,  # Additional Portuguese links
+                link_en=link_en,  # Additional English links
+                args=request.args.items(),  # Query string parameters
+            ),
+            status_code,  # Return configured HTTP status code
         )
     else:
         # For custom templates, provide minimal context
-        return render_template(template, origin_host=origin_host, origin_url=request.url, redirect_url=redirect_url)
+        return (
+            render_template(template, origin_host=origin_host, origin_url=request.url, redirect_url=redirect_url),
+            status_code,
+        )
 
 
 if __name__ == "__main__":
