@@ -2,16 +2,17 @@
 
 > Arquivo.pt Memorial service to serve preserved web pages
 
-Memorial is a Flask-based web application that serves as a redirection service for preserved websites. It provides a user-friendly landing page with metadata extraction from archived pages, helping users access content preserved by [Arquivo.pt](https://arquivo.pt) (Portuguese Web Archive).
+Memorial is a Quart-based async web application that serves as a redirection service for preserved websites. It provides a user-friendly landing page with metadata extraction from archived pages, helping users access content preserved by [Arquivo.pt](https://arquivo.pt) (Portuguese Web Archive).
 
 ## Features
 
+- 🚀 **Async/ASGI** - Built on Quart for true async concurrency
 - 🌐 Automatic redirection to preserved versions of websites
 - 📝 Metadata extraction from archived pages (titles, descriptions, keywords)
 - 🎨 Customizable templates per domain
 - 🌍 Multi-language support (Portuguese/English)
 - 🐳 Docker support for easy deployment
-- ✅ Comprehensive test suite with mocking
+- ✅ Comprehensive test suite with async support
 
 ## Requirements
 
@@ -49,12 +50,14 @@ That's it! The Makefile handles virtual environment creation automatically.
 
 ### Running Locally
 
-**Using uWSGI (Production-like):**
+**Using Hypercorn (Production-like):**
 ```bash
-uwsgi --ini uwsgi.ini --py-autoreload 1
+hypercorn memorial:app --bind 0.0.0.0:8080
+# or with config file
+hypercorn -c hypercorn.toml memorial:app
 ```
 
-**Using Flask development server:**
+**Using Quart development server:**
 ```bash
 python memorial.py
 ```
@@ -144,6 +147,8 @@ make test-cov
 
 # Run specific test file
 pytest tests/test_basic.py
+
+# Note: Tests use pytest with async support (pytest-asyncio)
 ```
 
 ### Code Quality
@@ -173,17 +178,17 @@ mypy memorial.py
 
 ```
 memorial/
-├── memorial.py           # Main Flask application
+├── memorial.py           # Main Quart async application
 ├── config.py            # Site configuration
 ├── pyproject.toml       # Project metadata and dependencies
 ├── setup.py             # Backwards compatibility setup file
 ├── Makefile             # Development automation tasks
-├── uwsgi.ini            # uWSGI configuration
+├── hypercorn.toml       # Hypercorn ASGI server configuration
 ├── Dockerfile           # Docker container definition
 ├── static/              # Static assets (CSS, images, robots.txt)
 ├── templates/           # Jinja2 templates
 └── tests/               # Test suite
-    └── test_basic.py    # Basic functionality tests
+    └── test_basic.py    # Async test suite with pytest
 ```
 
 ## Docker Deployment
