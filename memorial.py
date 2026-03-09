@@ -1,138 +1,246 @@
-from __future__ import unicode_literals
+"""Memorial - Arquivo.pt Memorial Service.
+
+A Flask web application that serves as a redirection service for preserved websites.
+Provides a user-friendly landing page with metadata extraction from archived pages,
+helping users access content preserved by Arquivo.pt (Portuguese Web Archive).
+"""
+
 import os
 
 import requests
 from bs4 import BeautifulSoup
-from flask import Flask
-from flask import render_template
-from flask import request, send_from_directory
+from flask import Flask, render_template, request, send_from_directory
 
+# Initialize Flask application
 app = Flask(__name__)
-app.config.from_object('config')
 
-if 'MEMORIAL_CONFIGURATION' in os.environ:
-    app.config.from_envvar('MEMORIAL_CONFIGURATION')
+# Load configuration from config.py module
+app.config.from_object("config")
 
-# for instance, this happen with gridcomputing.pt.
+# Allow overriding configuration via environment variable
+# Usage: export MEMORIAL_CONFIGURATION=/path/to/custom_config.py
+if "MEMORIAL_CONFIGURATION" in os.environ:
+    app.config.from_envvar("MEMORIAL_CONFIGURATION")
+
+
 def fix_not_closed_metatags(tag):
+    """Fix unclosed meta tags by ensuring proper closing.
+    
+    Some archived sites (e.g., gridcomputing.pt) have malformed HTML with
+    unclosed meta/link tags. This function ensures they are properly closed
+    with self-closing syntax (/>).
+    
+    Args:
+        tag: BeautifulSoup tag object to fix
+        
+    Returns:
+        str: Fixed tag string with proper closing
+    """
+    # Extract tag content before the first '>'
     fix_tag = str(tag).split(">")[0]
-    if not fix_tag.endswith('/'):
+
+    # Ensure self-closing tags end with '/>' 
+    if not fix_tag.endswith("/"):
         fix_tag += "/>"
     else:
         fix_tag += ">"
+
     return fix_tag
 
 
 def fetch_redirect_url_content(redirect_url_home, redirect_url_path):
+    """Fetch the content from the redirect URL.
+    
+    Attempts to fetch the requested path from the Wayback Machine. If the path
+    is not HTML content or fails, falls back to fetching the home page instead.
+    
+    Args:
+        redirect_url_home: URL to the archived home page
+        redirect_url_path: URL to the specific archived path requested
+        
+    Returns:
+        requests.Response: The HTTP response from the Wayback Machine
+        
+    Raises:
+        requests.exceptions.Timeout: If the request times out
+    """
     s = requests.Session()
-    wayback_timeout = app.config.get('WAYBACK_REQUEST_TIMEOUT', 3)
+    wayback_timeout = app.config.get("WAYBACK_REQUEST_TIMEOUT", 3)
+    
     try:
+        # First, check if the specific path exists and is HTML
+        # Use HEAD request to avoid downloading large files
         redirect_url_path_head = s.head(redirect_url_path, allow_redirects=True, timeout=(None, wayback_timeout))
-        if redirect_url_path_head.ok and 'content-type' in redirect_url_path_head.headers and redirect_url_path_head.headers['content-type'].startswith('text/html'):
+        
+        # If path exists and is HTML content, fetch it
+        if (
+            redirect_url_path_head.ok
+            and "content-type" in redirect_url_path_head.headers
+            and redirect_url_path_head.headers["content-type"].startswith("text/html")
+        ):
             return s.get(redirect_url_path, timeout=(None, wayback_timeout))
         else:
+            # Non-HTML content (images, PDFs, etc.) - fall back to home page metadata
             return s.get(redirect_url_home, timeout=(None, wayback_timeout))
-    except requests.exceptions.Timeout as e:
-        raise e
-    except Exception as e:
+    except requests.exceptions.Timeout:
+        # Re-raise timeout errors to be handled by caller
+        raise
+    except Exception:
+        # For any other error, fall back to home page
         return s.get(redirect_url_home, timeout=(None, wayback_timeout))
 
-def extract_metadata(redirect_url_home, redirect_url_path):
-    try:
-        meta_list = []
 
+def extract_metadata(redirect_url_home, redirect_url_path):
+    """Extract metadata from the preserved page.
+    
+    Fetches the archived page and extracts useful metadata including:
+    - Page title
+    - Meta tags (description, keywords, author)
+    - Link tags (author, home, favicon, alternate)
+    
+    This metadata is used to populate the memorial landing page with
+    information about the preserved site.
+    
+    Args:
+        redirect_url_home: URL to the archived home page
+        redirect_url_path: URL to the specific archived path
+        
+    Returns:
+        tuple: (title, meta_list) where title is BeautifulSoup tag or None,
+               and meta_list is a list of fixed metadata tag strings
+    """
+    meta_list = []
+    try:
+        # Fetch the archived page content
         r = fetch_redirect_url_content(redirect_url_home, redirect_url_path)
 
+        # Parse HTML content
         html = r.content
         soup = BeautifulSoup(html, "html.parser")
-        
-        valid_meta_names = ['description', 'keywords', 'author']
+
+        # Extract common meta tags that describe the page
+        valid_meta_names = ["description", "keywords", "author"]
         for name in valid_meta_names:
-            for tag in soup.find_all('meta', {'name': name}):
+            for tag in soup.find_all("meta", {"name": name}):
                 meta_list.append(fix_not_closed_metatags(tag))
 
-        valid_link_rels = ['author', 'home', 'shortcut icon', 'alternate']
+        # Extract link tags for additional resources (favicon, alternate pages, etc.)
+        valid_link_rels = ["author", "home", "shortcut icon", "alternate"]
         for rel_value in valid_link_rels:
-            for tag in soup.find('head').find_all('link', attrs={'rel': rel_value}):
+            for tag in soup.find("head").find_all("link", attrs={"rel": rel_value}):
                 meta_list.append(fix_not_closed_metatags(tag))
 
-        title = soup.find('title')
+        # Extract page title
+        title = soup.find("title")
 
         return title, meta_list
     except Exception as e:
-        print('Failed to extract metadata for redirect url: '+ redirect_url_home + ' with exception: '+ str(e))
+        # Log error but continue - metadata extraction is best effort
+        print(f"Failed to extract metadata for redirect url: {redirect_url_home} with exception: {str(e)}")
         return None, meta_list
 
 
-@app.route('/robots.txt')
+@app.route("/robots.txt")
 def robots():
-    return send_from_directory('static', 'robots.txt')
+    """Serve robots.txt file for web crawlers."""
+    return send_from_directory("static", "robots.txt")
 
 
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
+@app.route("/", defaults={"path": ""})
+@app.route("/<path:path>")
 def redirect(path):
+    """Main handler for all routes - generates memorial landing page.
+    
+    Creates a landing page that informs visitors the site is archived and
+    provides a link to view it in the Arquivo.pt Wayback Machine. The page
+    can be customized per-domain with specific messages, logos, and versions.
+    
+    Args:
+        path: The requested path (captured from URL)
+        
+    Returns:
+        Rendered HTML template with metadata and redirect information
+    """
+    # Get the original host that was requested
     origin_host = request.host
-    host_without_www = origin_host.replace('www.','')
-    wayback_server_url = app.config.get('WAYBACK_SERVER', 'https://arquivo.pt/wayback/')
-    wayback_noframe_server_url = app.config.get('WAYBACK_NOFRAME_SERVER', 'https://arquivo.pt/noFrame/replay/')
-    template = 'redirect_default.html'
-    default_language = 'pt'
+    host_without_www = origin_host.replace("www.", "")  # Normalize host for config lookup
+
+    # Wayback Machine URLs - can be overridden in config
+    wayback_server_url = app.config.get("WAYBACK_SERVER", "https://arquivo.pt/wayback/")
+    wayback_noframe_server_url = app.config.get("WAYBACK_NOFRAME_SERVER", "https://arquivo.pt/noFrame/replay/")
+
+    # Default template settings
+    template = "redirect_default.html"
+    default_language = "pt"
     message_pt = None
     message_en = None
-    version = None
+    version = None  # Specific timestamp version of archived site
     button_color = None
     logo = None
-    link_pt = None
-    link_en = None
-    link_to_noFrame = False
+    link_pt = None  # Custom links for Portuguese version
+    link_en = None  # Custom links for English version
+    link_to_noFrame = False  # Whether to use noFrame version
 
-    host_config = app.config['ARCHIVE_CONFIG'].get(host_without_www, None)
+    # Look up custom configuration for this specific host
+    # Configuration is defined in config.py ARCHIVE_CONFIG dictionary
+    host_config = app.config["ARCHIVE_CONFIG"].get(host_without_www, None)
     if host_config:
-        template = host_config.get('template', template)
-        default_language = host_config.get('default_language', default_language)
-        message_pt = host_config.get('message_pt', message_pt)
-        message_en = host_config.get('message_en', message_en)
-        version = host_config.get('version', version)
-        button_color = host_config.get('button_color', button_color)
-        logo = host_config.get('logo', logo)
-        link_pt = host_config.get('link_pt', link_pt)
-        link_en = host_config.get('link_en', link_en)
-        link_to_noFrame = host_config.get('link_to_noFrame', link_to_noFrame)
+        # Override defaults with host-specific settings
+        template = host_config.get("template", template)
+        default_language = host_config.get("default_language", default_language)
+        message_pt = host_config.get("message_pt", message_pt)
+        message_en = host_config.get("message_en", message_en)
+        version = host_config.get("version", version)  # Timestamp like '20200117175504'
+        button_color = host_config.get("button_color", button_color)
+        logo = host_config.get("logo", logo)
+        link_pt = host_config.get("link_pt", link_pt)
+        link_en = host_config.get("link_en", link_en)
+        link_to_noFrame = host_config.get("link_to_noFrame", link_to_noFrame)
 
+    # Construct Wayback Machine URLs
+    # If a specific version timestamp is configured, use it; otherwise use latest
     if version:
-        redirect_url_wayback = "{}{}/{}".format(wayback_server_url, version, request.base_url)
-        redirect_url_noFrame = "{}{}/{}".format(wayback_noframe_server_url, version, request.base_url)
-        redirect_url_home = "{}{}/{}".format(wayback_noframe_server_url, version, host_without_www)
+        # URLs with specific timestamp version (e.g., /20200117175504/example.com)
+        redirect_url_wayback = f"{wayback_server_url}{version}/{request.base_url}"
+        redirect_url_noFrame = f"{wayback_noframe_server_url}{version}/{request.base_url}"
+        redirect_url_home = f"{wayback_noframe_server_url}{version}/{host_without_www}"
     else:
-        redirect_url_wayback = "{}{}".format(wayback_server_url, request.base_url)
-        redirect_url_noFrame = "{}{}".format(wayback_noframe_server_url, request.base_url)
-        redirect_url_home = "{}{}".format(wayback_noframe_server_url, host_without_www)
+        # URLs without version - Wayback will use the latest archived version
+        redirect_url_wayback = f"{wayback_server_url}{request.base_url}"
+        redirect_url_noFrame = f"{wayback_noframe_server_url}{request.base_url}"
+        redirect_url_home = f"{wayback_noframe_server_url}{host_without_www}"
 
+    # Choose between noFrame (cleaner) or regular Wayback interface
     redirect_url = redirect_url_noFrame if link_to_noFrame else redirect_url_wayback
 
-    if template == 'redirect_default.html':
+    # Render the memorial landing page
+    if template == "redirect_default.html":
+        # For the default template, extract metadata from the archived page
+        # This provides context about what the preserved site contained
         title, metadata = extract_metadata(redirect_url_home, redirect_url_noFrame)
-        return render_template(template,
-            title = title,
-            metatags = metadata,
-            origin_host = origin_host,
-            origin_url = request.url,
-            redirect_url = redirect_url,
-            default_language = default_language,
-            message_pt = message_pt,
-            message_en = message_en,
-            button_color = button_color,
-            logo = logo,
-            link_pt = link_pt,
-            link_en = link_en,
-            args = request.args.items()
+        
+        return render_template(
+            template,
+            title=title,  # Original page title
+            metatags=metadata,  # Meta tags from original page
+            origin_host=origin_host,  # The domain that was requested
+            origin_url=request.url,  # Full original URL
+            redirect_url=redirect_url,  # Where to find the archived version
+            default_language=default_language,  # UI language (pt/en)
+            message_pt=message_pt,  # Custom Portuguese message
+            message_en=message_en,  # Custom English message
+            button_color=button_color,  # Custom button styling
+            logo=logo,  # Custom logo URL
+            link_pt=link_pt,  # Additional Portuguese links
+            link_en=link_en,  # Additional English links
+            args=request.args.items(),  # Query string parameters
         )
     else:
-        return render_template(template,
-            origin_host = origin_host,
-            origin_url = request.url,
-            redirect_url = redirect_url)
+        # For custom templates, provide minimal context
+        return render_template(template, origin_host=origin_host, origin_url=request.url, redirect_url=redirect_url)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
+    # Run Flask development server when executed directly
+    # For production, use uWSGI or similar WSGI server
     app.run()
