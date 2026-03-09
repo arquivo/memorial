@@ -94,6 +94,23 @@ docker-stop: ## Stop and remove Docker container
 	docker rm memorial || true
 .PHONY: docker-stop
 
+# Docker Compose
+docker-compose-up: ## Start services with docker-compose
+	docker-compose up -d
+.PHONY: docker-compose-up
+
+docker-compose-down: ## Stop services with docker-compose
+	docker-compose down
+.PHONY: docker-compose-down
+
+docker-compose-logs: ## Show docker-compose logs
+	docker-compose logs -f
+.PHONY: docker-compose-logs
+
+docker-compose-build: ## Build services with docker-compose
+	docker-compose build
+.PHONY: docker-compose-build
+
 # CI/CD - Run all checks
 ci: format-check lint test ## Run all CI checks (format, lint, test)
 	@echo ""
