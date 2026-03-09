@@ -43,11 +43,20 @@ class BasicTests(unittest.TestCase):
     def tearDown(self):
         self.patcher.stop()
 
-    def request_host(self, path, host):
-        """Helper method to make a request with a specific Host header."""
+    def request_host(self, path, host, expected_status=200):
+        """Helper method to make a request with a specific Host header.
+
+        Args:
+            path: The path to request
+            host: The Host header value
+            expected_status: Expected HTTP status code (default: 200)
+
+        Returns:
+            The response object
+        """
         # Fake host so it properly match the template
         response = self.app.get(path, follow_redirects=True, headers={"Host": host})
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, expected_status)
         return response
 
     def get_title(self, response_data):
@@ -87,8 +96,9 @@ class BasicTests(unittest.TestCase):
         """
         Test that requesting a non-existent page returns the same metadata as the home page, since it should fall back to the archived home page.
         """
-        response_nonexistent = self.request_host("/example-nonexistent", "www.antonioguterres.gov.pt")
-        response_home = self.request_host("/", "www.antonioguterres.gov.pt")
+        # Use a configured site (umic.pt:8080 is in config.py)
+        response_nonexistent = self.request_host("/example-nonexistent", "umic.pt:8080", expected_status=200)
+        response_home = self.request_host("/", "umic.pt:8080", expected_status=200)
         title_home = self.get_title(response_home.data)
         title_nonexistent = self.get_title(response_nonexistent.data)
         # Both should have the same title from the archived page
@@ -103,10 +113,12 @@ class BasicTests(unittest.TestCase):
         Test that requesting an inner page returns the same metadata as the home page for non-HTML content,
         and extracts metadata correctly for HTML content.
         """
-        response_home = self.request_host("/", "www.antonioguterres.gov.pt")
+        # Use configured sites from config.py
+        response_home = self.request_host("/", "umic.pt:8080", expected_status=200)
         response_inner = self.request_host(
-            "/wp-content/uploads/2016/06/Antonio-Guterres-Portugal-Informal-dialogue-for-the-position-of-the-next-UN-Secretary-General.mp4",
-            "www.antonioguterres.gov.pt",
+            "/some/path/file.mp4",
+            "umic.pt:8080",
+            expected_status=200,
         )
         # Non-HTML content should fall back to home page metadata
         self.assertEqual(self.get_title(response_home.data), self.get_title(response_inner.data))
@@ -114,17 +126,18 @@ class BasicTests(unittest.TestCase):
             self.get_metadata(response_home.data, "description"), self.get_metadata(response_inner.data, "description")
         )
 
-        response_inner = self.request_host("/antonio-guterres-biography/", "www.antonioguterres.gov.pt")
+        response_inner = self.request_host("/some/html/page/", "umic.pt:8080", expected_status=200)
         # With mocked responses, we get consistent test data
         title = self.get_title(response_inner.data)
         self.assertIsNotNone(title)
         desc = self.get_metadata(response_inner.data, "description")
         self.assertIsNotNone(desc)
 
-        response_home = self.request_host("/", "www.portugalin.gov.pt")
+        response_home = self.request_host("/", "ligarportugal.pt:8080", expected_status=200)
         response_inner = self.request_host(
-            "/wp-content/plugins/so-widgets-bundle/icons/fontawesome/webfonts/fa-solid-900.woff2",
-            "www.portugalin.gov.pt",
+            "/fonts/font-file.woff2",
+            "ligarportugal.pt:8080",
+            expected_status=200,
         )
         self.assertEqual(self.get_title(response_home.data), self.get_title(response_inner.data))
         self.assertEqual(
@@ -135,14 +148,15 @@ class BasicTests(unittest.TestCase):
         """
         Test that requesting the main page returns the expected metadata.
         """
-        response = self.request_host("/", "www.umic.pt")
+        # Use sites from config.py with :8080 port
+        response = self.request_host("/", "umic.pt:8080", expected_status=200)
         title = self.get_title(response.data)
         # With mocked responses, we should get our test title
         self.assertIsNotNone(title)
         desc = self.get_metadata(response.data, "description")
         self.assertIsNotNone(desc)
 
-        response = self.request_host("/", "www.ligarportugal.pt")
+        response = self.request_host("/", "ligarportugal.pt:8080", expected_status=200)
         title = self.get_title(response.data)
         self.assertIsNotNone(title)
 
@@ -150,9 +164,118 @@ class BasicTests(unittest.TestCase):
         """
         Test that requesting the robots.txt file returns a 200 status code.
         """
-        # Fake host so it properly match the template
-        response = self.request_host("/robots.txt", "www.umic.pt")
+        response = self.request_host("/robots.txt", "umic.pt:8080", expected_status=200)
         self.assertEqual(response.status_code, 200)
+
+    def test_configured_site_returns_200(self):
+        """
+        Test that a configured site without explicit status_code returns 200 OK by default.
+        """
+        # umic.pt:8080 is configured in config.py without explicit status_code
+        response = self.request_host("/", "umic.pt:8080", expected_status=200)
+        self.assertEqual(response.status_code, 200)
+
+        # Verify we get the memorial page content
+        self.assertIn(b"arquivo.pt", response.data.lower())
+
+    def test_unconfigured_site_returns_502(self):
+        """
+        Test that an unconfigured site returns 502 Bad Gateway by default.
+        This indicates the original site is no longer available.
+        """
+        # unconfigured-site.example.com is NOT in config.py
+        response = self.request_host("/", "unconfigured-site.example.com", expected_status=502)
+        self.assertEqual(response.status_code, 502)
+
+        # Verify we still get the memorial page content
+        self.assertIn(b"arquivo.pt", response.data.lower())
+
+    def test_configured_site_custom_status_code(self):
+        """
+        Test that a site configured with a custom status_code returns that code.
+        This requires temporarily patching the config.
+        """
+        # Patch the ARCHIVE_CONFIG to add a site with custom status_code
+        with patch.dict(
+            "memorial.app.config",
+            {
+                "ARCHIVE_CONFIG": {
+                    "custom-status.example.com": {
+                        "status_code": 410,  # 410 Gone
+                        "message_pt": "Site permanentemente removido",
+                    }
+                },
+                "WAYBACK_SERVER": "https://arquivo.pt/wayback/",
+                "WAYBACK_NOFRAME_SERVER": "https://arquivo.pt/noFrame/replay/",
+            },
+        ):
+            response = self.request_host("/", "custom-status.example.com", expected_status=410)
+            self.assertEqual(response.status_code, 410)
+            self.assertIn(b"arquivo.pt", response.data.lower())
+
+    def test_different_status_codes_for_different_sites(self):
+        """
+        Test that different sites can have different status codes configured.
+        """
+        # Patch config with multiple sites with different status codes
+        with patch.dict(
+            "memorial.app.config",
+            {
+                "ARCHIVE_CONFIG": {
+                    "site-ok.example.com": {
+                        "status_code": 200,
+                        "version": "20200101000000",
+                    },
+                    "site-gone.example.com": {
+                        "status_code": 410,
+                    },
+                    "site-unavailable.example.com": {
+                        "status_code": 503,
+                    },
+                },
+                "WAYBACK_SERVER": "https://arquivo.pt/wayback/",
+                "WAYBACK_NOFRAME_SERVER": "https://arquivo.pt/noFrame/replay/",
+            },
+        ):
+            # Test 200 OK
+            response_200 = self.request_host("/", "site-ok.example.com", expected_status=200)
+            self.assertEqual(response_200.status_code, 200)
+
+            # Test 410 Gone
+            response_410 = self.request_host("/", "site-gone.example.com", expected_status=410)
+            self.assertEqual(response_410.status_code, 410)
+
+            # Test 503 Service Unavailable
+            response_503 = self.request_host("/", "site-unavailable.example.com", expected_status=503)
+            self.assertEqual(response_503.status_code, 503)
+
+    def test_status_code_preserved_across_paths(self):
+        """
+        Test that the same status code is returned for all paths on the same host.
+        """
+        with patch.dict(
+            "memorial.app.config",
+            {
+                "ARCHIVE_CONFIG": {
+                    "consistent-status.example.com": {
+                        "status_code": 410,
+                    }
+                },
+                "WAYBACK_SERVER": "https://arquivo.pt/wayback/",
+                "WAYBACK_NOFRAME_SERVER": "https://arquivo.pt/noFrame/replay/",
+            },
+        ):
+            # Test root path
+            response_root = self.request_host("/", "consistent-status.example.com", expected_status=410)
+            self.assertEqual(response_root.status_code, 410)
+
+            # Test subpath
+            response_sub = self.request_host("/some/path", "consistent-status.example.com", expected_status=410)
+            self.assertEqual(response_sub.status_code, 410)
+
+            # Test with query parameters
+            response_query = self.request_host("/page?id=123", "consistent-status.example.com", expected_status=410)
+            self.assertEqual(response_query.status_code, 410)
 
 
 if __name__ == "__main__":
