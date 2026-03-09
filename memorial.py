@@ -14,6 +14,7 @@ from quart import Quart, render_template, request, send_from_directory
 
 try:
     import setproctitle
+
     setproctitle.setproctitle("memorial-worker")
 except ImportError:
     pass  # setproctitle is optional
