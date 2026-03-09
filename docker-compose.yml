@@ -1,0 +1,35 @@
+services:
+  memorial:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        HTTP_PORT: 8080
+        SOCKET_PORT: 8181
+    image: memorial:latest
+    container_name: memorial
+    ports:
+      - "8080:8080"
+      - "8181:8181"
+    # environment:
+      # Override default Wayback Machine servers if needed
+      # - WAYBACK_SERVER=https://arquivo.pt/wayback/
+      # - WAYBACK_NOFRAME_SERVER=https://arquivo.pt/noFrame/replay/
+      # - WAYBACK_REQUEST_TIMEOUT=3
+      
+      # Custom configuration file path (optional)
+      # - MEMORIAL_CONFIGURATION=/app/custom_config.py
+    # Uncomment for development: mount local code for live reload
+    # volumes:
+    #   - ./memorial.py:/app/memorial.py:ro
+    #   - ./config.py:/app/config.py:ro
+    #   - ./templates:/app/templates:ro
+    #   - ./static:/app/static:ro
+    restart: unless-stopped
+    # Health check using Python (no additional dependencies needed)
+    healthcheck:
+      test: ["CMD-SHELL", "python3 -c \"import urllib.request; urllib.request.urlopen('http://localhost:8080/robots.txt', timeout=5)\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
