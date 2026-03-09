@@ -9,9 +9,13 @@ ENV PYTHONUNBUFFERED=1 \
 # Base location for application source code
 WORKDIR /app
 
-# Install build dependencies required for uWSGI compilation
+# Install runtime and build dependencies required for uWSGI
+# Runtime deps: libexpat1, libpcre2-8-0 (needed by uWSGI at runtime)
+# Build deps: gcc, python3-dev, libpcre2-dev (only needed for compilation)
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+        libexpat1 \
+        libpcre2-8-0 \
         gcc \
         python3-dev \
         libpcre2-dev \
@@ -21,7 +25,7 @@ RUN apt-get update && \
 COPY pyproject.toml setup.py README.md ./
 RUN pip install --upgrade pip && \
     pip install . && \
-    apt-get purge -y --auto-remove gcc python3-dev && \
+    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false gcc python3-dev libpcre2-dev && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy application code
