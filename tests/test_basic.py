@@ -456,22 +456,34 @@ async def test_environment_variable_configuration(client):
     import os
     import tempfile
 
-    # Create a temporary config file
+    # Save original configuration
+    original_config = dict(app.config.get("ARCHIVE_CONFIG", {}))
+
+    # Create a temporary config file with unique configuration
     with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
-        f.write('ARCHIVE_CONFIG = {"env-test.example.com": {"status_code": 418}}\n')
+        f.write('ARCHIVE_CONFIG = {"env-test.example.com": {"status_code": 418, "message_pt": "Test config"}}\n')
         f.write('WAYBACK_SERVER = "https://arquivo.pt/wayback/"\n')
         f.write('WAYBACK_NOFRAME_SERVER = "https://arquivo.pt/noFrame/replay/"\n')
         temp_config_path = f.name
 
     try:
-        # Set environment variable and reload app
+        # Set environment variable and load the config
         with patch.dict(os.environ, {"MEMORIAL_CONFIGURATION": temp_config_path}):
-            # Import and reload to test env var loading
-            # Note: This tests that the code path exists, actual testing would require
-            # app reload which is complex in testing context
-            assert "MEMORIAL_CONFIGURATION" in os.environ
+            # Manually load config from environment variable
+            app.config.from_envvar("MEMORIAL_CONFIGURATION")
+
+            # Verify the configuration was actually loaded
+            assert "env-test.example.com" in app.config["ARCHIVE_CONFIG"]
+            assert app.config["ARCHIVE_CONFIG"]["env-test.example.com"]["status_code"] == 418
+            assert app.config["ARCHIVE_CONFIG"]["env-test.example.com"]["message_pt"] == "Test config"
+
+            # Test that a request uses the new configuration
+            response = await request_host(client, "/", "env-test.example.com", expected_status=418)
+            assert response.status_code == 418
     finally:
-        # Cleanup
+        # Restore original configuration
+        app.config["ARCHIVE_CONFIG"] = original_config
+        # Cleanup temp file
         os.unlink(temp_config_path)
 
 
