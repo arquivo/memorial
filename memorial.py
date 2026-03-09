@@ -5,14 +5,19 @@ Provides a user-friendly landing page with metadata extraction from archived pag
 helping users access content preserved by Arquivo.pt (Portuguese Web Archive).
 """
 
+import logging
 import os
 
-import requests
+import httpx
 from bs4 import BeautifulSoup
 from flask import Flask, render_template, request, send_from_directory
 
 # Initialize Flask application
 app = Flask(__name__)
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Load configuration from config.py module
 app.config.from_object("config")
@@ -25,21 +30,21 @@ if "MEMORIAL_CONFIGURATION" in os.environ:
 
 def fix_not_closed_metatags(tag):
     """Fix unclosed meta tags by ensuring proper closing.
-    
+
     Some archived sites (e.g., gridcomputing.pt) have malformed HTML with
     unclosed meta/link tags. This function ensures they are properly closed
     with self-closing syntax (/>).
-    
+
     Args:
         tag: BeautifulSoup tag object to fix
-        
+
     Returns:
         str: Fixed tag string with proper closing
     """
     # Extract tag content before the first '>'
     fix_tag = str(tag).split(">")[0]
 
-    # Ensure self-closing tags end with '/>' 
+    # Ensure self-closing tags end with '/>'
     if not fix_tag.endswith("/"):
         fix_tag += "/>"
     else:
@@ -48,71 +53,74 @@ def fix_not_closed_metatags(tag):
     return fix_tag
 
 
-def fetch_redirect_url_content(redirect_url_home, redirect_url_path):
-    """Fetch the content from the redirect URL.
-    
+async def fetch_redirect_url_content(redirect_url_home, redirect_url_path):
+    """Fetch the content from the redirect URL asynchronously.
+
     Attempts to fetch the requested path from the Wayback Machine. If the path
     is not HTML content or fails, falls back to fetching the home page instead.
-    
+
+    Uses async HTTP requests for better performance and non-blocking I/O.
+
     Args:
         redirect_url_home: URL to the archived home page
         redirect_url_path: URL to the specific archived path requested
-        
+
     Returns:
-        requests.Response: The HTTP response from the Wayback Machine
-        
+        httpx.Response: The HTTP response from the Wayback Machine
+
     Raises:
-        requests.exceptions.Timeout: If the request times out
+        httpx.TimeoutException: If the request times out
     """
-    s = requests.Session()
     wayback_timeout = app.config.get("WAYBACK_REQUEST_TIMEOUT", 3)
-    
-    try:
-        # First, check if the specific path exists and is HTML
-        # Use HEAD request to avoid downloading large files
-        redirect_url_path_head = s.head(redirect_url_path, allow_redirects=True, timeout=(None, wayback_timeout))
-        
-        # If path exists and is HTML content, fetch it
-        if (
-            redirect_url_path_head.ok
-            and "content-type" in redirect_url_path_head.headers
-            and redirect_url_path_head.headers["content-type"].startswith("text/html")
-        ):
-            return s.get(redirect_url_path, timeout=(None, wayback_timeout))
-        else:
-            # Non-HTML content (images, PDFs, etc.) - fall back to home page metadata
-            return s.get(redirect_url_home, timeout=(None, wayback_timeout))
-    except requests.exceptions.Timeout:
-        # Re-raise timeout errors to be handled by caller
-        raise
-    except Exception:
-        # For any other error, fall back to home page
-        return s.get(redirect_url_home, timeout=(None, wayback_timeout))
+
+    # Create async HTTP client with timeout configuration
+    async with httpx.AsyncClient(follow_redirects=True, timeout=wayback_timeout) as client:
+        try:
+            # First, check if the specific path exists and is HTML
+            # Use HEAD request to avoid downloading large files
+            redirect_url_path_head = await client.head(redirect_url_path)
+
+            # If path exists and is HTML content, fetch it
+            if (
+                redirect_url_path_head.status_code < 400
+                and "content-type" in redirect_url_path_head.headers
+                and redirect_url_path_head.headers["content-type"].startswith("text/html")
+            ):
+                return await client.get(redirect_url_path)
+            else:
+                # Non-HTML content (images, PDFs, etc.) - fall back to home page metadata
+                return await client.get(redirect_url_home)
+        except httpx.TimeoutException:
+            # Re-raise timeout errors to be handled by caller
+            raise
+        except Exception:
+            # For any other error, fall back to home page
+            return await client.get(redirect_url_home)
 
 
-def extract_metadata(redirect_url_home, redirect_url_path):
-    """Extract metadata from the preserved page.
-    
+async def extract_metadata(redirect_url_home, redirect_url_path):
+    """Extract metadata from the preserved page asynchronously.
+
     Fetches the archived page and extracts useful metadata including:
     - Page title
     - Meta tags (description, keywords, author)
     - Link tags (author, home, favicon, alternate)
-    
+
     This metadata is used to populate the memorial landing page with
     information about the preserved site.
-    
+
     Args:
         redirect_url_home: URL to the archived home page
         redirect_url_path: URL to the specific archived path
-        
+
     Returns:
         tuple: (title, meta_list) where title is BeautifulSoup tag or None,
                and meta_list is a list of fixed metadata tag strings
     """
     meta_list = []
     try:
-        # Fetch the archived page content
-        r = fetch_redirect_url_content(redirect_url_home, redirect_url_path)
+        # Fetch the archived page content asynchronously
+        r = await fetch_redirect_url_content(redirect_url_home, redirect_url_path)
 
         # Parse HTML content
         html = r.content
@@ -125,10 +133,13 @@ def extract_metadata(redirect_url_home, redirect_url_path):
                 meta_list.append(fix_not_closed_metatags(tag))
 
         # Extract link tags for additional resources (favicon, alternate pages, etc.)
-        valid_link_rels = ["author", "home", "shortcut icon", "alternate"]
-        for rel_value in valid_link_rels:
-            for tag in soup.find("head").find_all("link", attrs={"rel": rel_value}):
-                meta_list.append(fix_not_closed_metatags(tag))
+        # Only if the page has a <head> section
+        head = soup.find("head")
+        if head:
+            valid_link_rels = ["author", "home", "shortcut icon", "alternate"]
+            for rel_value in valid_link_rels:
+                for tag in head.find_all("link", attrs={"rel": rel_value}):
+                    meta_list.append(fix_not_closed_metatags(tag))
 
         # Extract page title
         title = soup.find("title")
@@ -136,7 +147,10 @@ def extract_metadata(redirect_url_home, redirect_url_path):
         return title, meta_list
     except Exception as e:
         # Log error but continue - metadata extraction is best effort
-        print(f"Failed to extract metadata for redirect url: {redirect_url_home} with exception: {str(e)}")
+        logger.error(
+            f"Failed to extract metadata for {redirect_url_home}: {type(e).__name__}: {str(e) or 'No error message'}",
+            exc_info=True,
+        )
         return None, meta_list
 
 
@@ -148,16 +162,19 @@ def robots():
 
 @app.route("/", defaults={"path": ""})
 @app.route("/<path:path>")
-def redirect(path):
+async def redirect(path):
     """Main handler for all routes - generates memorial landing page.
-    
+
     Creates a landing page that informs visitors the site is archived and
     provides a link to view it in the Arquivo.pt Wayback Machine. The page
     can be customized per-domain with specific messages, logos, and versions.
-    
+
+    This is an async route handler that uses non-blocking HTTP requests
+    for better performance when fetching metadata from the Wayback Machine.
+
     Args:
         path: The requested path (captured from URL)
-        
+
     Returns:
         Rendered HTML template with metadata and redirect information
     """
@@ -217,8 +234,8 @@ def redirect(path):
     if template == "redirect_default.html":
         # For the default template, extract metadata from the archived page
         # This provides context about what the preserved site contained
-        title, metadata = extract_metadata(redirect_url_home, redirect_url_noFrame)
-        
+        title, metadata = await extract_metadata(redirect_url_home, redirect_url_noFrame)
+
         return render_template(
             template,
             title=title,  # Original page title
