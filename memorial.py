@@ -1,6 +1,6 @@
 """Memorial - Arquivo.pt Memorial Service.
 
-A Flask web application that serves as a redirection service for preserved websites.
+A Quart web application that serves as a redirection service for preserved websites.
 Provides a user-friendly landing page with metadata extraction from archived pages,
 helping users access content preserved by Arquivo.pt (Portuguese Web Archive).
 """
@@ -10,10 +10,10 @@ import os
 
 import httpx
 from bs4 import BeautifulSoup
-from flask import Flask, render_template, request, send_from_directory
+from quart import Quart, render_template, request, send_from_directory
 
-# Initialize Flask application
-app = Flask(__name__)
+# Initialize Quart application
+app = Quart(__name__)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -155,9 +155,9 @@ async def extract_metadata(redirect_url_home, redirect_url_path):
 
 
 @app.route("/robots.txt")
-def robots():
+async def robots():
     """Serve robots.txt file for web crawlers."""
-    return send_from_directory("static", "robots.txt")
+    return await send_from_directory("static", "robots.txt")
 
 
 @app.route("/", defaults={"path": ""})
@@ -203,7 +203,7 @@ async def redirect(path):
     # Look up custom configuration for this specific host
     # Configuration is defined in config.py ARCHIVE_CONFIG dictionary
     host_config = app.config["ARCHIVE_CONFIG"].get(host_without_www, None)
-    if host_config:
+    if host_config is not None:
         # Override defaults with host-specific settings
         template = host_config.get("template", template)
         default_language = host_config.get("default_language", default_language)
@@ -240,7 +240,7 @@ async def redirect(path):
         title, metadata = await extract_metadata(redirect_url_home, redirect_url_noFrame)
 
         return (
-            render_template(
+            await render_template(
                 template,
                 title=title,  # Original page title
                 metatags=metadata,  # Meta tags from original page
@@ -261,12 +261,12 @@ async def redirect(path):
     else:
         # For custom templates, provide minimal context
         return (
-            render_template(template, origin_host=origin_host, origin_url=request.url, redirect_url=redirect_url),
+            await render_template(template, origin_host=origin_host, origin_url=request.url, redirect_url=redirect_url),
             status_code,
         )
 
 
 if __name__ == "__main__":
-    # Run Flask development server when executed directly
-    # For production, use uWSGI or similar WSGI server
+    # Run Quart development server when executed directly
+    # For production, use Hypercorn or similar ASGI server
     app.run()

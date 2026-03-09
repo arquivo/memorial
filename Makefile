@@ -72,11 +72,11 @@ check: format-check lint ## Run all code quality checks (format + lint)
 .PHONY: check
 
 # Running locally
-run: venv-check ## Run application with uWSGI (production-like)
-	uwsgi --ini uwsgi.ini --py-autoreload 1
+run: venv-check ## Run application with Hypercorn (production-like)
+	$(PYTHON) -m hypercorn memorial:app --bind 0.0.0.0:8080
 .PHONY: run
 
-run-dev: venv-check ## Run Flask development server
+run-dev: venv-check ## Run Quart development server
 	$(PYTHON) memorial.py
 .PHONY: run-dev
 

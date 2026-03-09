@@ -5,12 +5,10 @@ services:
       dockerfile: Dockerfile
       args:
         HTTP_PORT: 8080
-        SOCKET_PORT: 8181
     image: memorial:latest
     container_name: memorial
     ports:
-      - "8080:8080"
-      - "8181:8181"
+      - "80:8080"
     # environment:
       # Override default Wayback Machine servers if needed
       # - WAYBACK_SERVER=https://arquivo.pt/wayback/
