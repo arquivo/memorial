@@ -205,6 +205,8 @@ async def redirect(path):
     link_en = None  # Custom links for English version
     link_to_noFrame = False  # Whether to use noFrame version
     should_extract_metadata = None  # Whether to extract metadata from archived page
+    configured_title = None  # Static title when metadata extraction is disabled
+    configured_metadata = None  # Static metadata when metadata extraction is disabled
     status_code = 502  # Default to 502 Bad Gateway if the archived site is not configured
     archived_site_status_code = 200  # HTTP status code (200=OK, 502=Bad Gateway, etc.)
 
@@ -224,6 +226,8 @@ async def redirect(path):
         link_en = host_config.get("link_en", link_en)
         link_to_noFrame = host_config.get("link_to_noFrame", link_to_noFrame)
         should_extract_metadata = host_config.get("extract_metadata", should_extract_metadata)  # Per-host metadata extraction
+        configured_title = host_config.get("title", configured_title)  # Static title for this site
+        configured_metadata = host_config.get("metadata", configured_metadata)  # Static metadata for this site
         status_code = host_config.get("status_code", archived_site_status_code)  # HTTP status code
 
     # Construct Wayback Machine URLs
@@ -254,9 +258,12 @@ async def redirect(path):
         # For the default template, optionally extract metadata from the archived page
         # This provides context about what the preserved site contained
         if extract_metadata_enabled:
+            # Extract dynamic metadata from archived page (ignores configured title/metadata)
             title, metadata = await extract_metadata(redirect_url_home, redirect_url_noFrame)
         else:
-            title, metadata = None, []
+            # Use configured static metadata if available
+            title = f"<title>{configured_title}</title>" if configured_title is not None else None
+            metadata = configured_metadata if configured_metadata is not None else []
 
         return (
             await render_template(
