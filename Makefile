@@ -55,6 +55,12 @@ lint: venv-check ## Run linting with ruff
 	$(PYTHON) -m ruff check .
 .PHONY: lint
 
+lint-fix: venv-check ## Run linting with ruff and auto-fix issues
+	@$(PYTHON) -c "import ruff" 2>/dev/null || \
+		(echo "Error: ruff not found. Run 'make install-dev' first." && exit 1)
+	$(PYTHON) -m ruff check . --fix
+.PHONY: lint-fix
+
 format: venv-check ## Format code with black
 	@$(PYTHON) -c "import black" 2>/dev/null || \
 		(echo "Error: black not found. Run 'make install-dev' first." && exit 1)
