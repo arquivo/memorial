@@ -2,6 +2,13 @@
 # WARN do not update this file manually!
 # It should be updated using update-from-sheets.sh script that is located on this repository base folder.
 
+# Global setting to control metadata extraction from archived pages (default: disabled)
+# When enabled, the application will fetch and extract metadata (title, meta tags, link tags)
+# from the Wayback Machine for display on the memorial landing page.
+# This can be overridden per-site using the 'extract_metadata' key in ARCHIVE_CONFIG.
+# Note: Disabling metadata extraction improves performance by reducing HTTP requests.
+EXTRACT_METADATA = False
+
 ARCHIVE_CONFIG = {
     "senior3045.ipportalegre.pt": {
         "version": "20200117175504",
