@@ -204,6 +204,7 @@ async def redirect(path):
     link_pt = None  # Custom links for Portuguese version
     link_en = None  # Custom links for English version
     link_to_noFrame = False  # Whether to use noFrame version
+    should_extract_metadata = None  # Whether to extract metadata from archived page
     status_code = 502  # Default to 502 Bad Gateway if the archived site is not configured
     archived_site_status_code = 200  # HTTP status code (200=OK, 502=Bad Gateway, etc.)
 
@@ -222,6 +223,7 @@ async def redirect(path):
         link_pt = host_config.get("link_pt", link_pt)
         link_en = host_config.get("link_en", link_en)
         link_to_noFrame = host_config.get("link_to_noFrame", link_to_noFrame)
+        should_extract_metadata = host_config.get("extract_metadata", should_extract_metadata)  # Per-host metadata extraction
         status_code = host_config.get("status_code", archived_site_status_code)  # HTTP status code
 
     # Construct Wayback Machine URLs
@@ -240,11 +242,21 @@ async def redirect(path):
     # Choose between noFrame (cleaner) or regular Wayback interface
     redirect_url = redirect_url_noFrame if link_to_noFrame else redirect_url_wayback
 
+    # Determine if metadata should be extracted
+    # Priority: per-host setting > global setting > default (False)
+    if should_extract_metadata is not None:
+        extract_metadata_enabled = should_extract_metadata
+    else:
+        extract_metadata_enabled = app.config.get("EXTRACT_METADATA", False)
+
     # Render the memorial landing page
     if template == "redirect_default.html":
-        # For the default template, extract metadata from the archived page
+        # For the default template, optionally extract metadata from the archived page
         # This provides context about what the preserved site contained
-        title, metadata = await extract_metadata(redirect_url_home, redirect_url_noFrame)
+        if extract_metadata_enabled:
+            title, metadata = await extract_metadata(redirect_url_home, redirect_url_noFrame)
+        else:
+            title, metadata = None, []
 
         return (
             await render_template(
