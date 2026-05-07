@@ -17,6 +17,11 @@ services:
       
       # Custom configuration file path (optional)
       # - MEMORIAL_CONFIGURATION=/app/custom_config.py
+      
+      # Strip port from hostname for config lookup (useful for local development)
+      # Converts "example.com:8080" to "example.com" when looking up site config
+      # Recommended: enable only in development, not in production
+      # - MEMORIAL_STRIP_PORT=true
     # Uncomment for development: mount local code for live reload
     # volumes:
     #   - ./memorial.py:/app/memorial.py:ro

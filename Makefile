@@ -79,11 +79,11 @@ check: format-check lint ## Run all code quality checks (format + lint)
 
 # Running locally
 run: venv-check ## Run application with Hypercorn (production-like)
-	$(PYTHON) -m hypercorn memorial:app --bind 0.0.0.0:8080
+	MEMORIAL_STRIP_PORT=true $(PYTHON) -m hypercorn memorial:app --bind 0.0.0.0:8080
 .PHONY: run
 
 run-dev: venv-check ## Run Quart development server
-	$(PYTHON) memorial.py
+	MEMORIAL_STRIP_PORT=true $(PYTHON) memorial.py
 .PHONY: run-dev
 
 # Docker
