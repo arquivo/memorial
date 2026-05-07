@@ -778,3 +778,141 @@ async def test_metadata_extraction_with_different_hosts(client):
                 html2 = (await response2.data).decode("utf-8")
                 assert "<title>Multi-Host Test</title>" not in html2
                 assert 'content="Multi-host metadata"' not in html2
+
+
+@pytest.mark.asyncio
+async def test_configured_title_and_metadata(client):
+    """
+    Test that configured title and metadata are used when extract_metadata is False.
+    """
+    with with_test_config({
+        "configured-site.example.com": {
+            "title": "Configured Site Title",
+            "metadata": [
+                '<meta name="description" content="Configured description"/>',
+                '<meta name="keywords" content="configured, test"/>',
+            ],
+            "extract_metadata": False,
+        }
+    }):
+        with patch.dict("memorial.app.config", {"EXTRACT_METADATA": False}, clear=False):
+            response = await request_host(client, "/", "configured-site.example.com", expected_status=200)
+            html_content = (await response.data).decode("utf-8")
+
+            # Verify configured title is present
+            assert "<title>Configured Site Title</title>" in html_content
+
+            # Verify configured metadata is present
+            assert 'name="description"' in html_content
+            assert 'content="Configured description"' in html_content
+            assert 'name="keywords"' in html_content
+            assert 'content="configured, test"' in html_content
+
+
+@pytest.mark.asyncio
+async def test_configured_metadata_ignored_when_extraction_enabled(client):
+    """
+    Test that configured title and metadata are ignored when extract_metadata is True.
+    Dynamic metadata from archived page should be used instead.
+    """
+    # Configure mock to return HTML with metadata
+    mock_response = Mock()
+    mock_response.status_code = 200
+    mock_response.headers = {"content-type": "text/html"}
+    mock_response.content = b"""
+    <html>
+    <head>
+        <title>Dynamic Page Title</title>
+        <meta name="description" content="Dynamic description">
+    </head>
+    <body>Content</body>
+    </html>
+    """
+
+    mock_client_instance = Mock()
+    mock_client_instance.head = AsyncMock(return_value=mock_response)
+    mock_client_instance.get = AsyncMock(return_value=mock_response)
+    mock_client_instance.__aenter__ = AsyncMock(return_value=mock_client_instance)
+    mock_client_instance.__aexit__ = AsyncMock(return_value=None)
+
+    with with_test_config({
+        "configured-but-extracted.example.com": {
+            "title": "Configured Title (Should Be Ignored)",
+            "metadata": ['<meta name="description" content="Configured (ignored)"/>'],
+            "extract_metadata": True,  # Enable extraction
+        }
+    }):
+        with patch.dict("memorial.app.config", {"EXTRACT_METADATA": False}, clear=False):
+            with patch("memorial.httpx.AsyncClient", return_value=mock_client_instance):
+                response = await request_host(client, "/", "configured-but-extracted.example.com", expected_status=200)
+                html_content = (await response.data).decode("utf-8")
+
+                # Should have dynamic title, not configured title
+                assert "Dynamic Page Title" in html_content
+                assert "Configured Title (Should Be Ignored)" not in html_content
+
+                # Should have dynamic description, not configured description
+                assert 'content="Dynamic description"' in html_content
+                assert "Configured (ignored)" not in html_content
+
+
+@pytest.mark.asyncio
+async def test_no_configured_metadata_defaults_to_empty(client):
+    """
+    Test that when no title or metadata is configured and extraction is disabled,
+    the page renders with empty title and metadata.
+    """
+    with with_test_config({
+        "no-metadata-site.example.com": {
+            "extract_metadata": False,
+            # No title or metadata configured
+        }
+    }):
+        with patch.dict("memorial.app.config", {"EXTRACT_METADATA": False}, clear=False):
+            response = await request_host(client, "/", "no-metadata-site.example.com", expected_status=200)
+            html_content = (await response.data).decode("utf-8")
+
+            # Should not have any title tag (except in head structure)
+            # Check that there's no title between the standard meta tags
+            assert '<meta name="viewport"' in html_content
+            # No extracted or configured title should be present
+            assert html_content.count("<title>") <= 1  # Only structural title tags if any
+
+
+@pytest.mark.asyncio
+async def test_configured_title_only(client):
+    """
+    Test that a site can have configured title without metadata.
+    """
+    with with_test_config({
+        "title-only.example.com": {
+            "title": "Title Only Site",
+            "extract_metadata": False,
+        }
+    }):
+        with patch.dict("memorial.app.config", {"EXTRACT_METADATA": False}, clear=False):
+            response = await request_host(client, "/", "title-only.example.com", expected_status=200)
+            html_content = (await response.data).decode("utf-8")
+
+            # Verify configured title is present
+            assert "<title>Title Only Site</title>" in html_content
+
+
+@pytest.mark.asyncio
+async def test_configured_metadata_only(client):
+    """
+    Test that a site can have configured metadata without title.
+    """
+    with with_test_config({
+        "metadata-only.example.com": {
+            "metadata": ['<meta name="author" content="Test Author"/>'],
+            "extract_metadata": False,
+        }
+    }):
+        with patch.dict("memorial.app.config", {"EXTRACT_METADATA": False}, clear=False):
+            response = await request_host(client, "/", "metadata-only.example.com", expected_status=200)
+            html_content = (await response.data).decode("utf-8")
+
+            # Verify configured metadata is present
+            assert 'name="author"' in html_content
+            assert 'content="Test Author"' in html_content

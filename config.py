@@ -9,6 +9,21 @@
 # Note: Disabling metadata extraction improves performance by reducing HTTP requests.
 EXTRACT_METADATA = False
 
+# Per-site configuration options in ARCHIVE_CONFIG:
+# - extract_metadata (bool): Override global EXTRACT_METADATA for this site
+# - title (str): Static page title when extract_metadata is False
+# - metadata (list): Static metadata tags when extract_metadata is False
+#
+# Example:
+#   "example.com": {
+#       "title": "Example Site Archive",
+#       "metadata": ['<meta name="description" content="Archived site"/>'],
+#       "extract_metadata": False,  # Use configured title/metadata
+#   }
+#
+# Note: If extract_metadata is True, configured title and metadata are ignored,
+# and dynamic metadata is fetched from the archived page instead.
+
 ARCHIVE_CONFIG = {
     "senior3045.ipportalegre.pt": {
         "version": "20200117175504",
