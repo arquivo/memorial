@@ -11,11 +11,6 @@
      <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900&display=swap" rel="stylesheet" onload="if(media!='all')media='all'" />
      <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet" onload="if(media!='all')media='all'" />
      <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet" onload="if(media!='all')media='all'" />
-     <script
-        src="https://code.jquery.com/jquery-3.6.0.slim.min.js"
-        integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI="
-        crossorigin="anonymous">
-    </script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-HWP6ZG7XT7"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -26,8 +21,19 @@
     <script>
         function changeLanguage(languageCode) {
             var otherLanguage = languageCode == 'pt' ? 'en' : 'pt';
-            $("[lang='" + languageCode + "']").show();
-            $("[lang='" + otherLanguage + "']").hide();
+            var i;
+            
+            // Show elements with the selected language
+            var showElements = document.querySelectorAll("[lang='" + languageCode + "']");
+            for (i = 0; i < showElements.length; i++) {
+                showElements[i].style.display = '';
+            }
+            
+            // Hide elements with the other language
+            var hideElements = document.querySelectorAll("[lang='" + otherLanguage + "']");
+            for (i = 0; i < hideElements.length; i++) {
+                hideElements[i].style.display = 'none';
+            }
         }
     </script>
 </head>
