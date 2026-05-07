@@ -8,21 +8,23 @@ body {
 }
 
 a:link {
-    color: rgba(29, 142, 247, 0.86);
+    color: #1c75c0;
     text-decoration: none;
 }
 
 a:hover {
-    color: rgba(6, 98, 184, 0.86);
     text-decoration: underline;
+    color: #1c75c0;
 }
 
 a:active {
-    color: rgba(14, 56, 95, 0.86);
+    color: #1c75c0;
+    background-color: white;
+    border: 1px solid #1c75c0;
 }
 
 a:visited {
-    color: rgba(128, 3, 211, 0.86);
+    color: #1c75c0;
 }
 
 .containers {
@@ -62,7 +64,7 @@ div#language-container a {
     font-family: Roboto;
     font-style: normal;
     font-weight: 500;
-    font-size: 12px;
+    font-size: 14px;
     line-height: 17px;
     text-align: center;
 }
@@ -105,22 +107,24 @@ div form button {
     height: 32px;
     margin-top: 10px;
     margin-left: 23%;
-    background: rgba(29, 142, 247, 0.86);
+    background-color: #1c75c0;
     box-shadow: 0px 2px 4px rgb(0 0 0 / 55%);
     border-radius: 3px;
     font-family: Roboto;
     font-style: normal;
-    font-size: 12px;
+    font-size: 14px;
     line-height: 17px;
     text-align: center;
     color: #FFFFFF;
     cursor: pointer;
-    border: none;
+    border: 1px solid #1c75c0;
     transition: 0.5s;
 }
 
 div form button:hover {
-    background-color: rgba(6, 98, 184, 0.86);
+    color: #1c75c0;
+    background-color: white;
+    border: 1px solid #1c75c0;
     transition: 0.5s;
 }
 
