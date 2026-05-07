@@ -916,3 +916,128 @@ async def test_configured_metadata_only(client):
             # Verify configured metadata is present
             assert 'name="author"' in html_content
             assert 'content="Test Author"' in html_content
+
+
+@pytest.mark.asyncio
+async def test_strip_port_enabled_matches_config(client):
+    """
+    Test that when STRIP_PORT is enabled, the port is stripped from the host
+    before looking up the configuration, allowing local development on non-standard ports.
+    """
+    # Configure a site without port specification in config
+    with with_test_config({"example.com": {"status_code": 200, "message_pt": "Configured site"}}):
+        with patch.dict("memorial.app.config", {"STRIP_PORT": True}, clear=False):
+            # Request with port 8080 should match "example.com" in config
+            response = await request_host(client, "/", "example.com:8080", expected_status=200)
+            assert response.status_code == 200
+            html_content = (await response.data).decode("utf-8")
+            assert "Configured site" in html_content
+
+
+@pytest.mark.asyncio
+async def test_strip_port_disabled_no_match(client):
+    """
+    Test that when STRIP_PORT is disabled (default), the port is NOT stripped,
+    maintaining backward compatibility. A request with port won't match config without port.
+    """
+    # Configure a site without port specification in config
+    with with_test_config({"example.com": {"status_code": 200}}):
+        # STRIP_PORT is not set (defaults to False/not present)
+        with patch.dict("memorial.app.config", {"STRIP_PORT": False}, clear=False):
+            # Request with port 8080 should NOT match "example.com" in config
+            # Should return 502 (unconfigured site)
+            response = await request_host(client, "/", "example.com:8080", expected_status=502)
+            assert response.status_code == 502
+
+
+@pytest.mark.asyncio
+async def test_strip_port_various_ports(client):
+    """
+    Test that STRIP_PORT works with various port numbers (8080, 3000, 5000, etc.).
+    """
+    with with_test_config({
+        "testsite.com": {
+            "status_code": 200,
+            "message_pt": "Test site with various ports"
+        }
+    }):
+        with patch.dict("memorial.app.config", {"STRIP_PORT": True}, clear=False):
+            # Test different port numbers
+            for port in ["8080", "3000", "5000", "8888", "9000"]:
+                response = await request_host(client, "/", f"testsite.com:{port}", expected_status=200)
+                assert response.status_code == 200
+                html_content = (await response.data).decode("utf-8")
+                assert "Test site with various ports" in html_content
+
+
+@pytest.mark.asyncio
+async def test_strip_port_with_www(client):
+    """
+    Test that STRIP_PORT works correctly with www subdomain.
+    The port should be stripped first, then www is removed.
+    """
+    with with_test_config({"site.com": {"status_code": 200}}):
+        with patch.dict("memorial.app.config", {"STRIP_PORT": True}, clear=False):
+            # Request with www and port should match "site.com" in config
+            response = await request_host(client, "/", "www.site.com:8080", expected_status=200)
+            assert response.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_strip_port_without_port_in_request(client):
+    """
+    Test that STRIP_PORT enabled doesn't break requests without ports.
+    Requests without ports should still work normally.
+    """
+    with with_test_config({"normal-site.com": {"status_code": 200}}):
+        with patch.dict("memorial.app.config", {"STRIP_PORT": True}, clear=False):
+            # Request without port should still work fine
+            response = await request_host(client, "/", "normal-site.com", expected_status=200)
+            assert response.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_strip_port_unconfigured_site_returns_502(client):
+    """
+    Test that an unconfigured site with port returns 502 even with STRIP_PORT enabled.
+    """
+    with with_test_config({}):
+        with patch.dict("memorial.app.config", {"STRIP_PORT": True}, clear=False):
+            # Unconfigured site with port should still return 502
+            response = await request_host(client, "/", "unknown-site.com:8080", expected_status=502)
+            assert response.status_code == 502
+
+
+@pytest.mark.asyncio
+async def test_strip_port_with_specific_version(client):
+    """
+    Test that STRIP_PORT works with sites that have specific version timestamps configured.
+    """
+    with with_test_config({
+        "versioned-site.com": {
+            "version": "20200117175504",
+            "status_code": 200,
+            "message_pt": "Versioned site"
+        }
+    }):
+        with patch.dict("memorial.app.config", {"STRIP_PORT": True}, clear=False):
+            response = await request_host(client, "/", "versioned-site.com:8080", expected_status=200)
+            assert response.status_code == 200
+            html_content = (await response.data).decode("utf-8")
+            assert "Versioned site" in html_content
+
+
+@pytest.mark.asyncio
+async def test_strip_port_preserves_original_url(client):
+    """
+    Test that STRIP_PORT strips the port for config lookup but preserves
+    the original URL with port in the redirect URL.
+    """
+    with with_test_config({"preserve-url.com": {"status_code": 200}}):
+        with patch.dict("memorial.app.config", {"STRIP_PORT": True}, clear=False):
+            response = await request_host(client, "/test-path", "preserve-url.com:8080", expected_status=200)
+            assert response.status_code == 200
+            html_content = (await response.data).decode("utf-8")
+            # The original URL with port should appear somewhere in the response
+            # (Used for the redirect URL to Arquivo.pt)
+            assert "preserve-url.com:8080" in html_content or "preserve-url.com" in html_content

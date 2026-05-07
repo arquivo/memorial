@@ -34,6 +34,13 @@ app.config.from_object("config")
 if "MEMORIAL_CONFIGURATION" in os.environ:
     app.config.from_envvar("MEMORIAL_CONFIGURATION")
 
+# Configure port stripping for local development
+# When enabled, strips port numbers from hostnames before config lookup
+# This allows local development on non-standard ports (e.g., :8080)
+# while using production config files without port specifications
+if os.environ.get("MEMORIAL_STRIP_PORT", "").lower() in ("true", "1", "yes"):
+    app.config["STRIP_PORT"] = True
+
 
 def fix_not_closed_metatags(tag):
     """Fix unclosed meta tags by ensuring proper closing.
@@ -187,6 +194,12 @@ async def redirect(path):
     """
     # Get the original host that was requested
     origin_host = request.host
+
+    # Strip port if MEMORIAL_STRIP_PORT is enabled (useful for local development)
+    # When enabled, converts "example.com:8080" to "example.com" for config lookup
+    if app.config.get("STRIP_PORT", False):
+        origin_host = origin_host.split(":")[0]
+
     host_without_www = origin_host.replace("www.", "")  # Normalize host for config lookup
 
     # Wayback Machine URLs - can be overridden in config
