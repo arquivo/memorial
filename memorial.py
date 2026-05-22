@@ -10,7 +10,7 @@ import os
 
 import httpx
 from bs4 import BeautifulSoup
-from quart import Quart, render_template, request, send_from_directory
+from quart import Quart, render_template, request, send_from_directory, redirect as quart_redirect
 
 try:
     import setproctitle
@@ -107,7 +107,7 @@ async def fetch_redirect_url_content(redirect_url_home, redirect_url_path):
         except httpx.TimeoutException:
             # Re-raise timeout errors to be handled by caller
             raise
-        except Exception:
+        except Exception:  # pylint: disable=broad-except
             # For any other error, fall back to home page
             return await client.get(redirect_url_home)
 
@@ -159,10 +159,13 @@ async def extract_metadata(redirect_url_home, redirect_url_path):
         title = soup.find("title")
 
         return title, meta_list
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-except
         # Log error but continue - metadata extraction is best effort
         logger.error(
-            f"Failed to extract metadata for {redirect_url_home}: {type(e).__name__}: {str(e) or 'No error message'}",
+            "Failed to extract metadata for %s: %s: %s",
+            redirect_url_home,
+            type(e).__name__,
+            str(e) or "No error message",
             exc_info=True,
         )
         return None, meta_list
@@ -172,6 +175,112 @@ async def extract_metadata(redirect_url_home, redirect_url_path):
 async def robots():
     """Serve robots.txt file for web crawlers."""
     return await send_from_directory("static", "robots.txt")
+
+
+def get_host_configuration(host: str) -> tuple[str, dict | None]:
+    """Helper function to get site-specific configuration for a given host.
+
+    This function normalizes the host by stripping "www." and optionally
+    removing port numbers (if STRIP_PORT is enabled) before looking up the
+    configuration in the ARCHIVE_CONFIG dictionary.
+
+    Args:
+        host: The original host from the request (e.g., "www.example.com:8080")
+
+    Returns:
+        tuple: (host, config) where host is the normalized host string,
+               and config is the configuration dictionary for the host, or None if not found
+    """
+    # Optionally strip port number if STRIP_PORT is enabled
+    if app.config.get("STRIP_PORT", False):
+        host = host.split(":")[0]
+
+    # Normalize host by stripping "www." only from the beginning
+    if host.startswith("www."):
+        host = host[4:]  # Remove first 4 characters ("www.")
+
+    # Look up configuration for the normalized host
+    return host, app.config["ARCHIVE_CONFIG"].get(host, None)
+
+
+def get_wayback_noframe_server_url():
+    """Helper function to get the Wayback noFrame server URL from configuration.
+
+    This function retrieves the WAYBACK_NOFRAME_SERVER URL from the application
+    configuration and ensures it ends with a slash (/) for consistent URL construction.
+
+    Returns:
+        str: The Wayback noFrame server URL, guaranteed to end with a slash
+    """
+    wayback_noframe_server_url = app.config.get("WAYBACK_NOFRAME_SERVER", "https://arquivo.pt/noFrame/replay/")
+    if not wayback_noframe_server_url.endswith("/"):
+        wayback_noframe_server_url += "/"
+    return wayback_noframe_server_url
+
+# favicon.ico redirect to archived version
+# to http://arquivo.pt/noFrame/replay/<host>/favicon.ico
+@app.route("/favicon.ico")
+async def favicon():
+    """Redirect requests for favicon.ico to the archived version."""
+    host, host_config = get_host_configuration(request.host)
+
+    version = None
+    favicon_url = None
+    if host_config:
+        version = host_config.get("version", None)
+        favicon_url = host_config.get("favicon", None)
+
+    wayback_noframe_server_url = get_wayback_noframe_server_url()
+    favicon_url = wayback_noframe_server_url
+    if version:
+        favicon_url += f"{version}/"
+    favicon_url += f"{host}/favicon.ico"
+
+    return quart_redirect(favicon_url, code=302)
+
+@app.route("/memorial-site-image")
+async def site_image():
+    """Serves an image for the site"""
+    host, host_config = get_host_configuration(request.host)
+
+    # Image files follow a naming convention where domain names
+    # have dots (.) replaced with underscores (_)
+    # Without www and with . replaced by _ (e.g., example_com.png for example.com)
+    host_image_normalized = host.replace(".", "_")
+
+    # read the 'IMAGES_FOLDER' configuration variable to get the path to the images folder
+    images_folder = app.config.get("IMAGES_FOLDER", "/static/img")
+
+    logo = None
+    if host_config:
+        logo = host_config.get("logo", None)
+
+    image_filename = None
+    # if logo contains images_folder, serve that file directly
+    if logo and images_folder in logo:
+        # remove the images_folder part from the logo path to get the filename
+        image_filename = logo.split(images_folder)[-1].lstrip("/\\")
+
+    logger.info(image_filename)
+    if not logo and not image_filename:
+        # Try to find any file that matches the host name with any extension
+        image_filename = None
+        try:
+            if os.path.isdir(images_folder):
+                for fname in os.listdir(images_folder):
+                    name_no_ext, _ext = os.path.splitext(fname)
+                    if name_no_ext.lower() == host_image_normalized.lower():
+                        image_filename = fname
+                        break
+        except Exception:  # pylint: disable=broad-except
+            logger.info("No image file found for %s", host_image_normalized)
+
+    logger.info(image_filename)
+    if not image_filename:
+        image_filename = app.config.get("DEFAULT_LOGO", "arquivo_pt_2024-preto.png")
+
+    logger.info("Serving image folder: %s file: %s", images_folder, image_filename)
+    return await send_from_directory(images_folder, image_filename)
 
 
 @app.route("/", defaults={"path": ""})
@@ -192,19 +301,11 @@ async def redirect(path):
     Returns:
         Rendered HTML template with metadata and redirect information
     """
-    # Get the original host that was requested
-    origin_host = request.host
-
-    # Strip port if MEMORIAL_STRIP_PORT is enabled (useful for local development)
-    # When enabled, converts "example.com:8080" to "example.com" for config lookup
-    if app.config.get("STRIP_PORT", False):
-        origin_host = origin_host.split(":")[0]
-
-    host_without_www = origin_host.replace("www.", "")  # Normalize host for config lookup
+    host, host_config = get_host_configuration(request.host)
 
     # Wayback Machine URLs - can be overridden in config
     wayback_server_url = app.config.get("WAYBACK_SERVER", "https://arquivo.pt/wayback/")
-    wayback_noframe_server_url = app.config.get("WAYBACK_NOFRAME_SERVER", "https://arquivo.pt/noFrame/replay/")
+    wayback_noframe_server_url = get_wayback_noframe_server_url()
 
     # Default template settings
     template = "redirect_default.html"
@@ -225,7 +326,7 @@ async def redirect(path):
 
     # Look up custom configuration for this specific host
     # Configuration is defined in config.py ARCHIVE_CONFIG dictionary
-    host_config = app.config["ARCHIVE_CONFIG"].get(host_without_www, None)
+    host_config = app.config["ARCHIVE_CONFIG"].get(host, None)
     if host_config is not None:
         # Override defaults with host-specific settings
         template = host_config.get("template", template)
@@ -245,16 +346,13 @@ async def redirect(path):
 
     # Construct Wayback Machine URLs
     # If a specific version timestamp is configured, use it; otherwise use latest
-    if version:
-        # URLs with specific timestamp version (e.g., /20200117175504/example.com)
-        redirect_url_wayback = f"{wayback_server_url}{version}/{request.base_url}"
-        redirect_url_noFrame = f"{wayback_noframe_server_url}{version}/{request.base_url}"
-        redirect_url_home = f"{wayback_noframe_server_url}{version}/{host_without_www}"
-    else:
-        # URLs without version - Wayback will use the latest archived version
-        redirect_url_wayback = f"{wayback_server_url}{request.base_url}"
-        redirect_url_noFrame = f"{wayback_noframe_server_url}{request.base_url}"
-        redirect_url_home = f"{wayback_noframe_server_url}{host_without_www}"
+    # URLs with specific timestamp version (e.g., /20200117175504/example.com)
+    # Or latest version without timestamp (e.g., /example.com) - Wayback will serve the latest archived version
+    _version = f"{version}/" if version else ""
+
+    redirect_url_wayback = f"{wayback_server_url}{_version}{request.base_url}"
+    redirect_url_noFrame = f"{wayback_noframe_server_url}{_version}{request.base_url}"
+    redirect_url_home = f"{wayback_noframe_server_url}{_version}{host}"
 
     # Choose between noFrame (cleaner) or regular Wayback interface
     redirect_url = redirect_url_noFrame if link_to_noFrame else redirect_url_wayback
@@ -266,43 +364,33 @@ async def redirect(path):
     else:
         extract_metadata_enabled = app.config.get("EXTRACT_METADATA", False)
 
-    # Render the memorial landing page
-    if template == "redirect_default.html":
-        # For the default template, optionally extract metadata from the archived page
-        # This provides context about what the preserved site contained
-        if extract_metadata_enabled:
-            # Extract dynamic metadata from archived page (ignores configured title/metadata)
-            title, metadata = await extract_metadata(redirect_url_home, redirect_url_noFrame)
-        else:
-            # Use configured static metadata if available
-            title = f"<title>{configured_title}</title>" if configured_title is not None else None
-            metadata = configured_metadata if configured_metadata is not None else []
-
-        return (
-            await render_template(
-                template,
-                title=title,  # Original page title
-                metatags=metadata,  # Meta tags from original page
-                origin_host=origin_host,  # The domain that was requested
-                origin_url=request.url,  # Full original URL
-                redirect_url=redirect_url,  # Where to find the archived version
-                default_language=default_language,  # UI language (pt/en)
-                message_pt=message_pt,  # Custom Portuguese message
-                message_en=message_en,  # Custom English message
-                button_color=button_color,  # Custom button styling
-                logo=logo,  # Custom logo URL
-                link_pt=link_pt,  # Additional Portuguese links
-                link_en=link_en,  # Additional English links
-                args=request.args.items(),  # Query string parameters
-            ),
-            status_code,  # Return configured HTTP status code
-        )
+    # For the default template, optionally extract metadata from the archived page
+    # This provides context about what the preserved site contained
+    if extract_metadata_enabled:
+        # Extract dynamic metadata from archived page (ignores configured title/metadata)
+        title, metadata = await extract_metadata(redirect_url_home, redirect_url_noFrame)
     else:
-        # For custom templates, provide minimal context
-        return (
-            await render_template(template, origin_host=origin_host, origin_url=request.url, redirect_url=redirect_url),
-            status_code,
-        )
+        # Use configured static metadata if available
+        title = f"<title>{configured_title}</title>" if configured_title is not None else None
+        metadata = configured_metadata if configured_metadata is not None else []
+
+    return (
+        await render_template(
+            template,
+            title=title,  # Original page title
+            metatags=metadata,  # Meta tags from original page
+            redirect_url=redirect_url,  # Where to find the archived version
+            default_language=default_language,  # UI language (pt/en)
+            message_pt=message_pt,  # Custom Portuguese message
+            message_en=message_en,  # Custom English message
+            button_color=button_color,  # Custom button styling
+            logo=logo,  # Custom logo URL
+            link_pt=link_pt,  # Additional Portuguese links
+            link_en=link_en,  # Additional English links
+            args=request.args.items(),  # Query string parameters
+        ),
+        status_code,  # Return configured HTTP status code
+    )
 
 
 if __name__ == "__main__":

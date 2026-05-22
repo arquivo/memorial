@@ -121,7 +121,6 @@ ARCHIVE_CONFIG = {
         "default_language": "pt",
         "message_pt": "A UMIC – Agência para a Sociedade do Conhecimento, foi um Instituto Público que existiu de janeiro de 2005 a fevereiro de 2012, cujas funções transitaram para a <a href=https://www.fct.pt/dsi/>FCT, I.P.</a>",
         "link_en": "http://www.english.umic.pt",
-        "logo": "/static/img/umic.gif",
         "button_color": "#599bb3",
     },
     "gridcomputing.pt": {
@@ -130,4 +129,9 @@ ARCHIVE_CONFIG = {
     "e-u.pt": {
         "version": "20171228124550",
     },
+    "www.sg.pcm.gov.pt": {
+        
+    }
 }
+
+IMAGES_FOLDER = "../memorial-site-images/img"
