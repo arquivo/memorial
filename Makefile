@@ -83,7 +83,7 @@ run: venv-check ## Run application with Hypercorn (production-like)
 .PHONY: run
 
 run-dev: venv-check ## Run Quart development server
-	MEMORIAL_STRIP_PORT=true $(PYTHON) memorial.py
+	QUART_DEBUG=true MEMORIAL_STRIP_PORT=true $(PYTHON) memorial.py
 .PHONY: run-dev
 
 # Docker
