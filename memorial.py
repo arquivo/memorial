@@ -48,14 +48,34 @@ if os.environ.get("MEMORIAL_STRIP_PORT", "").lower() in ("true", "1", "yes"):
 
 # Default messages based on HTTP status code
 # These are used when a site is not configured with custom messages
+# Each status code has three message types:
+# - message: Primary message displayed to the user
+# - message_before_button: Message displayed before the redirect button
+# - button_message: Text for the redirect button
 DEFAULT_MESSAGES = {
     200: {
-        'pt': 'O site foi desactivado.',
-        'en': 'The site has been disabled.',
+        'pt': {
+            'message': 'O site foi desactivado.',
+            'message_before_button': 'O <a href="https://arquivo.pt/memorial" target="_blank">Memorial do Arquivo.pt</a> preservou o seu conteúdo.',
+            'button_message': 'Ver no Arquivo.pt',
+        },
+        'en': {
+            'message': 'The site has been disabled.',
+            'message_before_button': '<a href="https://arquivo.pt/memorialen" target="_blank">Arquivo.pt Memorial</a> preserved its content.',
+            'button_message': 'Browse in Arquivo.pt',
+        },
     },
     502: {
-        'pt': 'O site está temporariamente indisponível.',
-        'en': 'The site is temporarily unavailable.',
+        'pt': {
+            'message': 'O site está temporariamente indisponível.',
+            'message_before_button': 'O <a href="https://arquivo.pt/memorial" target="_blank">Memorial do Arquivo.pt</a> preservou o seu conteúdo.',
+            'button_message': 'Ver no Arquivo.pt',
+        },
+        'en': {
+            'message': 'The site is temporarily unavailable.',
+            'message_before_button': '<a href="https://arquivo.pt/memorialen" target="_blank">Arquivo.pt Memorial</a> preserved its content.',
+            'button_message': 'Browse in Arquivo.pt',
+        },
     },
 }
 
@@ -285,6 +305,10 @@ async def redirect(path):
     default_language = "pt"
     message_pt = None
     message_en = None
+    message_before_button_pt = None
+    message_before_button_en = None
+    button_message_pt = None
+    button_message_en = None
     version = None  # Specific timestamp version of archived site
     button_color = None
     logo = None
@@ -304,8 +328,8 @@ async def redirect(path):
         # Override defaults with host-specific settings
         template = host_config.get("template", template)
         default_language = host_config.get("default_language", default_language)
-        message_pt = host_config.get("message_pt", message_pt)
-        message_en = host_config.get("message_en", message_en)
+        message_pt = host_config.get("message_pt", message_pt)  # Only message is configurable per-host
+        message_en = host_config.get("message_en", message_en)  # Only message is configurable per-host
         version = host_config.get("version", version)  # Timestamp like '20200117175504'
         button_color = host_config.get("button_color", button_color)
         logo = host_config.get("logo", logo)
@@ -320,10 +344,20 @@ async def redirect(path):
     # Apply status-code-based default messages if no custom message is configured
     # This allows different messages for different HTTP status codes (e.g., 200 vs 502)
     # while still allowing per-host overrides via config.py
+    # Note: Only the primary message can be overridden per-host
+    # message_before_button and button_message always come from DEFAULT_MESSAGES
+    default_messages_for_status = DEFAULT_MESSAGES.get(status_code, DEFAULT_MESSAGES[200])
+    
     if message_pt is None:
-        message_pt = DEFAULT_MESSAGES.get(status_code, DEFAULT_MESSAGES[200])['pt']
+        message_pt = default_messages_for_status['pt']['message']
     if message_en is None:
-        message_en = DEFAULT_MESSAGES.get(status_code, DEFAULT_MESSAGES[200])['en']
+        message_en = default_messages_for_status['en']['message']
+    
+    # message_before_button and button_message are always from DEFAULT_MESSAGES
+    message_before_button_pt = default_messages_for_status['pt']['message_before_button']
+    message_before_button_en = default_messages_for_status['en']['message_before_button']
+    button_message_pt = default_messages_for_status['pt']['button_message']
+    button_message_en = default_messages_for_status['en']['button_message']
 
     # Construct Wayback Machine URLs
     # If a specific version timestamp is configured, use it; otherwise use latest
@@ -362,8 +396,12 @@ async def redirect(path):
             metatags=metadata,  # Meta tags from original page
             redirect_url=redirect_url,  # Where to find the archived version
             default_language=default_language,  # UI language (pt/en)
-            message_pt=message_pt,  # Custom Portuguese message
-            message_en=message_en,  # Custom English message
+            message_pt=message_pt,  # Custom Portuguese message (only configurable message)
+            message_en=message_en,  # Custom English message (only configurable message)
+            message_before_button_pt=message_before_button_pt,  # Message before button (from DEFAULT_MESSAGES)
+            message_before_button_en=message_before_button_en,  # Message before button (from DEFAULT_MESSAGES)
+            button_message_pt=button_message_pt,  # Button text (from DEFAULT_MESSAGES)
+            button_message_en=button_message_en,  # Button text (from DEFAULT_MESSAGES)
             button_color=button_color,  # Custom button styling
             logo=logo,  # Custom logo URL
             link_pt=link_pt,  # Additional Portuguese links
