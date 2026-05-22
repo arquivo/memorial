@@ -7,17 +7,17 @@ Tests cover:
 - export_to_tsv function
 """
 
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
+
 from bs4 import BeautifulSoup
 
 from data_extractor import (
-    format_metadata_as_string,
-    fix_not_closed_metatags,
-    extract_metadata_from_html,
-    export_to_tsv,
     export_site_to_tsv,
+    export_to_tsv,
+    extract_metadata_from_html,
     extract_site_metadata,
+    fix_not_closed_metatags,
+    format_metadata_as_string,
 )
 
 
@@ -256,7 +256,7 @@ class TestExportSiteToTsv:
         output_file = tmp_path / "test_output.tsv"
         export_site_to_tsv("example.com", "Example Site", ['<meta name="description" content="Example"/>'], str(output_file))
 
-        with open(output_file, "r", encoding="utf-8") as f:
+        with open(output_file, encoding="utf-8") as f:
             lines = f.readlines()
 
         # Should have only data row, no header
@@ -267,14 +267,14 @@ class TestExportSiteToTsv:
     def test_export_site_to_tsv_append_mode(self, tmp_path):
         """Test that export_site_to_tsv appends to existing file."""
         output_file = tmp_path / "test_output.tsv"
-        
+
         # First export
         export_site_to_tsv("example1.com", "Site 1", [], str(output_file))
-        
+
         # Second export (should append)
         export_site_to_tsv("example2.com", "Site 2", [], str(output_file))
 
-        with open(output_file, "r", encoding="utf-8") as f:
+        with open(output_file, encoding="utf-8") as f:
             lines = f.readlines()
 
         # Should have 2 data rows
@@ -292,7 +292,7 @@ class TestExportSiteToTsv:
             str(output_file),
         )
 
-        with open(output_file, "r", encoding="utf-8") as f:
+        with open(output_file, encoding="utf-8") as f:
             content = f.read()
 
         # Tabs and newlines should be escaped
@@ -320,7 +320,7 @@ class TestExportToTsv:
         }
         export_to_tsv(results, str(output_file))
 
-        with open(output_file, "r", encoding="utf-8") as f:
+        with open(output_file, encoding="utf-8") as f:
             lines = f.readlines()
         assert lines[0].strip() == "Site\tTitle\tMetadata"
 
@@ -333,7 +333,7 @@ class TestExportToTsv:
         }
         export_to_tsv(results, str(output_file))
 
-        with open(output_file, "r", encoding="utf-8") as f:
+        with open(output_file, encoding="utf-8") as f:
             lines = f.readlines()
 
         # Should have header + 2 data rows
@@ -352,7 +352,7 @@ class TestExportToTsv:
         }
         export_to_tsv(results, str(output_file))
 
-        with open(output_file, "r", encoding="utf-8") as f:
+        with open(output_file, encoding="utf-8") as f:
             content = f.read()
 
         # Tabs and newlines should be escaped
@@ -369,7 +369,7 @@ class TestExportToTsv:
         }
         export_to_tsv(results, str(output_file))
 
-        with open(output_file, "r", encoding="utf-8") as f:
+        with open(output_file, encoding="utf-8") as f:
             lines = f.readlines()
 
         assert "apple.com" in lines[1]
@@ -382,7 +382,7 @@ class TestExportToTsv:
         results = {}
         export_to_tsv(results, str(output_file))
 
-        with open(output_file, "r", encoding="utf-8") as f:
+        with open(output_file, encoding="utf-8") as f:
             lines = f.readlines()
 
         # Should have only header
@@ -397,7 +397,7 @@ class TestExportToTsv:
         }
         export_to_tsv(results, str(output_file), append=False)
 
-        with open(output_file, "r", encoding="utf-8") as f:
+        with open(output_file, encoding="utf-8") as f:
             lines = f.readlines()
 
         assert lines[0].strip() == "Site\tTitle\tMetadata"
@@ -405,20 +405,20 @@ class TestExportToTsv:
     def test_export_to_tsv_append_true_no_header(self, tmp_path):
         """Test that append=True doesn't write header."""
         output_file = tmp_path / "test_output.tsv"
-        
+
         # Create initial file with header
         results1 = {
             "site1.com": ("Site 1", []),
         }
         export_to_tsv(results1, str(output_file), append=False)
-        
+
         # Append more data
         results2 = {
             "site2.com": ("Site 2", []),
         }
         export_to_tsv(results2, str(output_file), append=True)
 
-        with open(output_file, "r", encoding="utf-8") as f:
+        with open(output_file, encoding="utf-8") as f:
             lines = f.readlines()
 
         # Should have header + 2 data rows (no duplicate header)

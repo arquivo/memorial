@@ -10,9 +10,10 @@ Tests:
   - port stripping
 """
 
-import pytest
 from unittest.mock import patch
-from conftest import with_test_config, request_host, get_metadata
+
+import pytest
+from conftest import request_host, with_test_config
 
 
 @pytest.mark.asyncio
@@ -45,7 +46,7 @@ async def test_get_host_configuration_strips_www(client):
     Test that get_host_configuration correctly normalizes hosts by removing www.
     """
     from memorial import get_host_configuration
-    
+
     with patch.dict("memorial.app.config", {
         "ARCHIVE_CONFIG": {"example.com": {"message_pt": "Test"}},
         "STRIP_PORT": False
@@ -62,7 +63,7 @@ async def test_get_host_configuration_no_config(client):
     Test that get_host_configuration returns None when site not configured.
     """
     from memorial import get_host_configuration
-    
+
     with patch.dict("memorial.app.config", {
         "ARCHIVE_CONFIG": {},
         "STRIP_PORT": False
@@ -77,7 +78,7 @@ async def test_get_host_configuration_with_port_stripping(client):
     Test that get_host_configuration strips port when STRIP_PORT is enabled.
     """
     from memorial import get_host_configuration
-    
+
     with patch.dict("memorial.app.config", {
         "ARCHIVE_CONFIG": {"example.com": {"message_pt": "Test"}},
         "STRIP_PORT": True

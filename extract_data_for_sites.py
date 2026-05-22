@@ -42,10 +42,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from data_extractor import (
-    extract_site_metadata,
-    extract_metadata_for_configured_sites,
-    export_to_tsv,
     export_site_to_tsv,
+    export_to_tsv,
+    extract_site_metadata,
 )
 
 
@@ -232,7 +231,7 @@ def main():
         sites_with_data,
         len(archive_config),
     )
-    print(f"\n✓ Extraction complete!")
+    print("\n✓ Extraction complete!")
     print(f"  Sites processed: {sites_with_data}/{len(archive_config)}")
     print(f"  Data saved to: {args.output}")
 
