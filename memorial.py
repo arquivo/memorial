@@ -46,6 +46,19 @@ if "MEMORIAL_CONFIGURATION" in os.environ:
 if os.environ.get("MEMORIAL_STRIP_PORT", "").lower() in ("true", "1", "yes"):
     app.config["STRIP_PORT"] = True
 
+# Default messages based on HTTP status code
+# These are used when a site is not configured with custom messages
+DEFAULT_MESSAGES = {
+    200: {
+        'pt': 'O site foi desactivado.',
+        'en': 'The site has been disabled.',
+    },
+    502: {
+        'pt': 'O site está temporariamente indisponível.',
+        'en': 'The site is temporarily unavailable.',
+    },
+}
+
 
 async def fetch_redirect_url_content(redirect_url_home, redirect_url_path):
     """Fetch the content from the redirect URL asynchronously.
@@ -226,7 +239,6 @@ async def site_image():
         # remove the images_folder part from the logo path to get the filename
         image_filename = logo.split(images_folder)[-1].lstrip("/\\")
 
-    logger.info(image_filename)
     if not logo and not image_filename:
         # Try to find any file that matches the host name with any extension
         image_filename = None
@@ -240,7 +252,6 @@ async def site_image():
         except Exception:  # pylint: disable=broad-except
             logger.info("No image file found for %s", host_image_normalized)
 
-    logger.info(image_filename)
     if not image_filename:
         image_filename = app.config.get("DEFAULT_LOGO", "arquivo_pt_2024-preto.png")
 
@@ -308,6 +319,14 @@ async def redirect(path):
         configured_title = host_config.get("title", configured_title)  # Static title for this site
         configured_metadata = host_config.get("metadata", configured_metadata)  # Static metadata for this site
         status_code = host_config.get("status_code", archived_site_status_code)  # HTTP status code
+
+    # Apply status-code-based default messages if no custom message is configured
+    # This allows different messages for different HTTP status codes (e.g., 200 vs 502)
+    # while still allowing per-host overrides via config.py
+    if message_pt is None:
+        message_pt = DEFAULT_MESSAGES.get(status_code, DEFAULT_MESSAGES[200])['pt']
+    if message_en is None:
+        message_en = DEFAULT_MESSAGES.get(status_code, DEFAULT_MESSAGES[200])['en']
 
     # Construct Wayback Machine URLs
     # If a specific version timestamp is configured, use it; otherwise use latest
