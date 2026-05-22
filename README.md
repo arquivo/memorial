@@ -9,7 +9,7 @@ Memorial is a Quart-based async web application that serves as a redirection ser
 - 🚀 **Async/ASGI** - Built on Quart for true async concurrency
 - 🌐 Automatic redirection to preserved versions of websites
 - 📝 Metadata extraction from archived pages (titles, descriptions, keywords)
-- 🎨 Customizable templates per domain
+- 🎨 Customizable UI changes per domain
 - 🌍 Multi-language support (Portuguese/English)
 - 🐳 Docker support for easy deployment
 - ✅ Comprehensive test suite with async support
@@ -72,7 +72,6 @@ Configure archived sites in [`config.py`](config.py). Each domain can have:
 - `message_pt`/`message_en`: Custom messages in Portuguese/English
 - `logo`: URL or path to custom logo
 - `button_color`: Custom button color
-- `template`: Custom template name
 - `default_language`: Default language (`pt` or `en`)
 - `link_to_noFrame`: Whether to link to noFrame version
 - `status_code`: HTTP status code to return (default: `200`, can be `502` for Bad Gateway, etc.)
@@ -146,7 +145,15 @@ pytest --cov=. --cov-report=html
 make test-cov
 
 # Run specific test file
-pytest tests/test_basic.py
+pytest tests/test_favicon.py                    # Favicon endpoint tests
+pytest tests/test_site_image.py                 # Site image endpoint tests
+pytest tests/test_normalization_and_params.py   # Normalization & query params
+pytest tests/test_url_construction.py           # URL helpers
+pytest tests/test_edge_cases.py                 # Edge cases
+pytest tests/test_redirect_core.py              # Core redirect logic
+
+# Run tests matching a pattern
+pytest -k favicon -v     # Run all tests matching "favicon"
 
 # Note: Tests use pytest with async support (pytest-asyncio)
 ```
@@ -187,9 +194,33 @@ memorial/
 ├── Dockerfile           # Docker container definition
 ├── static/              # Static assets (CSS, images, robots.txt)
 ├── templates/           # Jinja2 templates
-└── tests/               # Test suite
-    └── test_basic.py    # Async test suite with pytest
+└── tests/               # Test suite (76 async tests, 98% coverage)
+    ├── conftest.py                      # Shared fixtures and helpers
+    ├── test_favicon.py                  # Favicon endpoint tests (4 tests)
+    ├── test_site_image.py               # Site image endpoint tests (11 tests)
+    ├── test_normalization_and_params.py # WWW normalization & query params (8 tests)
+    ├── test_url_construction.py         # URL helpers and construction (9 tests)
+    ├── test_edge_cases.py               # Edge cases and error conditions (9 tests)
+    ├── test_redirect_core.py            # Core redirect functionality (35 tests)
+    └── test_basic.py.archive            # Original monolithic test file (archived)
 ```
+
+### Test Organization
+
+The test suite has been split into focused, manageable files organized by feature:
+
+**Shared Configuration** (`conftest.py`)
+- Mock setup for httpx.AsyncClient
+- Pytest fixtures (client fixture)
+- Helper functions (request_host, get_title, get_metadata, with_test_config)
+
+**Feature-Specific Test Files**
+- `test_favicon.py` - /favicon.ico endpoint with version handling and www normalization
+- `test_site_image.py` - /memorial-site-image endpoint with custom logos and directory lookups  
+- `test_normalization_and_params.py` - WWW prefix handling and query parameter preservation
+- `test_url_construction.py` - URL construction helpers and Wayback URL generation
+- `test_edge_cases.py` - Error conditions, timeouts, malformed input, multi-site configs
+- `test_redirect_core.py` - Core redirect routing, metadata extraction, configuration precedence
 
 ## Docker Deployment
 
@@ -238,16 +269,6 @@ curl -v --resolve senior3045.ipportalegre.pt:80:127.0.0.1 http://senior3045.ippo
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
 ## About Arquivo.pt
 
 [Arquivo.pt](https://arquivo.pt) is the Portuguese web archive, preserving information published on the web since the mid-1990s. It provides full-text search over historical websites and supports research and access to web heritage.
@@ -255,7 +276,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## Support
 
 For issues and questions:
-- 🐛 [Issue Tracker](https://github.com/arquivo/memorial/issues)
-- 📧 Email: arquivo@fccn.pt
+- 🐛 [Issue Tracker](https://github.com/arquivo/pwa-technologies/issues/new?template=BLANK_ISSUE&labels=Component-Frontend-Memorial)
 - 🌐 Website: [arquivo.pt](https://arquivo.pt)
 
