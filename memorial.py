@@ -215,6 +215,82 @@ def get_wayback_noframe_server_url():
         wayback_noframe_server_url += "/"
     return wayback_noframe_server_url
 
+
+def get_maintenance_template(host: str) -> str:
+    """Find the appropriate maintenance template for a given host.
+
+    When status_code is 502 (Bad Gateway), this function attempts to find
+    a custom maintenance page template specific to the domain. It follows
+    a hierarchical search strategy:
+
+    For example, for "some.example.com":
+    1. Try some_example_com.html
+    2. Try example_com.html
+    3. Try to find the domain (e.g., com.html for multi-part domains)
+    4. Fall back to redirect_default.html
+
+    The host should already be normalized (www. prefix removed).
+
+    Args:
+        host: The normalized host name (e.g., "example.com" or "sub.example.com")
+
+    Returns:
+        str: The template filename to use (e.g., "maintenance/example_com.html" or "redirect_default.html")
+    """
+    maintenance_folder = app.config.get("MAINTENANCE_FOLDER", "maintenance")
+
+    # Strip port number if present (e.g., "example.com:5000" -> "example.com")
+    # Always strip port numbers for maintenance template lookup
+    if ":" in host:
+        host = host.split(":")[0]
+
+    # Normalize host by stripping "www." only from the beginning
+    if host.startswith("www."):
+        host = host[4:]  # Remove first 4 characters ("www.")
+
+    # Convert host to normalized form by replacing dots with underscores
+    # e.g., "example.com" -> "example_com", "some.example.com" -> "some_example_com"
+    host_normalized = host.replace(".", "_")
+
+    # Try to find the template following the hierarchy
+    templates_to_try = []
+
+    # 1. Try the full host name (e.g., some_example_com.html)
+    templates_to_try.append(f"{host_normalized}.html")
+
+    # 2. For subdomains, try the second-level domain and above
+    # e.g., for "some.example.com" -> try "example_com.html"
+    parts = host.split(".")
+    if len(parts) > 2:
+        # Remove the first part and try again
+        domain_without_subdomain = ".".join(parts[1:])
+        templates_to_try.append(f"{domain_without_subdomain.replace('.', '_')}.html")
+
+    # 3. For multi-level TLDs, try progressively shorter domain names
+    # e.g., for "example.co.uk" -> try "example_co.html"
+    if len(parts) > 2:
+        for i in range(1, len(parts) - 1):
+            partial_domain = ".".join(parts[i:])
+            templates_to_try.append(f"{partial_domain.replace('.', '_')}.html")
+
+    # Try each template in order
+    try:
+        if os.path.isdir(f"templates/{maintenance_folder}"):
+            existing_files = os.listdir(f"templates/{maintenance_folder}")
+            for template_candidate in templates_to_try:
+                if template_candidate in existing_files:
+                    # Return path with folder prefix for Jinja2 to locate
+                    # e.g., "maintenance/example_com.html" will look for templates/maintenance/example_com.html
+                    template_path = f"{maintenance_folder}/{template_candidate}"
+                    logger.info("Found maintenance template: %s for host: %s", template_path, host)
+                    return template_path
+    except Exception as e:  # pylint: disable=broad-except
+        logger.error("Error checking maintenance folder: %s", str(e))
+
+    # Fall back to default template
+    logger.info("No maintenance template found for host: %s, using default", host)
+    return "redirect_default.html"
+
 # favicon.ico redirect to archived version
 # to http://arquivo.pt/noFrame/replay/<host>/favicon.ico
 @app.route("/favicon.ico")
@@ -300,8 +376,7 @@ async def redirect(path):
     wayback_server_url = app.config.get("WAYBACK_SERVER", "https://arquivo.pt/wayback/")
     wayback_noframe_server_url = get_wayback_noframe_server_url()
 
-    # Default template settings
-    template = "redirect_default.html"
+    template = None  # Template to use for this host (default is redirect_default.html)
     default_language = "pt"
     message_pt = None
     message_en = None
@@ -318,7 +393,7 @@ async def redirect(path):
     should_extract_metadata = None  # Whether to extract metadata from archived page
     configured_title = None  # Static title when metadata extraction is disabled
     configured_metadata = None  # Static metadata when metadata extraction is disabled
-    status_code = 502  # Default to 502 Bad Gateway if the archived site is not configured
+    status_code = 502  # HTTP status code (200=OK, 502=Bad Gateway, etc.)
     archived_site_status_code = 200  # HTTP status code (200=OK, 502=Bad Gateway, etc.)
 
     # Look up custom configuration for this specific host
@@ -326,7 +401,7 @@ async def redirect(path):
     host_config = app.config["ARCHIVE_CONFIG"].get(host, None)
     if host_config is not None:
         # Override defaults with host-specific settings
-        template = host_config.get("template", template)
+        template = host_config.get("template", None)  # Optional custom template for this host
         default_language = host_config.get("default_language", default_language)
         message_pt = host_config.get("message_pt", message_pt)  # Only message is configurable per-host
         message_en = host_config.get("message_en", message_en)  # Only message is configurable per-host
@@ -341,18 +416,25 @@ async def redirect(path):
         configured_metadata = host_config.get("metadata", configured_metadata)  # Static metadata for this site
         status_code = host_config.get("status_code", archived_site_status_code)  # HTTP status code
 
+    # Default template settings
+    # For 502 status codes, check for maintenance-specific templates
+    if not template and status_code in (502, 503, 504):  # Server error status codes
+        template = get_maintenance_template(host)
+    else:
+        template = "redirect_default.html"
+
     # Apply status-code-based default messages if no custom message is configured
     # This allows different messages for different HTTP status codes (e.g., 200 vs 502)
     # while still allowing per-host overrides via config.py
     # Note: Only the primary message can be overridden per-host
     # message_before_button and button_message always come from DEFAULT_MESSAGES
     default_messages_for_status = DEFAULT_MESSAGES.get(status_code, DEFAULT_MESSAGES[200])
-    
+
     if message_pt is None:
         message_pt = default_messages_for_status['pt']['message']
     if message_en is None:
         message_en = default_messages_for_status['en']['message']
-    
+
     # message_before_button and button_message are always from DEFAULT_MESSAGES
     message_before_button_pt = default_messages_for_status['pt']['message_before_button']
     message_before_button_en = default_messages_for_status['en']['message_before_button']

@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="pt">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no">
+    <title>NAU: Em manutenção</title>
+    <!-- no favicon -->
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap"
+        rel="stylesheet">
+</head>
+
+<script>
+    // stores the current language
+    let currentLanguage = null;
+
+    // feature toggle. shows or hides the operation details
+    const showOpDetails = false;
+
+    const intlTranslations = {
+        en: {
+            title: "Under maintenance",
+            shortmessage: "Please come back later, we'll try to be brief!",
+            // shortmessage: 'The NAU is undergoing scheduled maintenance.<br>We promise it will be quick!',
+            esttime: "Estimated time",
+            // esttime: "From 15:00 on 2025-01-28 and 24:00 on the same day - mainland Portugal time.",
+            message: "For additional information, please check out our user knowledge base at",
+            langchangemessage: "Mudar língua para Português",
+            technicalinfo: "Informação técnica do estado da NAU",
+        },
+        pt: {
+            title: 'Em manutenção',
+            shortmessage: "Por favor volte mais tarde, tentaremos ser breves.",
+            // shortmessage: 'A NAU encontra-se em manutenção programada.<br>Prometemos que será rápido!',
+            esttime: "Tempo estimado",
+            // esttime: "Entre as 15:00 do dia 2025-01-28 até às 24:00 do próprio dia - hora de Portugal continental.",
+            message: "Para informações adicionais por favor o site de ajuda ao utilizador em",
+            langchangemessage: "Change language to English",
+            technicalinfo: "Technical information on the state of the NAU",
+        }
+    };
+
+    const intlElements = ['maintenance-title', 'maintenance-shortmessage', 'maintenance-esttime', 'maintenance-message', 'maintenance-technicalinfo'];
+
+    function transformToSupportedLanguage(lang) {
+        const primaryLang = lang.split('-')[0];
+        const supportedLangs = Object.keys(intlTranslations);
+        return supportedLangs.includes(primaryLang) ? primaryLang : supportedLangs[0];
+    }
+
+    function getCookieValue() {
+        const cookieLang = decodeURIComponent(document.cookie).split(';').find(cookie => cookie.includes('nau-language-preference'));
+        return cookieLang ? cookieLang.split('=')[1] : null;
+    }
+
+    function setLanguage(lang) {
+        const newLang = transformToSupportedLanguage(lang);
+        currentLanguage = newLang;
+
+        document.documentElement.setAttribute('lang', newLang);
+        document.title = `NAU: ${intlTranslations[newLang]['title']}`;
+        document.getElementById('changeLang').ariaLabel = intlTranslations[newLang]['langchangemessage'];
+
+        intlElements.forEach(function (element) {
+            let el = document.getElementById(element);
+            el.innerHTML = intlTranslations[newLang][element.split('-')[1]];
+        });
+
+    }
+
+    function displayOpDetails() {
+        const opDetails = document.getElementById('op-details');
+        if (showOpDetails) {
+            opDetails.classList.remove('hide');
+        } else {
+            opDetails.classList.add('hide');
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        setLanguage(getCookieValue() || navigator.language);
+
+        displayOpDetails();
+
+        const languageSwitcher = document.getElementById('changeLang');
+
+        languageSwitcher.addEventListener('click', function (element) {
+            element.preventDefault();
+            element.currentTarget.innerHTML = currentLanguage == 'pt' ? 'Português' : 'English';
+            let newLanguage = currentLanguage == 'pt' ? 'en' : 'pt';
+            setLanguage(newLanguage);
+        });
+    });
+</script>
+
+<style>
+    :root {
+        --bg-color: #FFF;
+        --text-color: #4E4E4E;
+        --email-color: white;
+        --bg-color-alt: #693AE9;
+        --font-size: 62.5%;
+        --icon-external: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1leHRlcm5hbC1saW5rLWljb24gbHVjaWRlLWV4dGVybmFsLWxpbmsiPjxwYXRoIGQ9Ik0xNSAzaDZ2NiIvPjxwYXRoIGQ9Ik0xMCAxNCAyMSAzIi8+PHBhdGggZD0iTTE4IDEzdjZhMiAyIDAgMCAxLTIgMkg1YTIgMiAwIDAgMS0yLTJWOGEyIDIgMCAwIDEgMi0yaDYiLz48L3N2Zz4=");
+        --alt-font-color: #230082;
+    }
+
+    body {
+        font-family: 'IBM Plex Sans', Verdana, Geneva, Tahoma, sans-serif;
+        background-size: cover;
+        background-position: center center;
+        background: #693AE9;
+        background: linear-gradient(90deg, rgba(105, 58, 233, 1) 0%, rgba(5, 84, 255, 1) 34%, rgba(78, 31, 207, 1) 100%);
+        font-size: var(--font-size);
+        color: var(--bg-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+        padding: 0;
+        height: 98vh;
+    }
+
+    .container {
+        text-align: center;
+        max-width: 1180px;
+    }
+
+    @media (min-width: 1020px) {
+        section {
+            min-width: 960px;
+        }
+    }
+
+    .logo {
+        max-width: 500px;
+        display: inline-block;
+        margin: 3rem 1rem;
+        width: 500px;
+    }
+
+    .message {
+        font-size: 3rem;
+    }
+
+    h1 {
+        display: flex;
+        justify-content: center;
+        font-size: 1.75rem;
+        text-transform: uppercase;
+        font-weight: 600;
+        color: #fff;
+        box-shadow: 1px 1px 6px #000;
+        max-width: 400px;
+        border-radius: 5px;
+        padding: 0.1em 1em;
+        background-color: black;
+        margin: 0 auto;
+    }
+
+    h1 span {
+        margin: 0.5rem;
+    }
+
+    #op-details {
+        background-color: rgba(255, 255, 255, 0.9);
+        display: inline-block;
+        color: black;
+        padding: 1.5rem 3rem;
+        border-radius: 5px;
+        box-shadow: 0px 5px 12px #0639a8;
+        font-size: 1.5rem;
+    }
+
+    .hide {
+        display: none !important;
+    }
+
+    .contacts {
+        font-size: 0.9rem;
+        color: var(--text-color);
+    }
+
+    .contacts a {
+        color: var(--text-color);
+    }
+
+    .contacts a:hover {
+        color: var(--text-color);
+        text-decoration-color: var(--bg-color-alt);
+    }
+
+    .website {
+        font-size: 1.15rem;
+        color: var(--email-color);
+    }
+
+    .website a {
+        color: var(--email-color);
+    }
+
+    .email,
+    .status {
+        font-size: 1.15rem;
+        color: var(--email-color);
+    }
+
+    .email a,
+    .status a {
+        color: var(--email-color);
+    }
+
+    .email a:hover,
+    .status a:hover {
+        color: var(--alt-font-color);
+        text-decoration-color: var(--alt-font-color);
+    }
+
+    .social {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-block-start: 2rem;
+    }
+
+    .social ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+    }
+
+    .social a {
+        font-size: 1.15rem;
+        padding: 1rem 0.5rem;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .status a:after,
+    .website a:after,
+    .social a:after {
+        content: '';
+        margin-inline: 0.2rem 0.4rem;
+        background-repeat: no-repeat;
+        background-size: 14px 14px;
+        display: inline-block;
+        vertical-align: middle;
+        width: 14px;
+        height: 14px;
+        background-image: var(--icon-external);
+        color: white;
+    }
+
+    .social a:hover {
+        color: var(--alt-font-color);
+    }
+
+    .lang-options {
+        padding: 0 3rem;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .change-lang-link {
+        display: flex;
+        font-size: 0.9rem;
+        font-family: "IBM Plex Sans", Verdana, Geneva, Tahoma, sans-serif;
+        cursor: pointer;
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .change-lang-link::before {
+        content: "";
+        background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1nbG9iZS1pY29uIGx1Y2lkZS1nbG9iZSI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48cGF0aCBkPSJNMTIgMmExNC41IDE0LjUgMCAwIDAgMCAyMCAxNC41IDE0LjUgMCAwIDAgMC0yMCIvPjxwYXRoIGQ9Ik0yIDEyaDIwIi8+PC9zdmc+");
+        background-repeat: no-repeat;
+        display: inline-block;
+        width: 16px;    
+        height: 16px;
+        padding-right: 4px;
+    }
+
+    .change-lang-link:hover {
+        color: var(--alt-font-color);
+        text-decoration: underline;
+    }
+</style>
+
+<body>
+    <div class="container" aria-live="polite">
+        <div class="lang-options">
+            <button id="changeLang" class="change-lang-link" aria-label="Mudar língua para Português">Português</button>
+        </div>
+        <section>
+            <span class="logo">
+                <svg style="isolation:isolate" viewBox="0 0 655 154" xmlns="http://www.w3.org/2000/svg"
+                    title="Logo da plataforma NAU">
+                    <g>
+                        <path
+                            d="M333.9,78.9l3.6-3.2c2.4,2.6,5.4,4.1,9.5,4.1s6.3-1.2,6.3-4-1.9-3-4.2-3.3l-4.4-.7c-4.3-.6-9.2-2.2-9.2-7.9s4.7-8.6,11.8-8.6,8.9,1.6,11.4,4.3l-3.3,3.4c-1.4-1.7-4-3.3-8.3-3.3s-5.8,1.3-5.8,3.7,1.9,3,4.2,3.3l4.4.7c4.4.6,9.2,2.1,9.2,7.8s-4.6,9-12.2,9-10.4-2.1-13-5.3Z"
+                            fill="#fff" />
+                        <path
+                            d="M366.2,69.7c0-8.9,5.2-14.5,13-14.5s12.7,5.6,12.7,13.7v2.2h-19.9v.9c0,4.3,2.9,7.4,7.7,7.4s6.1-1.7,7.7-4.2l3.6,3.2c-1.9,3.2-5.7,5.7-11.4,5.7-8.5,0-13.5-5.6-13.5-14.4ZM372.1,67v.4h13.9v-.5c0-4.3-2.7-7.2-6.8-7.2s-7.1,3.1-7.1,7.3Z"
+                            fill="#fff" />
+                        <path
+                            d="M397.5,83.5v-27.7h5v3.6h.3c.9-2.4,2.3-4.2,5.3-4.2s4.5,1.7,4.9,4.5h.2c1-2.5,2.6-4.5,6-4.5s5.7,3.1,5.7,8.9v19.5h-5v-18.7c0-3.8-.9-5.1-3-5.1s-3.3,1.2-3.3,3.8v20.1h-5v-18.7c0-3.8-.8-5.1-2.9-5.1s-3.3,1.2-3.3,3.8v20.1h-5Z"
+                            fill="#fff" />
+                        <path
+                            d="M431.6,55.8h5.8v4.7h.3c1.6-3.3,4.3-5.4,8.4-5.4,6.5,0,10.7,5,10.7,14.5s-4.2,14.5-10.7,14.5-6.8-2-8.4-5.4h-.3v15.5h-5.8v-38.4ZM450.6,71.9v-4.5c0-4.5-2.5-7.5-6.9-7.5s-6.3,1.7-6.3,5.1v9.2c0,3.4,2.9,5.1,6.3,5.1s6.9-3,6.9-7.5Z"
+                            fill="#fff" />
+                        <path
+                            d="M463.6,78.8h7.4v-18.2h-7.4v-4.7h13.2v7.4h.3c1.1-3.9,3.5-7.4,9.1-7.4h3.3v5.6h-5.5c-4.8,0-7.3,3.2-7.3,7v10.4h10v4.7h-23.2v-4.7Z"
+                            fill="#fff" />
+                        <path
+                            d="M494.9,69.7c0-8.9,5.2-14.5,13-14.5s12.7,5.6,12.7,13.7v2.2h-19.9v.9c0,4.3,2.9,7.4,7.7,7.4s6.1-1.7,7.7-4.2l3.6,3.2c-1.9,3.2-5.7,5.7-11.4,5.7-8.5,0-13.5-5.6-13.5-14.4ZM500.8,67v.4h13.9v-.5c0-4.3-2.7-7.2-6.8-7.2s-7.1,3.1-7.1,7.3Z"
+                            fill="#fff" />
+                        <path
+                            d="M357.1,139.7c-3.3,0-5-1.9-5.3-4.7h-.3c-1.1,3.3-4,5.3-8.3,5.3s-9.3-3.2-9.3-8.4,3.9-8.3,12.1-8.3h5.3v-2.1c0-3.7-2-5.6-6-5.6s-5.6,1.5-7.1,3.8l-3.5-2.8c1.6-3,5.3-5.5,11.2-5.5s11.3,3.5,11.3,9.8v13.9h3.5v4.6h-3.6ZM351.4,131.4v-4h-5.2c-4.3,0-6.3,1.3-6.3,3.8v1.1c0,2.5,1.9,3.8,5,3.8s6.5-1.9,6.5-4.6Z"
+                            fill="#fff" />
+                        <path
+                            d="M410.8,139.7c-3.3,0-5-1.9-5.3-4.7h-.3c-1.1,3.3-4,5.3-8.3,5.3s-9.3-3.2-9.3-8.4,3.9-8.3,12.1-8.3h5.3v-2.1c0-3.7-2-5.6-6-5.6s-5.6,1.5-7.1,3.8l-3.5-2.8c1.6-3,5.3-5.5,11.2-5.5s11.3,3.5,11.3,9.8v13.9h3.5v4.6h-3.6ZM405,131.4v-4h-5.2c-4.3,0-6.3,1.3-6.3,3.8v1.1c0,2.5,1.9,3.8,5,3.8s6.5-1.9,6.5-4.6Z"
+                            fill="#fff" />
+                        <path
+                            d="M420.8,112h5.8v4.7h.3c1.6-3.3,4.3-5.4,8.4-5.4,6.5,0,10.7,5,10.7,14.5s-4.2,14.5-10.7,14.5-6.8-2-8.4-5.4h-.3v15.5h-5.8v-38.4ZM439.9,128.1v-4.5c0-4.5-2.5-7.5-6.9-7.5s-6.3,1.7-6.3,5.1v9.2c0,3.4,2.9,5.1,6.3,5.1s6.9-3,6.9-7.5Z"
+                            fill="#fff" />
+                        <path
+                            d="M452.8,135h7.4v-18.2h-7.4v-4.7h13.2v7.4h.3c1.1-3.9,3.5-7.4,9.1-7.4h3.3v5.6h-5.5c-4.8,0-7.3,3.2-7.3,7v10.4h10v4.7h-23.2v-4.7Z"
+                            fill="#fff" />
+                        <path
+                            d="M484.2,125.9c0-8.9,5.2-14.5,13-14.5s12.7,5.6,12.7,13.7v2.2h-19.9v.9c0,4.3,2.9,7.4,7.7,7.4s6.1-1.7,7.7-4.2l3.6,3.2c-1.9,3.2-5.7,5.7-11.4,5.7-8.5,0-13.5-5.6-13.5-14.4ZM490.1,123.2v.4h13.9v-.5c0-4.3-2.7-7.2-6.8-7.2s-7.1,3.1-7.1,7.3Z"
+                            fill="#fff" />
+                        <path
+                            d="M517.7,139.7v-27.7h5.8v4.7h.3c1.2-2.9,3.4-5.4,8-5.4s9.3,3.8,9.3,10.5v17.8h-5.8v-17c0-4.4-2-6.6-5.7-6.6s-6,1.6-6,4.8v18.8h-5.8Z"
+                            fill="#fff" />
+                        <path
+                            d="M567.4,135h-.3c-1.6,3.3-4.3,5.4-8.4,5.4-6.5,0-10.7-5-10.7-14.5s4.2-14.5,10.7-14.5,6.8,2,8.4,5.4h.3v-16.7h5.8v39.7h-5.8v-4.7ZM567.4,130.5v-9.2c0-3.4-2.9-5.1-6.3-5.1s-6.9,3-6.9,7.5v4.5c0,4.5,2.5,7.5,6.9,7.5s6.3-1.7,6.3-5.1Z"
+                            fill="#fff" />
+                        <path
+                            d="M580.7,125.9c0-8.9,5.2-14.5,13-14.5s12.7,5.6,12.7,13.7v2.2h-19.9v.9c0,4.3,2.9,7.4,7.7,7.4s6.1-1.7,7.7-4.2l3.6,3.2c-1.9,3.2-5.7,5.7-11.4,5.7-8.5,0-13.5-5.6-13.5-14.4ZM586.6,123.2v.4h13.9v-.5c0-4.3-2.7-7.2-6.8-7.2s-7.1,3.1-7.1,7.3Z"
+                            fill="#fff" />
+                        <path
+                            d="M613.8,135h7.4v-18.2h-7.4v-4.7h13.2v7.4h.3c1.1-3.9,3.5-7.4,9.1-7.4h3.3v5.6h-5.5c-4.8,0-7.3,3.2-7.3,7v10.4h10v4.7h-23.2v-4.7Z"
+                            fill="#fff" />
+                    </g>
+                    <g>
+                        <path
+                            d="M298.4,60.3h1.3v-5.4h-33.4v61c0,9-19.7,13.8-19.7-.8v-39.7c0-12.4-10-22.4-22.4-22.4h-14.1v5.3c5.1,1.1,10.5,8.3,10.5,18.1v42.8c0,12.3,10,22.3,22.3,22.3h.2c8.4,0,16.9-3.7,23.2-9v7h33.4v-5.4h-1.3c-3.4,0-6.2-2.8-6.2-6.2v-61.5c0-3.4,2.8-6.2,6.2-6.2Z"
+                            fill="#fff" />
+                        <path
+                            d="M99.5,118.2v-42.8c0-12.3-10-22.3-22.3-22.3h-.2c-8.4,0-16.9,3.7-23.2,9v-7.1H20.4v5.4h1.3c3.4,0,6.2,2.8,6.2,6.2v61.5c0,3.4-2.8,6.2-6.2,6.2h-1.3v5.4h33.4v-60.9c0-9,19.7-13.8,19.7.8v39.6c0,12.4,10,22.4,22.4,22.4h14.1v-5.3c-5.1-1.1-10.5-8.3-10.5-18.1Z"
+                            fill="#fff" />
+                        <path
+                            d="M200.1,117.9v-35.5c0-12.4-7.9-23.5-19.6-27.3-4.3-1.3-8.7-2-13.4-2-9.8,0-18.9,3.2-26.3,8.7-4.2-5.3-10.6-8.7-17.9-8.7h-14.3v5.4c5.2,1.1,10.6,8.4,10.6,18.4v35.5c0,12.4,7.9,23.5,19.6,27.3,4.3,1.3,8.7,2,13.4,2,9.8,0,19-3.2,26.3-8.7,4.2,5.3,10.6,8.7,17.9,8.7h14.3v-5.4c-5.3-1.1-10.6-8.4-10.6-18.4ZM169.5,128.5c-13.2,0-23.8-8.5-23.8-21.7v-31.1c0-3.2-.6-6.1-1.8-8.9,1.9-.5,3.9-.7,5.9-.7,13.2,0,23.8,8.5,23.8,21.7v31.2c0,3.2.7,6.1,1.8,8.8-1.9.5-3.9.7-5.9.7Z"
+                            fill="#fff" />
+                    </g>
+                    <path
+                        d="M581.1,22.6h9.4v4.1h-9.4v18.1h9.4v4.1h-21.8v-4.1h7.8v-18.1h-7.8v-4.1h6.1c.9,0,1.7-.7,1.7-1.7v-2.5c0-1,.4-2,1.1-2.8l4.4-4.4c.7-.7,1.7-1.1,2.8-1.1h5.8v4h-9.4v8.4ZM603.4,10.1h9.9v4.1h-13.6v19.8h13.6v4.1h-9.9c-1,0-2-.4-2.8-1.1l-4.4-4.4c-.7-.7-1.1-1.7-1.1-2.8v-11.2c0-1,.4-2,1.1-2.8l4.4-4.4c.7-.7,1.7-1.1,2.8-1.1ZM625.2,30v-15.9h-7.6v-4.1h6c.9,0,1.7-.7,1.7-1.7V3.6h4.6v6.5h9.9v4.1h-9.9v19.8h9.9v4.1h-7.1c-1.1,0-2.2-.5-2.9-1.3l-3.5-4c-.6-.7-1-1.6-1-2.6ZM595.1,44.7v4.1h44.7v-4.1h-44.7Z"
+                        fill="#fff" />
+                </svg>
+            </span>
+            <h1><span>
+                    <svg fill="#ffffff" height="32" width="32" viewBox="0 0 512.013 512.013"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <g>
+                            <path
+                                d="m369.871 280.394-34.14 34.141-.001-.001-235.826-235.827 18.124-18.124-75.151-60.569-42.877 42.877 60.569 75.15 18.125-18.124 235.827 235.827-34.141 34.141 48.69 48.689 89.49-89.49z" />
+                            <path
+                                d="m439.773 350.297-89.49 89.49 53.692 53.692c11.952 11.952 27.843 18.534 44.746 18.534 16.902 0 32.793-6.582 44.745-18.534 24.672-24.673 24.672-64.817 0-89.49z" />
+                        </g>
+                        <path
+                            d="m259.136 322.785-69.9-69.9-51.176 51.169c-37.59-11.78-78.61-1.94-106.9 26.36-20.09 20.09-31.16 46.799-31.16 75.22 0 28.41 11.07 55.13 31.16 75.22 20.74 20.74 47.98 31.11 75.22 31.11s54.49-10.37 75.22-31.11c28.3-28.29 38.14-69.31 26.36-106.9zm-128.406 107.188c-13.45 13.45-35.25 13.45-48.69 0-13.45-13.44-13.45-35.24 0-48.69 13.44-13.44 35.24-13.44 48.69 0 13.44 13.45 13.44 35.251 0 48.69z" />
+                        <g>
+                            <path
+                                d="m505.04 64.163-8.36-21.35-53.67 53.67-21.67-5.81-5.81-21.67 53.67-53.66-21.35-8.37c-37.43-14.66-79.97-5.78-108.38 22.63-26.02 26.02-35.66 63.91-25.82 98.86l-60.777 60.784 69.9 69.9 60.777-60.784c9.02 2.54 18.22 3.78 27.37 3.78 26.33-.01 52.18-10.29 71.49-29.6 28.41-28.409 37.29-70.949 22.63-108.38z" />
+                        </g>
+                    </svg>
+                </span><span id="maintenance-title">Em manutenção</span></h1>
+            <p id="maintenance-shortmessage" class="message" style="display:block;">Estamos a atualizar a plataforma
+                NAU.<br>Prometemos que vai ser rápido!</p>
+            <!-- Operation detail box -->
+            <div id="op-details">
+                <span class="eta">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-timer-icon lucide-timer"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>
+                    <span id="maintenance-esttime"></span>
+                    <div class="contacts">
+                        <p><span id="maintenance-message"></span> <a href="https://ajuda.nau.edu.pt"
+                                target="_blank">ajuda.nau.edu.pt</a></p>
+                    </div>
+            </div>
+        </section>
+        <p class="website"><a href="https://ajuda.nau.edu.pt" aria-label="NAU Wiki">ajuda.nau.edu.pt</a></p>
+        <section class="social">
+            <ul>
+                <li>
+                    <a class="facebook-link" href="https://www.facebook.com/plataformanau/" target="_blank">Facebook</a>
+                </li>
+                <li>
+                    <a class="twitter-link" href="https://www.linkedin.com/company/plataformanau/"
+                        target="_blank">LinkedIn</a>
+                </li>
+            </ul>
+        </section>
+        <p class="status">
+            <a target="_blank" href="https://status.nau.edu.pt" id="maintenance-technicalinfo">Informação técnica do
+                estado da NAU</a>
+        </p>
+    </div>
+</body>
+
+</html>

@@ -82,6 +82,72 @@ Configure archived sites in [`config.py`](config.py). Each domain can have:
 - `WAYBACK_NOFRAME_SERVER`: NoFrame server URL (default: `https://arquivo.pt/noFrame/replay/`)
 - `WAYBACK_REQUEST_TIMEOUT`: Request timeout in seconds (default: 3)
 
+### Maintenance Pages (502/503/504 Status Codes)
+
+When a site is configured with a 502, 503, or 504 status code (indicating the site is unavailable), Memorial automatically looks for domain-specific maintenance page templates in the `templates/maintenance/` folder.
+
+#### Template Lookup Strategy
+
+For a request to a domain, Memorial follows this hierarchical lookup:
+
+1. **Subdomain template**: For `sub.example.com`, try `sub_example_com.html`
+2. **Second-level domain template**: For `sub.example.com`, try `example_com.html`
+3. **Partial domain templates**: For multi-level domains, progressively shorter domain names
+4. **Default template**: Fall back to `redirect_default.html` if no specific template found
+
+#### Creating Custom Maintenance Templates
+
+1. Create an HTML template file in `templates/maintenance/` folder
+2. Name it according to your domain (dots replaced with underscores), e.g.:
+   - `example_com.html` for `example.com`
+   - `subdomain_example_com.html` for `subdomain.example.com`
+   - `api_example_com.html` for `api.example.com`
+
+3. Your template can use the same variables as regular templates:
+   - `{{ message_pt }}` / `{{ message_en }}` - Custom domain-specific messages
+   - `{{ redirect_url }}` - URL to the archived version
+   - `{{ button_message_pt }}` / `{{ button_message_en }}` - Button text
+   - And other standard template variables
+
+#### Example Maintenance Template
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Site Maintenance</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <div class="maintenance-notice">
+        <h2>Site Under Maintenance</h2>
+        <p>{{ message_pt if default_language == 'pt' else message_en }}</p>
+        <p>{{ message_before_button_pt if default_language == 'pt' else message_before_button_en }}</p>
+        <a href="{{ redirect_url }}" class="btn">
+            {{ button_message_pt if default_language == 'pt' else button_message_en }}
+        </a>
+    </div>
+</body>
+</html>
+```
+
+#### Configuration Example
+
+In `config.py`, configure a site with 502 status:
+
+```python
+ARCHIVE_CONFIG = {
+    "example.com": {
+        "status_code": 502,  # Bad Gateway
+        "version": "20230101000000",
+        "message_pt": "O site está em manutenção",
+        "message_en": "The site is under maintenance",
+    }
+}
+```
+
+The application will automatically serve `templates/maintenance/example_com.html` for requests to this domain, with a 502 status code.
+
 ## Development
 
 ### Setup for Development
@@ -180,6 +246,40 @@ make check
 # Type checking (optional)
 mypy memorial.py
 ```
+
+### Test Pages
+
+To double check if everything is ok you can use this procedure during local development.
+
+Edit your `/etc/hosts` file.
+
+```
+127.0.0.1 umic.pt
+127.0.0.1 english.umic.pt
+127.0.0.1 www.sg.pcm.gov.pt
+127.0.0.1 oe2020.gov.pt
+127.0.0.1 example.com
+127.0.0.1 educast.fccn.pt
+127.0.0.1 xpto.fccn.pt
+127.0.0.1 www.fccn.pt
+```
+
+Start the development mode of this application:
+```bash
+make run-dev
+```
+
+Open your browser on those pages use an incognito window because the browser could have SSL connection cached:
+
+- http://umic.pt:5000
+- http://english.umic.pt:5000
+- http://www.sg.pcm.gov.pt:5000
+- http://oe2020.gov.pt:5000
+- http://example.com:5000
+- http://educast.fccn.pt:5000
+- http://xpto.fccn.pt:5000
+- http://www.fccn.pt:5000
+
 
 ## Metadata Extraction
 
