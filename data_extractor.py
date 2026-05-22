@@ -223,7 +223,7 @@ def format_metadata_as_string(metadata_list: list[str]) -> str:
     """
     Format metadata list as a single string for TSV export.
 
-    The export needs to be compatible with both TSV format and Python because 
+    The export needs to be compatible with both TSV format and Python because
     the metadata is to be read back into Python for further processing.
 
     Joins metadata tags using the specified separator and escapes special characters for TSV.

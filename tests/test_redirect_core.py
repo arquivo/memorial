@@ -13,26 +13,27 @@ Core Memorial application tests including:
 """
 
 import os
+from unittest.mock import AsyncMock, Mock, patch
+
 import httpx
 import pytest
-from unittest.mock import patch, AsyncMock, Mock
 from conftest import (
-    with_test_config, 
-    request_host, 
-    get_title, 
     get_metadata,
-    mock_patcher,
-    mock_response,
-    client,
+    get_title,
+    request_host,
+    with_test_config,
 )
-from memorial import app, fix_not_closed_metatags
+
+from data_extractor import fix_not_closed_metatags
+from memorial import app
 
 
 @pytest.mark.asyncio
 async def test_nonexistent_page(client):
-    """Test fallback to home page for non-existent paths.
-    
-    Verifies that requesting a non-existent page returns the same metadata 
+    """
+    Test fallback to home page for non-existent paths.
+
+    Verifies that requesting a non-existent page returns the same metadata
     as the home page since it should fall back to the archived home page.
     """
     # Use a test-specific configuration with metadata extraction enabled
@@ -134,9 +135,10 @@ async def test_robotstxt(client):
 
 @pytest.mark.asyncio
 async def test_configured_site_returns_200(client):
-    """Test default 200 status for configured sites.
-    
-    Verifies that a configured site without explicit status_code returns 
+    """
+    Test default 200 status for configured sites.
+
+    Verifies that a configured site without explicit status_code returns
     200 OK by default (the configured site is active in the archive).
     """
     # Use test-specific configuration without explicit status_code
@@ -331,7 +333,6 @@ async def test_environment_variable_configuration(client):
     Test that MEMORIAL_CONFIGURATION environment variable is properly loaded.
     This tests the configuration override mechanism.
     """
-    import os
     import tempfile
 
     # Save original configuration

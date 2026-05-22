@@ -11,7 +11,7 @@ Tests:
 """
 
 import pytest
-from conftest import with_test_config, request_host
+from conftest import request_host, with_test_config
 
 
 @pytest.mark.asyncio

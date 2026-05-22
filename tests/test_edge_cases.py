@@ -13,9 +13,10 @@ Tests:
   - priority and precedence
 """
 
+from unittest.mock import AsyncMock, Mock, patch
+
 import pytest
-from unittest.mock import patch, AsyncMock, Mock
-from conftest import with_test_config, request_host, get_title, get_metadata
+from conftest import request_host, with_test_config
 
 
 @pytest.mark.asyncio
@@ -121,16 +122,16 @@ async def test_httpx_timeout_configuration(client):
     mock_response.status_code = 200
     mock_response.headers = {"content-type": "text/html"}
     mock_response.content = b"<html><head><title>Test</title></head></html>"
-    
+
     mock_client_instance = Mock()
     mock_client_instance.head = AsyncMock(return_value=mock_response)
     mock_client_instance.get = AsyncMock(return_value=mock_response)
     mock_client_instance.__aenter__ = AsyncMock(return_value=mock_client_instance)
     mock_client_instance.__aexit__ = AsyncMock(return_value=None)
-    
+
     with patch("memorial.httpx.AsyncClient") as mock_async_client_class:
         mock_async_client_class.return_value = mock_client_instance
-        
+
         with patch.dict("memorial.app.config", {
             "WAYBACK_REQUEST_TIMEOUT": 10,
             "EXTRACT_METADATA": True
@@ -168,11 +169,11 @@ async def test_multiple_sites_different_configs(client):
         # Test site A
         response_a = await request_host(client, "/", "site-a.com", expected_status=200)
         assert "Site A" in (await response_a.data).decode("utf-8")
-        
+
         # Test site B
         response_b = await request_host(client, "/", "site-b.com", expected_status=410)
         assert response_b.status_code == 410
-        
+
         # Test site C
         response_c = await request_host(client, "/", "site-c.com", expected_status=503)
         assert response_c.status_code == 503

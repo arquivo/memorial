@@ -9,7 +9,7 @@ Tests cover:
 """
 
 import sys
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -230,7 +230,7 @@ class TestBulkExtraction:
     def test_bulk_extraction_custom_timeout(self, mock_config):
         """Test bulk extraction with custom timeout."""
         mock_extract = MagicMock(return_value=("Example Title", ["<meta name='description'/>"]))
-        
+
         with patch("extract_data_for_sites.extract_site_metadata", mock_extract):
             with patch("extract_data_for_sites.export_site_to_tsv"):
                 with patch("builtins.open", create=True):
@@ -286,7 +286,7 @@ class TestBulkExtraction:
         """Test bulk extraction with custom output file."""
         mock_extract = MagicMock(return_value=("Example Title", ["<meta name='description'/>"]))
         mock_export = MagicMock()
-        
+
         with patch("extract_data_for_sites.extract_site_metadata", mock_extract):
             with patch("extract_data_for_sites.export_site_to_tsv", mock_export):
                 with patch("builtins.open", create=True):

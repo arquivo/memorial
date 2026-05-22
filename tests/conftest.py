@@ -11,12 +11,11 @@ This module provides:
 from contextlib import contextmanager
 from unittest.mock import AsyncMock, Mock, patch
 
-import httpx
 import pytest
 from bs4 import BeautifulSoup
 
 # Import memorial first
-from memorial import app, fix_not_closed_metatags
+from memorial import app
 
 # Then patch memorial.httpx.AsyncClient to intercept calls from within memorial
 mock_patcher = patch("memorial.httpx.AsyncClient")

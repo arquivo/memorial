@@ -10,12 +10,11 @@ import os
 
 import httpx
 from bs4 import BeautifulSoup
-from quart import Quart, render_template, request, send_from_directory, redirect as quart_redirect
+from quart import Quart, render_template, request, send_from_directory
+from quart import redirect as quart_redirect
 
 from data_extractor import (
-    fix_not_closed_metatags,
     extract_metadata_from_html,
-    get_archived_page_content,
 )
 
 try:
