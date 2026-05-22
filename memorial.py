@@ -233,24 +233,21 @@ async def site_image():
     if host_config:
         logo = host_config.get("logo", None)
 
-    image_filename = None
-    # if logo contains images_folder, serve that file directly
-    if logo and images_folder in logo:
-        # remove the images_folder part from the logo path to get the filename
-        image_filename = logo.split(images_folder)[-1].lstrip("/\\")
+    # if logo is an URL send a redirect to it
+    if logo and (logo.startswith("http://") or logo.startswith("https://") or logo.startswith("//")):
+        return await quart_redirect(logo, code=302)
 
-    if not logo and not image_filename:
-        # Try to find any file that matches the host name with any extension
-        image_filename = None
-        try:
-            if os.path.isdir(images_folder):
-                for fname in os.listdir(images_folder):
-                    name_no_ext, _ext = os.path.splitext(fname)
-                    if name_no_ext.lower() == host_image_normalized.lower():
-                        image_filename = fname
-                        break
-        except Exception:  # pylint: disable=broad-except
-            logger.info("No image file found for %s", host_image_normalized)
+    # Try to find any file that matches the host name with any extension
+    image_filename = None
+    try:
+        if os.path.isdir(images_folder):
+            for fname in os.listdir(images_folder):
+                name_no_ext, _ext = os.path.splitext(fname)
+                if name_no_ext.lower() == host_image_normalized.lower():
+                    image_filename = fname
+                    break
+    except Exception:  # pylint: disable=broad-except
+        logger.info("No image file found for %s", host_image_normalized)
 
     if not image_filename:
         image_filename = app.config.get("DEFAULT_LOGO", "arquivo_pt_2024-preto.png")
