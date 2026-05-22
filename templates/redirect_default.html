@@ -11,6 +11,13 @@
      <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900&display=swap" rel="stylesheet" onload="if(media!='all')media='all'" />
      <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet" onload="if(media!='all')media='all'" />
      <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet" onload="if(media!='all')media='all'" />
+    {% if button_color %}
+    <style>
+        button {
+            background-color: {{ button_color }} !important;
+        }
+    </style>
+    {% endif %}
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-HWP6ZG7XT7"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -49,17 +56,17 @@
         <div id="language-container" class="containers">
             <a lang="en" href="{{ link_pt if link_pt else 'javascript:void(0)' }}"
                 onclick="{{ '' if link_pt else 'changeLanguage(\'pt\');' }}"
-                {{ style_en }}>🇵🇹 Português</a>
+                {{ style_en }}>🌐 Português</a>
             <a lang="pt" href="{{ link_en if link_en else 'javascript:void(0)' }}"
                 onclick="{{ '' if link_en else 'changeLanguage(\'en\');' }}"
-                {{ style_pt }}>🇬🇧 English</a>
+                {{ style_pt }}>🌐 English</a>
         </div>
         {% endif %}
         <!-- ends language container -->
 
         <!-- starts img container -->
         <div id="img-container" class="containers">
-            <img src="{{ logo if logo else url_for('static', filename='img/arquivo_pt_2024-preto.png') }}">
+            <img src="{{ logo if logo else url_for('site_image') }}">
         </div>
         <!-- ends img container -->
 
