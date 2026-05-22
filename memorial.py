@@ -12,6 +12,12 @@ import httpx
 from bs4 import BeautifulSoup
 from quart import Quart, render_template, request, send_from_directory, redirect as quart_redirect
 
+from data_extractor import (
+    fix_not_closed_metatags,
+    extract_metadata_from_html,
+    get_archived_page_content,
+)
+
 try:
     import setproctitle
 
@@ -40,31 +46,6 @@ if "MEMORIAL_CONFIGURATION" in os.environ:
 # while using production config files without port specifications
 if os.environ.get("MEMORIAL_STRIP_PORT", "").lower() in ("true", "1", "yes"):
     app.config["STRIP_PORT"] = True
-
-
-def fix_not_closed_metatags(tag):
-    """Fix unclosed meta tags by ensuring proper closing.
-
-    Some archived sites (e.g., gridcomputing.pt) have malformed HTML with
-    unclosed meta/link tags. This function ensures they are properly closed
-    with self-closing syntax (/>).
-
-    Args:
-        tag: BeautifulSoup tag object to fix
-
-    Returns:
-        str: Fixed tag string with proper closing
-    """
-    # Extract tag content before the first '>'
-    fix_tag = str(tag).split(">")[0]
-
-    # Ensure self-closing tags end with '/>'
-    if not fix_tag.endswith("/"):
-        fix_tag += "/>"
-    else:
-        fix_tag += ">"
-
-    return fix_tag
 
 
 async def fetch_redirect_url_content(redirect_url_home, redirect_url_path):
@@ -136,26 +117,11 @@ async def extract_metadata(redirect_url_home, redirect_url_path):
         # Fetch the archived page content asynchronously
         r = await fetch_redirect_url_content(redirect_url_home, redirect_url_path)
 
-        # Parse HTML content
-        html = r.content
-        soup = BeautifulSoup(html, "html.parser")
-
-        # Extract common meta tags that describe the page
-        valid_meta_names = ["description", "keywords", "author"]
-        for name in valid_meta_names:
-            for tag in soup.find_all("meta", {"name": name}):
-                meta_list.append(fix_not_closed_metatags(tag))
-
-        # Extract link tags for additional resources (favicon, alternate pages, etc.)
-        # Only if the page has a <head> section
-        head = soup.find("head")
-        if head:
-            valid_link_rels = ["author", "home", "shortcut icon", "alternate"]
-            for rel_value in valid_link_rels:
-                for tag in head.find_all("link", attrs={"rel": rel_value}):
-                    meta_list.append(fix_not_closed_metatags(tag))
+        # Parse HTML content and extract metadata using the shared utility
+        meta_list = extract_metadata_from_html(r.content)
 
         # Extract page title
+        soup = BeautifulSoup(r.content, "html.parser")
         title = soup.find("title")
 
         return title, meta_list

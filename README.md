@@ -181,17 +181,307 @@ make check
 mypy memorial.py
 ```
 
+## Metadata Extraction
+
+Memorial includes comprehensive utilities to extract and export metadata from archived sites on Arquivo.pt. This is useful for:
+- Testing metadata availability before adding a site to config
+- Bulk extracting metadata for all configured sites
+- Generating metadata exports in TSV format with titles and metadata
+
+### Files
+
+- **`data_extractor.py`** - Core library module with reusable functions
+- **`extract_data_for_sites.py`** - Command-line tool to extract and export data for all configured or individual archived sites
+
+### Quick Start
+
+#### Extract for all configured sites and export to TSV:
+
+```bash
+python extract_data_for_sites.py
+```
+
+This creates a `data.tsv` file with three columns:
+- Column 1: Site hostname (e.g., `example.com`)
+- Column 2: Page title
+- Column 3: Extracted metadata tags (semicolon-separated)
+
+#### Extract for a specific site:
+
+```bash
+# Display data on screen
+python extract_data_for_sites.py --site example.com --version 20230101120000
+
+# Export to TSV file
+python extract_data_for_sites.py --site example.com --version 20230101120000 --output my_site.tsv
+
+# Custom timeout for slow sites
+python extract_data_for_sites.py --site example.com --version 20230101120000 --timeout 30
+```
+
+#### Extract all configured sites with options:
+
+```bash
+# Custom output file
+python extract_data_for_sites.py --output my_data.tsv
+
+# Longer timeout for slow sites
+python extract_data_for_sites.py --timeout 30 --output results.tsv
+
+# Verbose logging
+python extract_data_for_sites.py --verbose
+
+# Custom wayback server
+python extract_data_for_sites.py --wayback-server https://web.archive.org/web/
+```
+
+### Using as a Python Library
+
+#### Extract data for a single site:
+
+```python
+from data_extractor import extract_site_metadata
+
+# Extract title and metadata for a specific site and version
+title, metadata = extract_site_metadata(
+    site="example.com",
+    version="20200117175504"
+)
+
+print(f"Title: {title}")
+print(f"Metadata tags: {metadata}")
+# Output: 
+# Title: Example Site
+# Metadata tags: ['<meta name="description" content="..."/>', ...]
+```
+
+#### Extract and display results programmatically:
+
+```python
+from data_extractor import extract_site_metadata
+
+title, metadata = extract_site_metadata("example.com", "20230101120000", timeout=15)
+
+print(f"✓ Site Title: {title}")
+if metadata:
+    print(f"✓ Found {len(metadata)} metadata tags:")
+    for tag in metadata:
+        print(f"  - {tag}")
+else:
+    print("✗ No metadata found")
+```
+
+#### Extract for all configured sites:
+
+```python
+from config import ARCHIVE_CONFIG
+from data_extractor import extract_metadata_for_configured_sites, export_to_tsv
+
+# Extract titles and metadata for all sites in config
+results = extract_metadata_for_configured_sites(ARCHIVE_CONFIG)
+
+# Export to TSV
+export_to_tsv(results, "data.tsv")
+
+# Or process results programmatically
+for site, (title, metadata) in results.items():
+    print(f"{site}: '{title}' - {len(metadata)} metadata tags")
+```
+
+### API Reference
+
+#### `extract_site_metadata(site, version, wayback_noframe_server, timeout)`
+
+Extract title and metadata for a specific archived site and version.
+
+**Parameters:**
+- `site` (str): Domain name (e.g., "example.com")
+- `version` (str): Version timestamp (e.g., "20200117175504")
+- `wayback_noframe_server` (str): Base Arquivo.pt URL (default: `https://arquivo.pt/noFrame/replay/`)
+- `timeout` (int): Request timeout in seconds (default: 30)
+
+**Returns:** `tuple[str, list[str]]` - (title, metadata_list) where metadata_list contains metadata tag strings
+
+**Example:**
+```python
+title, metadata = extract_site_metadata("senior3045.ipportalegre.pt", "20200117175504")
+```
+
+#### `extract_metadata_for_configured_sites(archive_config, wayback_noframe_server, timeout)`
+
+Extract title and metadata for all sites in ARCHIVE_CONFIG.
+
+**Parameters:**
+- `archive_config` (dict): The ARCHIVE_CONFIG dictionary from config.py
+- `wayback_noframe_server` (str): Base Arquivo.pt URL (default: `https://arquivo.pt/noFrame/replay/`)
+- `timeout` (int): Request timeout per site (default: 30)
+
+**Returns:** `dict[str, tuple[str, list[str]]]` - Dict mapping sites to (title, metadata_list) tuples
+
+**Example:**
+```python
+from config import ARCHIVE_CONFIG
+results = extract_metadata_for_configured_sites(ARCHIVE_CONFIG)
+```
+
+#### `export_to_tsv(results, output_file)`
+
+Export extracted data to a TSV file with three columns: site, title, metadata.
+
+**Parameters:**
+- `results` (dict[str, tuple[str, list[str]]]): Dictionary from `extract_metadata_for_configured_sites()`
+- `output_file` (str): Path to output TSV file
+
+**Returns:** `None`
+
+**Example:**
+```python
+export_to_tsv(results, "data.tsv")
+```
+
+#### `extract_metadata_from_html(html_content)`
+
+Extract title and metadata tags from HTML content.
+
+**Parameters:**
+- `html_content` (bytes): HTML content to parse
+
+**Returns:** `tuple[str, list[str]]` - (title, metadata_list)
+
+#### `get_archived_page_content(wayback_url, timeout)`
+
+Fetch content from an archived page on Arquivo.pt.
+
+**Parameters:**
+- `wayback_url` (str): Full URL to archived page
+- `timeout` (int): Request timeout in seconds (default: 30)
+
+**Returns:** `bytes | None` - HTML content or None if retrieval fails
+
+### TSV File Format
+
+The exported TSV file has the following structure:
+
+```
+Site	Title	Metadata
+example.com	Example Site Title	<meta name="description" content="Example site"/>; <meta name="keywords" content="test"/>
+newsite.com	New Site	<meta name="author" content="Author Name"/>
+```
+
+Features:
+- **Tab-separated** for easy import into spreadsheets
+- **Semicolon-separated** metadata tags within each row
+- **UTF-8 encoded** for international characters
+- Special characters (tabs, newlines) are escaped
+
+### Command-Line Options
+
+```bash
+python extract_data_for_sites.py --help
+
+# Key options:
+#   --site SITE                 Extract specific site (requires --version)
+#   --version VERSION           Timestamp for archived version
+#   --output OUTPUT, -o OUTPUT  Output TSV file (default: data.tsv)
+#   --timeout TIMEOUT, -t       Request timeout in seconds (default: 30)
+#   --wayback-server URL, -w    Custom Arquivo.pt URL
+#   --config CONFIG, -c         Custom config.py path
+#   --verbose, -vv              Enable verbose logging
+```
+
+### Workflow: Adding a New Site
+
+1. **Test metadata extraction** before adding to config:
+```bash
+python extract_data_for_sites.py --site newsite.com --version 20230101120000
+```
+
+2. **Review the extracted title and metadata** - if useful, proceed to step 3
+
+3. **Add site to `config.py`:**
+```python
+ARCHIVE_CONFIG = {
+    # ... existing sites ...
+    "newsite.com": {
+        "version": "20230101120000",
+        "message_pt": "Custom Portuguese message",
+    }
+}
+```
+
+4. **Extract data for all sites:**
+```bash
+python extract_data_for_sites.py --output data_updated.tsv
+```
+
+### Error Handling
+
+The utilities handle various error conditions gracefully:
+
+- **Network errors**: Logs warning and returns empty metadata list
+- **Timeout**: Falls back gracefully, customizable with `--timeout`
+- **Invalid HTML**: BeautifulSoup handles malformed HTML
+- **Malformed tags**: Unclosed tags are automatically corrected
+
+### Logging
+
+Enable verbose logging to see what's happening:
+
+```bash
+python extract_data_for_sites.py --verbose
+```
+
+Or in Python code:
+
+```python
+import logging
+logging.basicConfig(level=logging.DEBUG)
+```
+
+### Performance Considerations
+
+- Default timeout is 30 seconds per site
+- For large numbers of sites, extraction can take time
+- Adjust `--timeout` based on your network conditions
+- Arquivo.pt may rate-limit requests - adjust accordingly
+
+### Troubleshooting
+
+**No metadata extracted for a site:**
+1. Check if the site's version is correct in config.py
+2. Verify the site exists on Arquivo.pt: `https://arquivo.pt/noFrame/replay/VERSION/site.com`
+3. Run with `--verbose` flag to see detailed logs
+4. Increase `--timeout` if the site is slow to respond
+
+**TSV file not created:**
+1. Check file permissions in the output directory
+2. Ensure the output path is valid
+3. Check logs for specific error message
+
+### Integration with the Web App
+
+The Memorial web application (memorial.py) can use metadata extracted by this module:
+
+1. Use `extract_metadata_for_configured_sites()` during deployment to pre-compute data
+2. Store results in cache for faster page loads
+3. Update metadata periodically using the CLI tool in a cron job
+
 ### Project Structure
 
 ```
 memorial/
 ├── memorial.py           # Main Quart async application
 ├── config.py            # Site configuration
+├── data_extractor.py # Data extraction utility library
+├── extract_data_for_sites.py  # CLI tool for metadata extraction
+├── example_metadata_extraction.py # Examples demonstrating metadata utilities
 ├── pyproject.toml       # Project metadata and dependencies
 ├── setup.py             # Backwards compatibility setup file
 ├── Makefile             # Development automation tasks
 ├── hypercorn.toml       # Hypercorn ASGI server configuration
 ├── Dockerfile           # Docker container definition
+├── README.md            # This file
+├── METADATA_EXTRACTION.md # Detailed metadata extraction documentation
 ├── static/              # Static assets (CSS, images, robots.txt)
 ├── templates/           # Jinja2 templates
 └── tests/               # Test suite (76 async tests, 98% coverage)
