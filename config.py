@@ -1,6 +1,5 @@
-# Managed on google sheet: https://docs.google.com/spreadsheets/d/1OGQmQhwl9harDkO9H7JoS84k8_DiVz5k2_LXoBAgXHM/edit#gid=207512202
-# WARN do not update this file manually!
-# It should be updated using update-from-sheets.py script that is located on this repository base folder.
+# Configuration just for local development
+IMAGES_FOLDER = "../memorial-site-images/img"
 
 ARCHIVE_CONFIG = {
 
@@ -31,66 +30,66 @@ ARCHIVE_CONFIG = {
         'version': '20190424172251',
         'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
         'message_en': 'This page is digitally preserved by the Arquivo.pt, under a collaboration protocol with the Centro de Gestão da Rede Informática do Governo.',
-        'logo': '/static/img/sites/natolisboa2010.jpg',
+        'logo': 'natolisboa2010_gov_pt.jpg',
     },
 
     'dislikebullyinghomofobico.gov.pt': {
         'version': '20190424172246',
         'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
         'message_en': 'This page is digitally preserved by the Arquivo.pt, under a collaboration protocol with the Centro de Gestão da Rede Informática do Governo.',
-        'logo': '/static/img/sites/dislikebullyinghomofobico.jpg',
+        'logo': 'dislikebullyinghomofobico_gov_pt.jpg',
     },
 
     'natomedicalconference2009.gov.pt': {
         'version': '20190424165218',
         'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
         'message_en': 'This page is digitally preserved by the Arquivo.pt, under a collaboration protocol with the Centro de Gestão da Rede Informática do Governo.',
-        'logo': '/static/img/sites/natomedicalconference2009.jpg',
+        'logo': 'natomedicalconference2009_gov_pt.jpg',
     },
 
     'pepal.gov.pt': {
         'version': '20190424163439',
         'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
         'message_en': 'This page is digitally preserved by the Arquivo.pt, under a collaboration protocol with the Centro de Gestão da Rede Informática do Governo.',
-        'logo': '/static/img/sites/pepal.jpg',
+        'logo': 'pepal_gov_pt.jpg',
     },
 
     'knetworks.gov.pt': {
         'version': '20190424165218',
         'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
         'message_en': 'This page is digitally preserved by the Arquivo.pt, under a collaboration protocol with the Centro de Gestão da Rede Informática do Governo.',
-        'logo': '/static/img/sites/knetworks.png',
+        'logo': 'knetworks_gov_pt.png',
     },
 
     'disaster-recovery.gov.pt': {
         'version': '20190424165203',
         'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
-        'logo': '/static/img/sites/disaster-recovery.gif',
+        'logo': 'disaster-recovery_gov_pt.gif',
     },
 
     'redesdoconhecimento.gov.pt': {
         'version': '20190424170738',
         'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
         'message_en': 'This page is digitally preserved by the Arquivo.pt, under a collaboration protocol with the Centro de Gestão da Rede Informática do Governo.',
-        'logo': '/static/img/sites/redesdoconhecimento.png',
+        'logo': 'redesdoconhecimento_gov_pt.png',
     },
 
     'diadomar.mdn.gov.pt': {
         'version': '20061117092548',
         'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
-        'logo': '/static/img/sites/diadomar.png',
+        'logo': 'diadomar_mdn_gov_pt.png',
     },
 
     'missaovenezuela.gov.pt': {
         'version': '20160211010406',
         'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
-        'logo': '/static/img/sites/missaovenezuela.png',
+        'logo': 'missaovenezuela_gov_pt.png',
     },
 
     'religare.gov.pt': {
         'version': '20191204111700',
         'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
-        'logo': '/static/img/sites/religare.png',
+        'logo': 'religare_gov_pt.png',
     },
 
     'ticsociedade.pt': {
@@ -127,7 +126,7 @@ ARCHIVE_CONFIG = {
 
     'minema.di.fc.ul.pt': {
         'version': '20191126170837',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'minema_di_fc_ul_pt.png',
     },
 
     'icolc.fccn.pt': {
@@ -166,17 +165,17 @@ ARCHIVE_CONFIG = {
     'english.umic.pt': {
         'version': '20170831175908',
         'default_language': 'en',
-        'message_en': 'UMIC - Knowledge Society Agency was a public institute that existed from January 2005 to February 2012, whose functions were transferred to <a href="https://www.fct.pt/dsi/index.phtml.en">FCT, I.P.</a>',
+        'message_en': 'UMIC - Knowledge Society Agency was a public institute that existed from January 2005 to February 2012, whose functions were transferred to <a href=""https://www.fct.pt/dsi/index.phtml.en"">FCT, I.P.</a>',
         'link_pt': 'http://www.umic.pt',
-        'logo': '/static/img/sites/umic_en.gif',
+        'logo': 'english_umic_pt.gif',
     },
 
     'umic.pt': {
         'version': '20170831104506',
         'default_language': 'pt',
-        'message_pt': 'A UMIC – Agência para a Sociedade do Conhecimento, foi um Instituto Público que existiu de janeiro de 2005 a fevereiro de 2012, cujas funções transitaram para a <a href="https://www.fct.pt/dsi/">FCT, I.P.</a>',
+        'message_pt': 'A UMIC – Agência para a Sociedade do Conhecimento, foi um Instituto Público que existiu de janeiro de 2005 a fevereiro de 2012, cujas funções transitaram para a <a href=""https://www.fct.pt/dsi/"">FCT, I.P.</a>',
         'link_en': 'http://www.english.umic.pt',
-        'logo': '/static/img/sites/umic.gif',
+        'logo': 'umic_pt.gif',
     },
 
     'gridcomputing.pt': {
@@ -193,222 +192,222 @@ ARCHIVE_CONFIG = {
 
     'senior3045.ipportalegre.pt': {
         'version': '20200117175504',
-        'message_pt': 'O programa <i>Fulbright Senior Specialist</i> sobre "Apoios aos Alunos" (<i>Support to Students</i>) decorreu no Instituto Politécnico de Portalegre em 2009 com a colaboração do Professor Katta G. Murty da Universidade do Michigan (EUA).',
+        'message_pt': 'O programa <i>Fulbright Senior Specialist</i> sobre ""Apoios aos Alunos"" (<i>Support to Students</i>) decorreu no Instituto Politécnico de Portalegre em 2009 com a colaboração do Professor Katta G. Murty da Universidade do Michigan (EUA).',
         'message_en': 'The program <i>Fulbright Senior Specialist</i> about <i>Support to Students</i> took place at the Instituto Politécnico de Portalegre in 2009 with the collaboration of Professor Katta G. Murty of the University of Michigan (USA).',
-        'logo': '/static/img/sites/senior3045.png',
+        'logo': 'senior3045_ipportalegre_pt.png',
     },
 
     'inst-informatica.pt': {
         'version': '20201124112929',
         'message_pt': 'Este sítio Web encontra-se preservado digitalmente pelo Arquivo.pt numa colaboração com a Entidade de Serviços Partilhados da Administração Pública (eSPap, I.P.)',
         'message_en': 'This page is digitally preserved by the Arquivo.pt in collaboration with the Entidade de Serviços Partilhados da Administração Pública (eSPap, I.P.)',
-        'logo': '/static/img/sites/inst-informatica.png',
+        'logo': 'inst-informatica_pt.png',
     },
 
     'degois.pt': {
         'version': '20191031145127',
-        'message_pt': 'A plataforma de gestão curricular DeGóis foi descontinuada em maio de 2021 e substituída pelo <strong>CIÊNCIA</strong>VITAE. Se deseja pesquisar ou editar CVs por favor aceda à <a href="https://www.cienciavitae.pt/"><strong>plataforma CIÊNCIA</strong>VITAE</a>.<br><br>Poderá aceder à versão do currículo DeGóis preservada pelo Arquivo.pt.',
-        'logo': '/static/img/sites/degois.jpg',
+        'message_pt': 'A plataforma de gestão curricular DeGóis foi descontinuada em maio de 2021 e substituída pelo <strong>CIÊNCIA</strong>VITAE. Se deseja pesquisar ou editar CVs por favor aceda à <a href=""https://www.cienciavitae.pt/""><strong>plataforma CIÊNCIA</strong>VITAE</a>.<br><br>Poderá aceder à versão do currículo DeGóis preservada pelo Arquivo.pt.',
+        'logo': 'degois_pt.jpg',
     },
 
     'cfcul.fc.ul.pt': {
         'version': '20210429144438',
-        'message_pt': 'O site do Centro de Filosofia das Ciências da Universidade de Lisboa agora é <a href="https://cfcul.ciencias.ulisboa.pt">cfcul.ciencias.ulisboa.pt</a><br><br>O site cfcul.fc.ul.pt foi desativado.',
+        'message_pt': 'O site do Centro de Filosofia das Ciências da Universidade de Lisboa agora é <a href=""https://cfcul.ciencias.ulisboa.pt"">cfcul.ciencias.ulisboa.pt</a><br><br>O site cfcul.fc.ul.pt foi desativado.',
     },
 
     'tenhoumacrianca.gov.pt': {
         'version': '20210512132104',
-        'message_pt': 'O site Tenho Uma Criança foi descontinuado e substituído pelo <a href="https://eportugal.gov.pt/cidadaos/ter-uma-crianca">guia prático "Ter uma criança", disponível no portal ePortugal</a> com informação revista e atualizada.',
-        'logo': '/static/img/sites/tenhoumacrianca.png',
+        'message_pt': 'O site Tenho Uma Criança foi descontinuado e substituído pelo <a href=""https://eportugal.gov.pt/cidadaos/ter-uma-crianca"">guia prático ""Ter uma criança"", disponível no portal ePortugal</a> com informação revista e atualizada.',
+        'logo': 'tenhoumacrianca_gov_pt.png',
     },
 
     'ocorvo.pt': {
         'version': '20211013150452',
         'message_pt': 'O jornal O Corvo (www.ocorvo.pt) teve actividade editorial entre 1 de Março de 2013 e 29 de Maio de 2019. Toda a produção jornalística desse período encontra-se preservada no portal público Arquivo.pt.',
-        'logo': '/static/img/sites/ocorvo.png',
+        'logo': 'ocorvo_pt.png',
     },
 
     'disepla.fc.ul.pt': {
         'version': '20210916175431',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'disepla_fc_ul_pt.png',
     },
 
     'gi3ceaul.fc.ul.pt': {
         'version': '20210302073718',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'gi3ceaul_fc_ul_pt.png',
     },
 
     'sesul.fc.ul.pt': {
         'version': '20210916181300',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'sesul_fc_ul_pt.png',
     },
 
     'solea.fc.ul.pt': {
         'version': '20210916172953',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'solea_fc_ul_pt.png',
     },
 
     'oe2017.gov.pt': {
         'version': '20190424180803',
         'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
-        'logo': '/static/img/sites/oe2017.jpg',
+        'logo': 'oe2017_gov_pt.jpg',
     },
 
     'oe2018.gov.pt': {
         'version': '20190426132611',
         'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
-        'logo': '/static/img/sites/oe2018.jpg',
+        'logo': 'oe2018_gov_pt.jpg',
     },
 
     'oe2019.gov.pt': {
         'version': '20190424163818',
         'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
-        'logo': '/static/img/sites/oe2019.jpg',
+        'logo': 'oe2019_gov_pt.jpg',
     },
 
     'oe2020.gov.pt': {
         'version': '20211119134139',
         'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
-        'logo': '/static/img/sites/oe2020.jpg',
+        'logo': 'oe2020_gov_pt.jpg',
     },
 
     'portugalin.gov.pt': {
         'version': '20190424172310',
         'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
         'message_en': 'This page is digitally preserved by the Arquivo.pt, under a collaboration protocol with the Centro de Gestão da Rede Informática do Governo.',
-        'logo': '/static/img/sites/portugalin.jpg',
+        'logo': 'portugalin_gov_pt.jpg',
     },
 
     'comemoracoesdireitoshumanos.gov.pt': {
         'version': '20190424165245',
         'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
-        'logo': '/static/img/sites/comemoracoesdireitoshumanos.jpg',
+        'logo': 'comemoracoesdireitoshumanos_gov_pt.jpg',
     },
 
     'istplisbon18.gov.pt': {
         'version': '20190424163742',
         'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
         'message_en': 'This page is digitally preserved by the Arquivo.pt, under a collaboration protocol with the Centro de Gestão da Rede Informática do Governo.',
-        'logo': '/static/img/sites/istplisbon18.jpg',
+        'logo': 'istplisbon18_gov_pt.jpg',
     },
 
     'antonioguterres.gov.pt': {
         'version': '20190424172312',
         'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
         'message_en': 'This page is digitally preserved by the Arquivo.pt, under a collaboration protocol with the Centro de Gestão da Rede Informática do Governo.',
-        'logo': '/static/img/sites/antonioguterres.jpg',
+        'logo': 'antonioguterres_gov_pt.jpg',
     },
 
     'prestarcontas.gov.pt': {
         'version': '20211122104715',
         'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
-        'logo': '/static/img/sites/prestarcontas.jpg',
+        'logo': 'prestarcontas_gov_pt.jpg',
     },
 
     'paineissolares.gov.pt': {
         'version': '20190424165145',
         'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
-        'logo': '/static/img/sites/paineissolares.jpg',
+        'logo': 'paineissolares_gov_pt.jpg',
     },
 
     'jaf35.campus.ciencias.ulisboa.pt': {
         'version': '20220628195550',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'jaf35_campus_ciencias_ulisboa_pt.png',
     },
 
     'paris-isp.campus.ciencias.ulisboa.pt': {
         'version': '20220708101621',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'paris-isp_campus_ciencias_ulisboa_pt.png',
     },
 
     'jobshop2016.campus.ciencias.ulisboa.pt': {
         'version': '20220708101618',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'jobshop2016_campus_ciencias_ulisboa_pt.png',
     },
 
     'jobshop2017.campus.ciencias.ulisboa.pt': {
         'version': '20220708101617',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'jobshop2017_campus_ciencias_ulisboa_pt.png',
     },
 
     'gemab.campus.ciencias.ulisboa.pt': {
         'version': '20220708101616',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'gemab_campus_ciencias_ulisboa_pt.png',
     },
 
     'matfin.campus.ciencias.ulisboa.pt': {
         'version': '20220708104042',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'matfin_campus_ciencias_ulisboa_pt.png',
     },
 
     'netopt2017.campus.ciencias.ulisboa.pt': {
         'version': '20220708104042',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'netopt2017_campus_ciencias_ulisboa_pt.png',
     },
 
     'netopt2020.campus.ciencias.ulisboa.pt': {
         'version': '20220708104047',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'netopt2020_campus_ciencias_ulisboa_pt.png',
     },
 
     'netopt2018.campus.ciencias.ulisboa.pt': {
         'version': '20220708104044',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'netopt2018_campus_ciencias_ulisboa_pt.png',
     },
 
     'netopt2019.campus.ciencias.ulisboa.pt': {
         'version': '20220708104047',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'netopt2019_campus_ciencias_ulisboa_pt.png',
     },
 
     'jornadasqt2017.campus.ciencias.ulisboa.pt': {
         'version': '20220708104048',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'jornadasqt2017_campus_ciencias_ulisboa_pt.png',
     },
 
     'cameron17.campus.ciencias.ulisboa.pt': {
         'version': '20220708104048',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'cameron17_campus_ciencias_ulisboa_pt.png',
     },
 
     'hsl2017.campus.ciencias.ulisboa.pt': {
         'version': '20220708104422',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'hsl2017_campus_ciencias_ulisboa_pt.png',
     },
 
     'zooarchaeology30.campus.ciencias.ulisboa.pt': {
         'version': '20210628082016',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'zooarchaeology30_campus_ciencias_ulisboa_pt.png',
     },
 
     'bed10.rd.ciencias.ulisboa.pt': {
         'version': '20220708104056',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'bed10_rd_ciencias_ulisboa_pt.png',
     },
 
     'bioclub.campus.ciencias.ulisboa.pt': {
         'version': '20220708104057',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'bioclub_campus_ciencias_ulisboa_pt.png',
     },
 
     'sciencephoto.campus.ciencias.ulisboa.pt': {
         'version': '20220708104058',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'sciencephoto_campus_ciencias_ulisboa_pt.png',
     },
 
     'le-workshop.rd.ciencias.ulisboa.pt': {
         'version': '20220708104100',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'le-workshop_rd_ciencias_ulisboa_pt.png',
     },
 
     'dil2020.campus.ciencias.ulisboa.pt': {
         'version': '20220708104102',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'dil2020_campus_ciencias_ulisboa_pt.png',
     },
 
     'netopt2011.fc.ul.pt': {
         'version': '20141001114443',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'netopt2011_fc_ul_pt.png',
     },
 
     'e-escola.tecnico.ulisboa.pt': {
@@ -418,19 +417,19 @@ ARCHIVE_CONFIG = {
     'pees.gov.pt': {
         'version': '20200616122659',
         'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
-        'logo': '/static/img/sites/pees.png',
+        'logo': 'pees_gov_pt.png',
     },
 
     'oe2021.gov.pt': {
         'version': '20211119134331',
         'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt, ao abrigo de um protocolo de colaboração com o Centro de Gestão da Rede Informática do Governo.',
-        'logo': '/static/img/sites/oe2021.png',
+        'logo': 'oe2021_gov_pt.png',
     },
 
     'confdados.rcaap.pt': {
         'version': '20230315161520',
-        'message_pt': 'A Conferência de Dados de Investigação e Ciência Aberta, "Rumo a uma estratégia nacional", foi realizada a 22 setembro 2016, na Faculdade de Psicologia e Ciências da Educação da U.PORTO.',
-        'logo': '/static/img/sites/confdadosrcaap.png',
+        'message_pt': 'A Conferência de Dados de Investigação e Ciência Aberta, ""Rumo a uma estratégia nacional"", foi realizada a 22 setembro 2016, na Faculdade de Psicologia e Ciências da Educação da U.PORTO.',
+        'logo': 'confdados_rcaap_pt.png',
     },
 
     'acompanhamento-eb1.rcts.pt': {
@@ -475,458 +474,458 @@ ARCHIVE_CONFIG = {
 
     'ccenggeo.fc.ul.pt': {
         'version': '20050830005946',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'ccenggeo_fc_ul_pt.png',
     },
 
     'adsorption.fc.ul.pt': {
         'version': '20230321162217',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'adsorption_fc_ul_pt.png',
     },
 
     'beachtocanyon.rd.ciencias.ulisboa.pt': {
         'version': '20210727090949',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'beachtocanyon_rd_ciencias_ulisboa_pt.png',
     },
 
     'cbv.fc.ul.pt': {
         'version': '20210301235540',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'cbv_fc_ul_pt.png',
     },
 
     'cebv.fc.ul.pt': {
         'version': '20091217171641',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'cebv_fc_ul_pt.png',
     },
 
     'chcul.fc.ul.pt': {
         'version': '20150413211317',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'chcul_fc_ul_pt.png',
     },
 
     'ecofun.fc.ul.pt': {
         'version': '20160206233414',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'ecofun_fc_ul_pt.png',
     },
 
     # ecossistemas.org has been removed at 2023-05-31
     'electro.fc.ul.pt': {
         'version': '20131105202617',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'electro_fc_ul_pt.png',
     },
 
     'ewi2007.fc.ul.pt': {
         'version': '20090924194841',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'ewi2007_fc_ul_pt.png',
     },
 
     'ffishgul.fc.ul.pt': {
         'version': '20131105213041',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'ffishgul_fc_ul_pt.png',
     },
 
     'frhn.cqb.fc.ul.pt': {
         'version': '20110522164058',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'frhn_cqb_fc_ul_pt.png',
     },
 
     'lcmbt.fc.ul.pt': {
         'version': '20230319134222',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'lcmbt_fc_ul_pt.png',
     },
 
     'lmg.fc.ul.pt': {
         'version': '20091217192525',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'lmg_fc_ul_pt.png',
     },
 
     'massspec.cqb.fc.ul.pt': {
         'version': '20110520123324',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'massspec_cqb_fc_ul_pt.png',
     },
 
     'mit.fc.ul.pt': {
         'version': '20100531200658',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'mit_fc_ul_pt.png',
     },
 
     'netejo.fc.ul.pt': {
         'version': '20100531202344',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'netejo_fc_ul_pt.png',
     },
 
     'netopt2009.fc.ul.pt': {
         'version': '20131106013959',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'netopt2009_fc_ul_pt.png',
     },
 
     'nidos.cqb.fc.ul.pt': {
         'version': '20100531202344',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'nidos_cqb_fc_ul_pt.png',
     },
 
     'serreta-creminer.fc.ul.pt': {
         'version': '20070219200346',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'serreta-creminer_fc_ul_pt.png',
     },
 
     'solar.fc.ul.pt': {
         'version': '20100602025750',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'solar_fc_ul_pt.png',
     },
 
     'spq-grupocromatografia.fc.ul.pt': {
         'version': '20040819180609',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'spq-grupocromatografia_fc_ul_pt.png',
     },
 
     'swim.ul.pt': {
         'version': '20230319190335',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'swim_ul_pt.png',
     },
 
     '10mag.fc.ul.pt': {
         'version': '20230319191446',
-        'logo': '/static/img/sites/fc.png',
+        'logo': '10mag_fc_ul_pt.png',
     },
 
     '7ip.fc.ul.pt': {
         'version': '20230319192803',
-        'logo': '/static/img/sites/fc.png',
+        'logo': '7ip_fc_ul_pt.png',
     },
 
     'bioeng2003.fc.ul.pt': {
         'version': '20040606040540',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'bioeng2003_fc_ul_pt.png',
     },
 
     'coastalhope2010.fc.ul.pt': {
         'version': '20131105210450',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'coastalhope2010_fc_ul_pt.png',
     },
 
     'cormv.fc.ul.pt': {
         'version': '20100531173533',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'cormv_fc_ul_pt.png',
     },
 
     'criptogamica2009.fc.ul.pt': {
         'version': '20091217172824',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'criptogamica2009_fc_ul_pt.png',
     },
 
     'csource.fc.ul.pt': {
         'version': '20230320104006',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'csource_fc_ul_pt.png',
     },
 
     'enec.fc.ul.pt': {
         'version': '20031218060734',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'enec_fc_ul_pt.png',
     },
 
     'energia2020.fc.ul.pt': {
         'version': '20100611081224',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'energia2020_fc_ul_pt.png',
     },
 
     'eupa2010.fc.ul.pt': {
         'version': '20110120221018',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'eupa2010_fc_ul_pt.png',
     },
 
     'eurocarbxi.fc.ul.pt': {
         'version': '20011129090219',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'eurocarbxi_fc_ul_pt.png',
     },
 
     'fisiolveg.fc.ul.pt': {
         'version': '20051001033457',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'fisiolveg_fc_ul_pt.png',
     },
 
     'flatfish2008.fc.ul.pt': {
         'version': '20090925194109',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'flatfish2008_fc_ul_pt.png',
     },
 
     'fronteirasmat.fc.ul.pt': {
         'version': '20100609231126',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'fronteirasmat_fc_ul_pt.png',
     },
 
     'geomod2010.fc.ul.pt': {
         'version': '20140926133013',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'geomod2010_fc_ul_pt.png',
     },
 
     'iberpaleo2010.fc.ul.pt': {
         'version': '20131105230358',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'iberpaleo2010_fc_ul_pt.png',
     },
 
     'ieb2011.fc.ul.pt': {
         'version': '20131105230401',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'ieb2011_fc_ul_pt.png',
     },
 
     'ina.fc.ul.pt': {
         'version': '20070613235326',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'ina_fc_ul_pt.png',
     },
 
     'iseo2012.fc.ul.pt': {
         'version': '20131105230422',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'iseo2012_fc_ul_pt.png',
     },
 
     'matsemlimites.fc.ul.pt': {
         'version': '20131106003908',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'matsemlimites_fc_ul_pt.png',
     },
 
     'ms2010.fc.ul.pt': {
         'version': '20140927163451',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'ms2010_fc_ul_pt.png',
     },
 
     'mustelid.fc.ul.pt': {
         'version': '20100531202908',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'mustelid_fc_ul_pt.png',
     },
 
     'mwplisbon2010.fc.ul.pt': {
         'version': '20110124015129',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'mwplisbon2010_fc_ul_pt.png',
     },
 
     'nutri.fc.ul.pt': {
         'version': '20050323102415',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'nutri_fc_ul_pt.png',
     },
 
     'opti2004.fc.ul.pt': {
         'version': '20040729225010',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'opti2004_fc_ul_pt.png',
     },
 
     'polyploidymeeting.fc.ul.pt': {
         'version': '20110121080340',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'polyploidymeeting_fc_ul_pt.png',
     },
 
     'ria2010.fc.ul.pt': {
         'version': '20230319193603',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'ria2010_fc_ul_pt.png',
     },
 
     'secm.fc.ul.pt': {
         'version': '20040331134313',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'secm_fc_ul_pt.png',
     },
 
     'spe2012.fc.ul.pt': {
         'version': '20131106084421',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'spe2012_fc_ul_pt.png',
     },
 
     'stam2010.fc.ul.pt': {
         'version': '20100806132743',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'stam2010_fc_ul_pt.png',
     },
 
     'tristan4.fc.ul.pt': {
         'version': '20010724005923',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'tristan4_fc_ul_pt.png',
     },
 
     'ycw.fc.ul.pt': {
         'version': '20051118174424',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'ycw_fc_ul_pt.png',
     },
 
     'bmg.fc.ul.pt': {
         'version': '20181010200038',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'bmg_fc_ul_pt.png',
     },
 
     'geofisica.fc.ul.pt': {
         'version': '20050525081753',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'geofisica_fc_ul_pt.png',
     },
 
     'iio.fc.ul.pt': {
         'version': '20050721131252',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'iio_fc_ul_pt.png',
     },
 
     'logtrans2012.fc.ul.pt': {
         'version': '20141001114543',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'logtrans2012_fc_ul_pt.png',
     },
 
     'ma.fc.ul.pt': {
         'version': '20131106003621',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'ma_fc_ul_pt.png',
     },
 
     'matset.fc.ul.pt': {
         'version': '20131106003908',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'matset_fc_ul_pt.png',
     },
 
     'mgi.fc.ul.pt': {
         'version': '20150418034153',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'mgi_fc_ul_pt.png',
     },
 
     'nanomedicina.fc.ul.pt': {
         'version': '20230319200119',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'nanomedicina_fc_ul_pt.png',
     },
 
     'pl.fc.ul.pt': {
         'version': '20230316213745',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'pl_fc_ul_pt.png',
     },
 
     'workshoptejo.fc.ul.pt': {
         'version': '20091217224556',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'workshoptejo_fc_ul_pt.png',
     },
 
     'sign.fc.ul.pt': {
         'version': '20230321162514',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'sign_fc_ul_pt.png',
     },
 
     'aicsorraia.fc.ul.pt': {
         'version': '20091217232958',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'aicsorraia_fc_ul_pt.png',
     },
 
     'enzymology.fc.ul.pt': {
         'version': '20230321162221',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'enzymology_fc_ul_pt.png',
     },
 
     'eurachem2011.fc.ul.pt': {
         'version': '20110630222405',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'eurachem2011_fc_ul_pt.png',
     },
 
     'evos.fc.ul.pt': {
         'version': '20230316213755',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'evos_fc_ul_pt.png',
     },
 
     'ralisolar2011.fc.ul.pt': {
         'version': '20110701111624',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'ralisolar2011_fc_ul_pt.png',
     },
 
     'revista.educ.fc.ul.pt': {
         'version': '20120121130713',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'revista_educ_fc_ul_pt.png',
     },
 
     'sabcompdesenv.fc.ul.pt': {
         'version': '20230319200521',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'sabcompdesenv_fc_ul_pt.png',
     },
 
     'area.fc.ul.pt': {
         'version': '20070613000645',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'area_fc_ul_pt.png',
     },
 
     'azolla.fc.ul.pt': {
         'version': '20170214164640',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'azolla_fc_ul_pt.png',
     },
 
     'baag.fc.ul.pt': {
         'version': '20230320093553',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'baag_fc_ul_pt.png',
     },
 
     'cids.fc.ul.pt': {
         'version': '20100609231105',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'cids_fc_ul_pt.png',
     },
 
     'giardiarisk.fc.ul.pt': {
         'version': '20120126142552',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'giardiarisk_fc_ul_pt.png',
     },
 
     'habcol.fc.ul.pt': {
         'version': '20100610035458',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'habcol_fc_ul_pt.png',
     },
 
     'ica.fc.ul.pt': {
         'version': '20131105230359',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'ica_fc_ul_pt.png',
     },
 
     'if.fc.ul.pt': {
         'version': '20030325143605',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'if_fc_ul_pt.png',
     },
 
     'insectamadeira.fc.ul.pt': {
         'version': '20150416142932',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'insectamadeira_fc_ul_pt.png',
     },
 
     'learnc3s.fc.ul.pt': {
         'version': '20230316213813',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'learnc3s_fc_ul_pt.png',
     },
 
     'lisboncisa.fc.ul.pt': {
         'version': '20230320094332',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'lisboncisa_fc_ul_pt.png',
     },
 
     'liscos.fc.ul.pt': {
         'version': '20030720100054',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'liscos_fc_ul_pt.png',
     },
 
     'matematicaabrincar.fc.ul.pt': {
         'version': '20091218222739',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'matematicaabrincar_fc_ul_pt.png',
     },
 
     'megahazards.fc.ul.pt': {
         'version': '20160208095626',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'megahazards_fc_ul_pt.png',
     },
 
     'nurseries.fc.ul.pt': {
         'version': '20230320103744',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'nurseries_fc_ul_pt.png',
     },
 
     'obrascompletas-dm.fc.ul.pt': {
         'version': '20120123224303',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'obrascompletas-dm_fc_ul_pt.png',
     },
 
     'oincendio.fc.ul.pt': {
         'version': '20230320104540',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'oincendio_fc_ul_pt.png',
     },
 
     'parquedeestufas.fc.ul.pt': {
         'version': '20131115044517',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'parquedeestufas_fc_ul_pt.png',
     },
 
     'perarocha.fc.ul.pt': {
         'version': '20230319132800',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'perarocha_fc_ul_pt.png',
     },
 
     'medidasjustica.portugal.gov.pt': {
@@ -958,14 +957,14 @@ ARCHIVE_CONFIG = {
         'version': '20231214181149',
         'message_pt': 'O sítio web apin.gov.pt foi descontinuado.',
         'message_en': 'The site apin.gov.pt has been disabled.',
-        'logo': '/static/img/sites/apin.gov.pt.png',
+        'logo': 'apin_gov_pt.png',
     },
 
     'imigrante.sef.pt': {
         'version': '20231215193203',
-        'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt. Os conteúdos atualizados estão disponíveis no endereço <a href="https://aima.gov.pt/">www.aima.gov.pt</a>.',
-        'message_en': 'This page is digitally preserved by Arquivo.pt. The updated contents are available at <a href="https://aima.gov.pt/">www.aima.gov.pt</a>. ',
-        'logo': '/static/img/sites/imigrante_sef_pt.jpg',
+        'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt. Os conteúdos atualizados estão disponíveis no endereço <a href=""https://aima.gov.pt/"">www.aima.gov.pt</a>.',
+        'message_en': 'This page is digitally preserved by Arquivo.pt. The updated contents are available at <a href=""https://aima.gov.pt/"">www.aima.gov.pt</a>. ',
+        'logo': 'imigrante_sef_pt.jpg',
     },
 
     'former.fct.pt': {
@@ -974,147 +973,147 @@ ARCHIVE_CONFIG = {
 
     'aml.fc.ul.pt': {
         'version': '20240115155817',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'aml_fc_ul_pt.png',
     },
 
     'bioconnect.fc.ul.pt': {
         'version': '20240115174012',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'bioconnect_fc_ul_pt.png',
     },
 
     'caul.fc.ul.pt': {
         'version': '20240114135241',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'caul_fc_ul_pt.png',
     },
 
     'cemat.fc.ul.pt': {
         'version': '20240112200634',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'cemat_fc_ul_pt.png',
     },
 
     'ciencia13-14.fc.ul.pt': {
         'version': '20240112200715',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'ciencia13-14_fc_ul_pt.png',
     },
 
     'convergirsustentabilidade.fc.ul.pt': {
         'version': '20240112202425',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'convergirsustentabilidade_fc_ul_pt.png',
     },
 
     'cqb.fc.ul.pt': {
         'version': '20240112203035',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'cqb_fc_ul_pt.png',
     },
 
     'deleuze2013.fc.ul.pt': {
         'version': '20240114135436',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'deleuze2013_fc_ul_pt.png',
     },
 
     'dsabns2015.rd.ciencias.ulisboa.pt': {
         'version': '20240112203652',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'dsabns2015_rd_ciencias_ulisboa_pt.png',
     },
 
     'ecsa54.fc.ul.pt': {
         'version': '20240113163144',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'ecsa54_fc_ul_pt.png',
     },
 
     'ejibce2014.fc.ul.pt': {
         'version': '20240113163539',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'ejibce2014_fc_ul_pt.png',
     },
 
     'energiaescolas.fc.ul.pt': {
         'version': '20240113171801',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'energiaescolas_fc_ul_pt.png',
     },
 
     'filcc-ulutl.fc.ul.pt': {
         'version': '20240113171421',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'filcc-ulutl_fc_ul_pt.png',
     },
 
     'icbo2015.fc.ul.pt': {
         'version': '20240113163807',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'icbo2015_fc_ul_pt.png',
     },
 
     'isco2014.fc.ul.pt': {
         'version': '20240113164043',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'isco2014_fc_ul_pt.png',
     },
 
     'lcms-proteomics.fc.ul.pt': {
         'version': '20240113171940',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'lcms-proteomics_fc_ul_pt.png',
     },
 
     'margulis2012.fc.ul.pt': {
         'version': '20240114121010',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'margulis2012_fc_ul_pt.png',
     },
 
     'miguelramos.fc.ul.pt': {
         'version': '20240113172131',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'miguelramos_fc_ul_pt.png',
     },
 
     'netopt2013.fc.ul.pt': {
         'version': '20240113164730',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'netopt2013_fc_ul_pt.png',
     },
 
     'netopt2015.fc.ul.pt': {
         'version': '20240113165240',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'netopt2015_fc_ul_pt.png',
     },
 
     'philo-sci21.fc.ul.pt': {
         'version': '20240113165642',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'philo-sci21_fc_ul_pt.png',
     },
 
     'ssc.fc.ul.pt': {
         'version': '20240114114312',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'ssc_fc_ul_pt.png',
     },
 
     'worklis2012.fc.ul.pt': {
         'version': '20240113165906',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'worklis2012_fc_ul_pt.png',
     },
 
     'worldsearch.fc.ul.pt': {
         'version': '20240114114720',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'worldsearch_fc_ul_pt.png',
     },
 
     'celc.fc.ul.pt': {
         'version': '20240112194804',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'celc_fc_ul_pt.png',
     },
 
     'bod2015.fc.ul.pt': {
         'version': '20240127195758',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'bod2015_fc_ul_pt.png',
     },
 
     'auladaesfera.fc.ul.pt': {
         'version': '20240128181100',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'auladaesfera_fc_ul_pt.png',
     },
 
     'evolutionarypatterns.fc.ul.pt': {
         'version': '20240114135702',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'evolutionarypatterns_fc_ul_pt.png',
     },
 
     'evolutionschool.fc.ul.pt': {
         'version': '20240113171047',
-        'logo': '/static/img/sites/fc.png',
+        'logo': 'evolutionschool_fc_ul_pt.png',
     },
 
     'blogs.letras.up.pt': {
@@ -1129,7 +1128,7 @@ ARCHIVE_CONFIG = {
         'version': '20240420080302',
         'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt',
         'message_en': 'This page has been digitally preserved by Arquivo.pt',
-        'logo': '/static/img/sites/barometro.png',
+        'logo': 'barometro-covid-19_ensp_unl_pt.png',
     },
 
     'agroreg.uevora.pt': {
@@ -1154,7 +1153,7 @@ ARCHIVE_CONFIG = {
 
     'imigrante.pt': {
         'version': '20211109234156',
-        'logo': '/static/img/sites/imigrante_sef_pt.jpg',
+        'logo': 'imigrante_pt.jpg',
     },
 
     'catedra.uevora.pt': {
@@ -1172,7 +1171,7 @@ ARCHIVE_CONFIG = {
     'diretorio.rcaap.pt': {
         'version': '20230211162333',
         'message_pt': 'O diretório Luso-Brasileiro armazenou repositórios e revistas de Portugal e Brasil entre 2008 e 2023. O serviço foi descontinuado. Podem ser consultados os repositórios e revistas referentes a Portugal na nova plataforma Indexar. No que diz respeito aos repositórios e revistas Brasileiros, estão disponíveis no OASISBR.',
-        'logo': '/static/img/sites/diretorio_rcaap_pt.jpg',
+        'logo': 'diretorio_rcaap_pt.jpg',
     },
 
     'costactiontd1301.rd.ciencias.ulisboa.pt': {
@@ -1187,21 +1186,21 @@ ARCHIVE_CONFIG = {
         'version': '20201015133552',
         'message_pt': 'Este sítio Web encontra-se preservado digitalmente pelo Arquivo.pt numa colaboração com a Entidade de Serviços Partilhados da Administração Pública (eSPap, I.P.)',
         'message_en': 'This page is digitally preserved by the Arquivo.pt in collaboration with the Entidade de Serviços Partilhados da Administração Pública (eSPap, I.P.)',
-        'logo': '/static/img/sites/gerap.gif',
+        'logo': 'gerap_gov_pt.gif',
     },
 
     'ccas.min-financas.pt': {
         'version': '20181026214951',
         'message_pt': 'Este sítio Web encontra-se preservado digitalmente pelo Arquivo.pt numa colaboração com a Entidade de Serviços Partilhados da Administração Pública (eSPap, I.P.)',
         'message_en': 'This page is digitally preserved by the Arquivo.pt in collaboration with the Entidade de Serviços Partilhados da Administração Pública (eSPap, I.P.)',
-        'logo': '/static/img/sites/ccas.min-financas.jpg',
+        'logo': 'ccas_min-financas_pt.jpg',
     },
 
     'seminariogprap.gov.pt': {
         'version': '20181027015332',
         'message_pt': 'Este sítio Web encontra-se preservado digitalmente pelo Arquivo.pt numa colaboração com a Entidade de Serviços Partilhados da Administração Pública (eSPap, I.P.)',
         'message_en': 'This page is digitally preserved by the Arquivo.pt in collaboration with the Entidade de Serviços Partilhados da Administração Pública (eSPap, I.P.)',
-        'logo': '/static/img/sites/seminariogprap.jpg',
+        'logo': 'seminariogprap_gov_pt.jpg',
     },
 
     # www.pdesenvolvimento.pt has been removed at 2025-08-30
@@ -1263,8 +1262,8 @@ ARCHIVE_CONFIG = {
 
     'old.cge.uevora.pt': {
         'version': '20241129143154',
-        'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt. Aceda à <a href="http://old.cge.uevora.pt/sites/">pasta que contém 31 pequenos websites da Universidade de Évora</a>.',
-        'message_en': 'This page has been digitally preserved by Arquivo.pt. Access <a href="http://old.cge.uevora.pt/sites/">the folder containing 31 small websites from Universidade de Évora</a>.',
+        'message_pt': 'Esta página encontra-se preservada digitalmente pelo Arquivo.pt. Aceda à <a href=""http://old.cge.uevora.pt/sites/"">pasta que contém 31 pequenos websites da Universidade de Évora</a>.',
+        'message_en': 'This page has been digitally preserved by Arquivo.pt. Access <a href=""http://old.cge.uevora.pt/sites/"">the folder containing 31 small websites from Universidade de Évora</a>.',
     },
 
     'proclira.uevora.pt': {
@@ -1353,32 +1352,32 @@ ARCHIVE_CONFIG = {
 
     'portugalforukraine.gov.pt': {
         'version': '20231231173918',
-        'logo': '/static/img/sites/portugalforukraine.gov.pt.png',
+        'logo': 'portugalforukraine_gov_pt.png',
     },
 
     'covid19estamoson.gov.pt': {
         'version': '20211122112727',
-        'logo': '/static/img/sites/covid19estamoson.gov.pt.jpg',
+        'logo': 'covid19estamoson_gov_pt.jpg',
     },
 
     'oe2022.gov.pt': {
         'version': '20211122103629',
-        'logo': '/static/img/sites/oe2022.gov.pt.png',
+        'logo': 'oe2022_gov_pt.png',
     },
 
     'oe2023.gov.pt': {
         'version': '20240712051816',
-        'logo': '/static/img/sites/oe2023.gov.pt.png',
+        'logo': 'oe2023_gov_pt.png',
     },
 
     'oe2024.gov.pt': {
         'version': '20240531212323',
-        'logo': '/static/img/sites/oe2024.gov.pt.png',
+        'logo': 'oe2024_gov_pt.png',
     },
 
     'votoantecipado.gov.pt': {
         'version': '20220203001239',
-        'logo': '/static/img/sites/votoantecipado.gov.pt.jpg',
+        'logo': 'votoantecipado_gov_pt.jpg',
     },
 
     'ticeduca2014.ie.ul.pt': {
@@ -1423,16 +1422,16 @@ ARCHIVE_CONFIG = {
 
     'elearning.rcaap.pt': {
         'version': '20251114112859',
-        'message_pt': 'A Plataforma elearning serviu de apoio a processos formais de formação dos utilizadores dos serviços do RCAAP, com a reestruturação dos serviços e a necessidade de atualização de conteúdo, esse mesmo conteúdo foi recriado nos serviços relevantes tais como o <a href="https://projeto.rcaap.pt">RCAAP</a>, <a href="https://www.ptcris.pt">PTCRIS</a> e <a href="https://www.pubin.pt">PUBin</a>.',
-        'message_en': 'The e-learning platform supported formal training processes for RCAAP service users. With the restructuring of services and the need to update content, this content was recreated in relevant services such as <a href="https://projeto. rcaap.pt">RCAAP</a>, <a href="https://www.ptcris.pt">PTCRIS</a> and <a href="https://www.pubin.pt">PUBin</a>.',
-        'logo': '/static/img/sites/elearning_rcaap_pt.png',
+        'message_pt': 'A Plataforma elearning serviu de apoio a processos formais de formação dos utilizadores dos serviços do RCAAP, com a reestruturação dos serviços e a necessidade de atualização de conteúdo, esse mesmo conteúdo foi recriado nos serviços relevantes tais como o <a href=""https://projeto.rcaap.pt"">RCAAP</a>, <a href=""https://www.ptcris.pt"">PTCRIS</a> e <a href=""https://www.pubin.pt"">PUBin</a>.',
+        'message_en': 'The e-learning platform supported formal training processes for RCAAP service users. With the restructuring of services and the need to update content, this content was recreated in relevant services such as <a href=""https://projeto. rcaap.pt"">RCAAP</a>, <a href=""https://www.ptcris.pt"">PTCRIS</a> and <a href=""https://www.pubin.pt"">PUBin</a>.',
+        'logo': 'elearning_rcaap_pt.png',
     },
 
     'conferencias.rcaap.pt': {
         'version': '20260114125438',
-        'message_pt': 'Esta conferência pretendeu reunir as comunidades portuguesas e brasileiras que desenvolvem atividades, nomeadamente de investigação, de desenvolvimento, de gestão de serviços e de definição de políticas, relacionadas com o acesso aberto ao conhecimento, através de repositórios e de revistas de acesso aberto. Este evento alargou a sua abrangência passando a designar-se <a href="https://confoa.rcaap.pt/">Conferência Lusófona de Ciência Aberta</a>.',
-        'message_en': 'This conference aimed to bring together Portuguese and Brazilian communities involved in activities such as research, development, service management and policy-making related to open access to knowledge through open access repositories and journals. This event broadened its scope and is now called the <a href="https://confoa.rcaap.pt/">Conferência Lusófona de Ciência Aberta</a>.',
-        'logo': '/static/img/sites/conferencias_rcaap_pt.jpg',
+        'message_pt': 'Esta conferência pretendeu reunir as comunidades portuguesas e brasileiras que desenvolvem atividades, nomeadamente de investigação, de desenvolvimento, de gestão de serviços e de definição de políticas, relacionadas com o acesso aberto ao conhecimento, através de repositórios e de revistas de acesso aberto. Este evento alargou a sua abrangência passando a designar-se <a href=""https://confoa.rcaap.pt/"">Conferência Lusófona de Ciência Aberta</a>.',
+        'message_en': 'This conference aimed to bring together Portuguese and Brazilian communities involved in activities such as research, development, service management and policy-making related to open access to knowledge through open access repositories and journals. This event broadened its scope and is now called the <a href=""https://confoa.rcaap.pt/"">Conferência Lusófona de Ciência Aberta</a>.',
+        'logo': 'conferencias_rcaap_pt.jpg',
     },
 
     'feiradoemprego2024.uevora.pt': {
@@ -1447,12 +1446,14 @@ ARCHIVE_CONFIG = {
         'version': '20260121174333',
         'default_language': 'en',
         'message_en': 'The EPILEPSIAE project (EU FP7 Grantt 211713) aims to explore technology of brain-computer interaction to enhance human life and to use Information and Communication Technologies to empower the epileptic patients to monitor their own risks and improve their safety in daily life, strengthening their social integration.',
-        'logo': '/static/img/sites/epilepsiae_eu.jpg',
+        'logo': 'epilepsiae_eu.jpg',
     },
 
     'sg.pcm.gov.pt': {
         'version': '20260430100922',
     },
+
+
 
 }
 
