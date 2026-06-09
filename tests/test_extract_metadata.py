@@ -1,4 +1,4 @@
-"""Test suite for extract_data_for_sites.py command-line tool.
+"""Test suite for extract_metadata.py command-line tool.
 
 Tests cover:
 - Command-line argument parsing and validation
@@ -57,20 +57,20 @@ class TestSingleSiteExtraction:
 
     def test_single_site_extraction_success(self, mock_data, capsys):
         """Test successful extraction for a single site."""
-        with patch("extract_data_for_sites.extract_site_metadata", return_value=mock_data):
-            with patch("extract_data_for_sites.export_to_tsv"):
+        with patch("extract_metadata.extract_site_metadata", return_value=mock_data):
+            with patch("extract_metadata.export_to_tsv"):
                 with patch.object(
                     sys,
                     "argv",
                     [
-                        "extract_data_for_sites.py",
+                        "extract_metadata.py",
                         "--site",
                         "example.com",
                         "--version",
                         "20200101120000",
                     ],
                 ):
-                    from extract_data_for_sites import main
+                    from extract_metadata import main
 
                     result = main()
 
@@ -81,20 +81,20 @@ class TestSingleSiteExtraction:
 
     def test_single_site_no_metadata(self, mock_title, capsys):
         """Test single site extraction when no metadata found."""
-        with patch("extract_data_for_sites.extract_site_metadata", return_value=(mock_title, [])):
-            with patch("extract_data_for_sites.export_to_tsv"):
+        with patch("extract_metadata.extract_site_metadata", return_value=(mock_title, [])):
+            with patch("extract_metadata.export_to_tsv"):
                 with patch.object(
                     sys,
                     "argv",
                     [
-                        "extract_data_for_sites.py",
+                        "extract_metadata.py",
                         "--site",
                         "example.com",
                         "--version",
                         "20200101120000",
                     ],
                 ):
-                    from extract_data_for_sites import main
+                    from extract_metadata import main
 
                     result = main()
 
@@ -105,13 +105,13 @@ class TestSingleSiteExtraction:
     def test_single_site_custom_timeout(self, mock_data):
         """Test single site extraction with custom timeout."""
         mock_extract = MagicMock(return_value=mock_data)
-        with patch("extract_data_for_sites.extract_site_metadata", mock_extract):
-            with patch("extract_data_for_sites.export_to_tsv"):
+        with patch("extract_metadata.extract_site_metadata", mock_extract):
+            with patch("extract_metadata.export_to_tsv"):
                 with patch.object(
                     sys,
                     "argv",
                     [
-                        "extract_data_for_sites.py",
+                        "extract_metadata.py",
                         "--site",
                         "example.com",
                         "--version",
@@ -120,7 +120,7 @@ class TestSingleSiteExtraction:
                         "45",
                     ],
                 ):
-                    from extract_data_for_sites import main
+                    from extract_metadata import main
 
                     main()
 
@@ -132,13 +132,13 @@ class TestSingleSiteExtraction:
         mock_extract = MagicMock(return_value=mock_data)
         custom_server = "https://web.archive.org/web/"
 
-        with patch("extract_data_for_sites.extract_site_metadata", mock_extract):
-            with patch("extract_data_for_sites.export_to_tsv"):
+        with patch("extract_metadata.extract_site_metadata", mock_extract):
+            with patch("extract_metadata.export_to_tsv"):
                 with patch.object(
                     sys,
                     "argv",
                     [
-                        "extract_data_for_sites.py",
+                        "extract_metadata.py",
                         "--site",
                         "example.com",
                         "--version",
@@ -147,7 +147,7 @@ class TestSingleSiteExtraction:
                         custom_server,
                     ],
                 ):
-                    from extract_data_for_sites import main
+                    from extract_metadata import main
 
                     main()
 
@@ -156,8 +156,8 @@ class TestSingleSiteExtraction:
 
     def test_single_site_missing_version_error(self, capsys):
         """Test error when --site provided without --version."""
-        with patch.object(sys, "argv", ["extract_data_for_sites.py", "--site", "example.com"]):
-            from extract_data_for_sites import main
+        with patch.object(sys, "argv", ["extract_metadata.py", "--site", "example.com"]):
+            from extract_metadata import main
 
             with pytest.raises(SystemExit) as exc_info:
                 main()
@@ -169,13 +169,13 @@ class TestSingleSiteExtraction:
     def test_single_site_tsv_export(self, mock_data):
         """Test TSV export for single site."""
         mock_export = MagicMock()
-        with patch("extract_data_for_sites.extract_site_metadata", return_value=mock_data):
-            with patch("extract_data_for_sites.export_to_tsv", mock_export):
+        with patch("extract_metadata.extract_site_metadata", return_value=mock_data):
+            with patch("extract_metadata.export_to_tsv", mock_export):
                 with patch.object(
                     sys,
                     "argv",
                     [
-                        "extract_data_for_sites.py",
+                        "extract_metadata.py",
                         "--site",
                         "example.com",
                         "--version",
@@ -184,7 +184,7 @@ class TestSingleSiteExtraction:
                         "test.tsv",
                     ],
                 ):
-                    from extract_data_for_sites import main
+                    from extract_metadata import main
 
                     main()
 
@@ -210,16 +210,16 @@ class TestBulkExtraction:
         ]
         mock_export = MagicMock()
 
-        with patch("extract_data_for_sites.extract_site_metadata", mock_extract):
-            with patch("extract_data_for_sites.export_site_to_tsv", mock_export):
+        with patch("extract_metadata.extract_site_metadata", mock_extract):
+            with patch("extract_metadata.export_site_to_tsv", mock_export):
                 with patch("builtins.open", create=True):
                     with patch("config.ARCHIVE_CONFIG", mock_config):
                         with patch.object(
                             sys,
                             "argv",
-                            ["extract_data_for_sites.py"],
+                            ["extract_metadata.py"],
                         ):
-                            from extract_data_for_sites import main
+                            from extract_metadata import main
 
                             result = main()
 
@@ -233,20 +233,20 @@ class TestBulkExtraction:
         """Test bulk extraction with custom timeout."""
         mock_extract = MagicMock(return_value=("Example Title", ["<meta name='description'/>"]))
 
-        with patch("extract_data_for_sites.extract_site_metadata", mock_extract):
-            with patch("extract_data_for_sites.export_site_to_tsv"):
+        with patch("extract_metadata.extract_site_metadata", mock_extract):
+            with patch("extract_metadata.export_site_to_tsv"):
                 with patch("builtins.open", create=True):
                     with patch("config.ARCHIVE_CONFIG", mock_config):
                         with patch.object(
                             sys,
                             "argv",
                             [
-                                "extract_data_for_sites.py",
+                                "extract_metadata.py",
                                 "--timeout",
                                 "60",
                             ],
                         ):
-                            from extract_data_for_sites import main
+                            from extract_metadata import main
 
                             main()
 
@@ -261,20 +261,20 @@ class TestBulkExtraction:
         mock_extract = MagicMock(return_value=("Example Title", ["<meta name='description'/>"]))
         custom_server = "https://web.archive.org/web/"
 
-        with patch("extract_data_for_sites.extract_site_metadata", mock_extract):
-            with patch("extract_data_for_sites.export_site_to_tsv"):
+        with patch("extract_metadata.extract_site_metadata", mock_extract):
+            with patch("extract_metadata.export_site_to_tsv"):
                 with patch("builtins.open", create=True):
                     with patch("config.ARCHIVE_CONFIG", mock_config):
                         with patch.object(
                             sys,
                             "argv",
                             [
-                                "extract_data_for_sites.py",
+                                "extract_metadata.py",
                                 "--wayback-server",
                                 custom_server,
                             ],
                         ):
-                            from extract_data_for_sites import main
+                            from extract_metadata import main
 
                             main()
 
@@ -289,20 +289,20 @@ class TestBulkExtraction:
         mock_extract = MagicMock(return_value=("Example Title", ["<meta name='description'/>"]))
         mock_export = MagicMock()
 
-        with patch("extract_data_for_sites.extract_site_metadata", mock_extract):
-            with patch("extract_data_for_sites.export_site_to_tsv", mock_export):
+        with patch("extract_metadata.extract_site_metadata", mock_extract):
+            with patch("extract_metadata.export_site_to_tsv", mock_export):
                 with patch("builtins.open", create=True):
                     with patch("config.ARCHIVE_CONFIG", mock_config):
                         with patch.object(
                             sys,
                             "argv",
                             [
-                                "extract_data_for_sites.py",
+                                "extract_metadata.py",
                                 "--output",
                                 "custom.tsv",
                             ],
                         ):
-                            from extract_data_for_sites import main
+                            from extract_metadata import main
 
                             main()
 
@@ -317,8 +317,8 @@ class TestErrorHandling:
 
     def test_version_without_site_error(self, capsys):
         """Test error when --version provided without --site."""
-        with patch.object(sys, "argv", ["extract_data_for_sites.py", "--version", "20200101120000"]):
-            from extract_data_for_sites import main
+        with patch.object(sys, "argv", ["extract_metadata.py", "--version", "20200101120000"]):
+            from extract_metadata import main
 
             with pytest.raises(SystemExit) as exc_info:
                 main()
@@ -336,12 +336,12 @@ class TestArgumentValidation:
         mock_extract = MagicMock(return_value=("Title", []))
         mock_export = MagicMock()
 
-        with patch("extract_data_for_sites.extract_site_metadata", mock_extract):
-            with patch("extract_data_for_sites.export_site_to_tsv", mock_export):
+        with patch("extract_metadata.extract_site_metadata", mock_extract):
+            with patch("extract_metadata.export_site_to_tsv", mock_export):
                 with patch("builtins.open", create=True):
                     with patch("config.ARCHIVE_CONFIG", mock_config):
-                        with patch.object(sys, "argv", ["extract_data_for_sites.py"]):
-                            from extract_data_for_sites import main
+                        with patch.object(sys, "argv", ["extract_metadata.py"]):
+                            from extract_metadata import main
 
                             main()
 
@@ -354,12 +354,12 @@ class TestArgumentValidation:
         """Test that default timeout is 30 seconds."""
         mock_extract = MagicMock(return_value=("Title", []))
 
-        with patch("extract_data_for_sites.extract_site_metadata", mock_extract):
-            with patch("extract_data_for_sites.export_site_to_tsv"):
+        with patch("extract_metadata.extract_site_metadata", mock_extract):
+            with patch("extract_metadata.export_site_to_tsv"):
                 with patch("builtins.open", create=True):
                     with patch("config.ARCHIVE_CONFIG", mock_config):
-                        with patch.object(sys, "argv", ["extract_data_for_sites.py"]):
-                            from extract_data_for_sites import main
+                        with patch.object(sys, "argv", ["extract_metadata.py"]):
+                            from extract_metadata import main
 
                             main()
 
@@ -373,12 +373,12 @@ class TestArgumentValidation:
         """Test that default wayback server is set correctly."""
         mock_extract = MagicMock(return_value=("Title", []))
 
-        with patch("extract_data_for_sites.extract_site_metadata", mock_extract):
-            with patch("extract_data_for_sites.export_site_to_tsv"):
+        with patch("extract_metadata.extract_site_metadata", mock_extract):
+            with patch("extract_metadata.export_site_to_tsv"):
                 with patch("builtins.open", create=True):
                     with patch("config.ARCHIVE_CONFIG", mock_config):
-                        with patch.object(sys, "argv", ["extract_data_for_sites.py"]):
-                            from extract_data_for_sites import main
+                        with patch.object(sys, "argv", ["extract_metadata.py"]):
+                            from extract_metadata import main
 
                             main()
 
@@ -394,20 +394,20 @@ class TestOutputFormatting:
 
     def test_single_site_output_display(self, mock_data, capsys):
         """Test output formatting for single site."""
-        with patch("extract_data_for_sites.extract_site_metadata", return_value=mock_data):
-            with patch("extract_data_for_sites.export_to_tsv"):
+        with patch("extract_metadata.extract_site_metadata", return_value=mock_data):
+            with patch("extract_metadata.export_to_tsv"):
                 with patch.object(
                     sys,
                     "argv",
                     [
-                        "extract_data_for_sites.py",
+                        "extract_metadata.py",
                         "--site",
                         "example.com",
                         "--version",
                         "20200101120000",
                     ],
                 ):
-                    from extract_data_for_sites import main
+                    from extract_metadata import main
 
                     main()
 
@@ -421,12 +421,12 @@ class TestOutputFormatting:
         """Test progress display for bulk extraction."""
         mock_extract = MagicMock(return_value=("Example Title", ["<meta name='description'/>"]))
 
-        with patch("extract_data_for_sites.extract_site_metadata", mock_extract):
-            with patch("extract_data_for_sites.export_site_to_tsv"):
+        with patch("extract_metadata.extract_site_metadata", mock_extract):
+            with patch("extract_metadata.export_site_to_tsv"):
                 with patch("builtins.open", create=True):
                     with patch("config.ARCHIVE_CONFIG", mock_config):
-                        with patch.object(sys, "argv", ["extract_data_for_sites.py"]):
-                            from extract_data_for_sites import main
+                        with patch.object(sys, "argv", ["extract_metadata.py"]):
+                            from extract_metadata import main
 
                             main()
 
@@ -445,13 +445,13 @@ class TestIntegration:
         mock_extract = MagicMock(return_value=mock_data)
         mock_export = MagicMock()
 
-        with patch("extract_data_for_sites.extract_site_metadata", mock_extract):
-            with patch("extract_data_for_sites.export_to_tsv", mock_export):
+        with patch("extract_metadata.extract_site_metadata", mock_extract):
+            with patch("extract_metadata.export_to_tsv", mock_export):
                 with patch.object(
                     sys,
                     "argv",
                     [
-                        "extract_data_for_sites.py",
+                        "extract_metadata.py",
                         "--site",
                         "example.com",
                         "--version",
@@ -464,7 +464,7 @@ class TestIntegration:
                         "results.tsv",
                     ],
                 ):
-                    from extract_data_for_sites import main
+                    from extract_metadata import main
 
                     result = main()
 
@@ -477,22 +477,22 @@ class TestIntegration:
         mock_extract = MagicMock(return_value=mock_data)
         mock_export = MagicMock()
 
-        with patch("extract_data_for_sites.extract_site_metadata", mock_extract):
-            with patch("extract_data_for_sites.export_site_to_tsv", mock_export):
+        with patch("extract_metadata.extract_site_metadata", mock_extract):
+            with patch("extract_metadata.export_site_to_tsv", mock_export):
                 with patch("builtins.open", create=True):
                     with patch("config.ARCHIVE_CONFIG", mock_config):
                         with patch.object(
                             sys,
                             "argv",
                             [
-                                "extract_data_for_sites.py",
+                                "extract_metadata.py",
                                 "--timeout",
                                 "60",
                                 "--output",
                                 "all_sites.tsv",
                             ],
                         ):
-                            from extract_data_for_sites import main
+                            from extract_metadata import main
 
                             result = main()
 
