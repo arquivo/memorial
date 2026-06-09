@@ -68,43 +68,16 @@ lint-fix: venv-check ## Auto fix linting issues with ruff and black
 
 # Running locally
 run: venv-check ## Run application with Hypercorn (production-like)
-	MEMORIAL_STRIP_PORT=true $(PYTHON) -m hypercorn memorial:app --bind 0.0.0.0:8080
+	MEMORIAL_STRIP_PORT=true $(PYTHON) -m hypercorn memorial:app
 .PHONY: run
 
 run-dev: venv-check ## Run Quart development server
 	QUART_DEBUG=true MEMORIAL_STRIP_PORT=true $(PYTHON) memorial.py
 .PHONY: run-dev
 
-# Docker
-docker-build: ## Build Docker image
-	docker build -t memorial .
-.PHONY: docker-build
-
-docker-run: ## Run Docker container
-	docker run -d --name memorial -p 127.0.0.1:8080:8080 memorial
-.PHONY: docker-run
-
-docker-stop: ## Stop and remove Docker container
-	docker stop memorial || true
-	docker rm memorial || true
-.PHONY: docker-stop
-
-# Docker Compose
-docker-compose-up: ## Start services with docker-compose
-	docker-compose up -d
-.PHONY: docker-compose-up
-
-docker-compose-down: ## Stop services with docker-compose
-	docker-compose down
-.PHONY: docker-compose-down
-
-docker-compose-logs: ## Show docker-compose logs
-	docker-compose logs -f
-.PHONY: docker-compose-logs
-
-docker-compose-build: ## Build services with docker-compose
-	docker-compose build
-.PHONY: docker-compose-build
+run-docker-compose: ## Start services with docker-compose
+	docker compose up --build
+.PHONY: run-docker-compose
 
 # CI/CD - Run all checks
 ci: lint test ## Run all CI checks (lint, test)
