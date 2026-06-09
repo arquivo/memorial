@@ -15,22 +15,22 @@ This script can operate in two modes:
 
 Usage:
     # Extract all configured sites to data.tsv
-    python extract_data_for_sites.py
+    python extract_metadata.py
 
     # Extract for a specific site (not in config)
-    python extract_data_for_sites.py --site example.com --version 20230101120000
+    python extract_metadata.py --site example.com --version 20230101120000
 
     # Extract to custom output file
-    python extract_data_for_sites.py --output results.tsv
+    python extract_metadata.py --output results.tsv
 
     # Extract specific site with custom timeout
-    python extract_data_for_sites.py --site example.com --version 20230101120000 --timeout 30
+    python extract_metadata.py --site example.com --version 20230101120000 --timeout 30
 
     # Specify custom config file
-    python extract_data_for_sites.py --config /path/to/config.py --output results.tsv
+    python extract_metadata.py --config /path/to/config.py --output results.tsv
 
     # Enable verbose logging
-    python extract_data_for_sites.py --verbose
+    python extract_metadata.py --verbose
 """
 
 import argparse

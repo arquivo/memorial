@@ -240,7 +240,7 @@ ARCHIVE_CONFIG = {
         # List of pre-computed <meta> and <link> tag strings.
         # These are injected verbatim into the <head> of the landing page.
         # Obtain them by running:
-        #   python extract_data_for_sites.py --site example.com --version 20230101120000
+        #   python extract_metadata.py --site example.com --version 20230101120000
         "metadata": [
             '<meta name="description" content="An example archived website."/>',
             '<meta name="keywords" content="example, archive, arquivo"/>',
@@ -403,24 +403,24 @@ Memorial includes comprehensive utilities to extract and export metadata from ar
 ### Files
 
 - **`data_extractor.py`** - Core library module with reusable functions
-- **`extract_data_for_sites.py`** - Command-line tool to extract and export data for all configured or individual archived sites
+- **`extract_metadata.py`** - Command-line tool to extract and export data for all configured or individual archived sites
 
 ### Quick Start
 
 #### Extract for all configured sites (TSV to stdout):
 
 ```bash
-python extract_data_for_sites.py
+python extract_metadata.py
 ```
 
 Output is written to **stdout** as TSV (tab-separated), so you can pipe or redirect it:
 
 ```bash
 # Save to a file
-python extract_data_for_sites.py > data.tsv
+python extract_metadata.py > data.tsv
 
 # Or write directly to a named file
-python extract_data_for_sites.py --output data.tsv
+python extract_metadata.py --output data.tsv
 ```
 
 Progress and status messages are always written to **stderr**, keeping stdout clean for piping.
@@ -434,29 +434,29 @@ The TSV has three columns:
 
 ```bash
 # Display data on screen
-python extract_data_for_sites.py --site example.com --version 20230101120000
+python extract_metadata.py --site example.com --version 20230101120000
 
 # Export to TSV file
-python extract_data_for_sites.py --site example.com --version 20230101120000 --output my_site.tsv
+python extract_metadata.py --site example.com --version 20230101120000 --output my_site.tsv
 
 # Custom timeout for slow sites
-python extract_data_for_sites.py --site example.com --version 20230101120000 --timeout 30
+python extract_metadata.py --site example.com --version 20230101120000 --timeout 30
 ```
 
 #### Extract all configured sites with options:
 
 ```bash
 # Custom output file
-python extract_data_for_sites.py --output my_data.tsv
+python extract_metadata.py --output my_data.tsv
 
 # Longer timeout for slow sites
-python extract_data_for_sites.py --timeout 30 --output results.tsv
+python extract_metadata.py --timeout 30 --output results.tsv
 
 # Verbose logging
-python extract_data_for_sites.py --verbose
+python extract_metadata.py --verbose
 
 # Custom wayback server
-python extract_data_for_sites.py --wayback-server https://web.archive.org/web/
+python extract_metadata.py --wayback-server https://web.archive.org/web/
 ```
 
 ### Using as a Python Library
@@ -601,7 +601,7 @@ Features:
 ### Command-Line Options
 
 ```bash
-python extract_data_for_sites.py --help
+python extract_metadata.py --help
 
 # Key options:
 #   --site SITE                 Extract specific site (requires --version)
@@ -621,13 +621,13 @@ The recommended flow is: extract metadata → inspect it → paste it into `conf
 
 **Locally:**
 ```bash
-python extract_data_for_sites.py --site newsite.com --version 20230101120000
+python extract_metadata.py --site newsite.com --version 20230101120000
 ```
 
 **Using the published Docker image (no local Python required):**
 ```bash
 docker run --rm arquivo/memorial \
-  python extract_data_for_sites.py \
+  python extract_metadata.py \
   --site newsite.com \
   --version 20230101120000
 ```
@@ -637,22 +637,22 @@ Both commands print a human-readable summary to the terminal. The TSV row is wri
 To capture just the TSV output to stdout:
 ```bash
 # Locally
-python extract_data_for_sites.py --site newsite.com --version 20230101120000
+python extract_metadata.py --site newsite.com --version 20230101120000
 
 # Docker
 docker run --rm arquivo/memorial \
-  python extract_data_for_sites.py \
+  python extract_metadata.py \
   --site newsite.com --version 20230101120000
 ```
 
 To save directly with `--output` instead:
 ```bash
 # Locally
-python extract_data_for_sites.py --site newsite.com --version 20230101120000 --output newsite.tsv
+python extract_metadata.py --site newsite.com --version 20230101120000 --output newsite.tsv
 
 # Docker (mount a local directory to retrieve the file)
 docker run --rm -v "$PWD":/data arquivo/memorial \
-  python extract_data_for_sites.py \
+  python extract_metadata.py \
   --site newsite.com --version 20230101120000 \
   --output /data/newsite.tsv
 ```
@@ -683,11 +683,11 @@ ARCHIVE_CONFIG = {
 
 ```bash
 # Locally
-python extract_data_for_sites.py --output data.tsv
+python extract_metadata.py --output data.tsv
 
 # Docker
 docker run --rm -v "$PWD":/data arquivo/memorial \
-  python extract_data_for_sites.py --output /data/data.tsv
+  python extract_metadata.py --output /data/data.tsv
 ```
 
 ### Error Handling
@@ -704,7 +704,7 @@ The utilities handle various error conditions gracefully:
 Enable verbose logging to see what's happening:
 
 ```bash
-python extract_data_for_sites.py --verbose
+python extract_metadata.py --verbose
 ```
 
 Or in Python code:
@@ -749,7 +749,7 @@ memorial/
 ├── memorial.py                  # Main Quart async application
 ├── config.py                    # Site configuration (ARCHIVE_CONFIG)
 ├── data_extractor.py            # Data extraction utility library
-├── extract_data_for_sites.py    # CLI tool for metadata extraction
+├── extract_metadata.py    # CLI tool for metadata extraction
 ├── hypercorn_config.py          # Hypercorn ASGI server configuration
 ├── uwsgi.ini                    # Legacy uWSGI configuration (kept for reference)
 ├── pyproject.toml               # Project metadata and dependencies
@@ -782,7 +782,7 @@ memorial/
     ├── test_status_code_messages.py         # Status-code-based default messages
     ├── test_multi_part_messages.py          # Three-part message system
     ├── test_data_extractor.py               # data_extractor.py unit tests
-    └── test_extract_data_for_sites.py       # CLI tool tests
+    └── test_extract_metadata.py       # CLI tool tests
 ```
 
 ### Test Organization
@@ -805,7 +805,7 @@ The test suite has been split into focused, manageable files organized by featur
 - `test_status_code_messages.py` - Status-code-based default messages (200/502/503/504)
 - `test_multi_part_messages.py` - Three-part message rendering (primary, before-button, button label)
 - `test_data_extractor.py` - Unit tests for `data_extractor.py` library functions
-- `test_extract_data_for_sites.py` - CLI tool argument parsing, bulk/single extraction, TSV export
+- `test_extract_metadata.py` - CLI tool argument parsing, bulk/single extraction, TSV export
 
 ## Docker Deployment
 
