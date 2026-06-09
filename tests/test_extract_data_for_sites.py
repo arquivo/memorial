@@ -225,8 +225,9 @@ class TestBulkExtraction:
 
         assert result == 0
         captured = capsys.readouterr()
-        assert "Extracting data for 3 sites" in captured.out
-        assert "✓ Extraction complete!" in captured.out
+        # Progress messages go to stderr when no --output file is given
+        assert "Extracting data for 3 sites" in captured.err
+        assert "✓ Extraction complete!" in captured.err
 
     def test_bulk_extraction_custom_timeout(self, mock_config):
         """Test bulk extraction with custom timeout."""
@@ -430,9 +431,10 @@ class TestOutputFormatting:
                             main()
 
         captured = capsys.readouterr()
-        assert "Extracting data for" in captured.out
-        assert "Timeout per site: 30 seconds" in captured.out
-        assert "✓ Extraction complete!" in captured.out
+        # Progress messages go to stderr when no --output file is given
+        assert "Extracting data for" in captured.err
+        assert "Timeout per site: 30 seconds" in captured.err
+        assert "✓ Extraction complete!" in captured.err
 
 
 class TestIntegration:

@@ -68,8 +68,8 @@ def main():
     parser.add_argument(
         "--output",
         "-o",
-        default="data.tsv",
-        help="Output TSV file path (default: data.tsv)",
+        default=None,
+        help="Output TSV file path. If omitted, TSV is written to stdout.",
     )
 
     parser.add_argument(
@@ -146,6 +146,15 @@ def main():
             results = {args.site: (title, metadata)}
             export_to_tsv(results, args.output)
             print(f"\nData also exported to: {args.output}")
+        else:
+            # Write TSV row to stdout for piping / redirection
+            from data_extractor import format_metadata_as_string
+
+            metadata_str = format_metadata_as_string(metadata)
+            title_escaped = title.replace("\t", "\\t").replace("\n", "\\n")
+            metadata_escaped = metadata_str.replace("\t", "\\t").replace("\n", "\\n")
+            print("Site\tTitle\tMetadata")
+            print(f"{args.site}\t{title_escaped}\t{metadata_escaped}")
 
         return 0
 
@@ -170,24 +179,36 @@ def main():
         print("Error: Could not import configuration. Make sure config.py exists.")
         sys.exit(1)
 
-    # Extract metadata for all configured sites
-    print(f"Extracting data for {len(archive_config)} sites...")
-    print(f"Wayback server: {args.wayback_server}")
-    print(f"Timeout per site: {args.timeout} seconds")
-    print(f"Output file: {args.output}")
-    print(f"Appending to existing file: {Path(args.output).exists()}")
-    print()
+    # When writing to stdout, send all progress/status messages to stderr
+    # so that the TSV stream remains clean for piping.
+    out = sys.stderr if args.output is None else sys.stdout
 
-    # Initialize output file with header if it doesn't exist
-    if not Path(args.output).exists():
-        try:
-            with open(args.output, "w", encoding="utf-8") as f:
-                f.write("Site\tTitle\tMetadata\n")
-            logger.info("Created new TSV file %s with header", args.output)
-        except Exception as e:  # pylint: disable=broad-except
-            logger.error("Error creating TSV file %s: %s", args.output, str(e))
-            print(f"Error creating output file: {str(e)}")
-            return 1
+    print(f"Extracting data for {len(archive_config)} sites...", file=out)
+    print(f"Wayback server: {args.wayback_server}", file=out)
+    print(f"Timeout per site: {args.timeout} seconds", file=out)
+    if args.output:
+        print(f"Output file: {args.output}", file=out)
+        print(f"Appending to existing file: {Path(args.output).exists()}", file=out)
+    else:
+        print("Output: stdout (TSV)", file=out)
+    print(file=out)
+
+    # Initialize output: write TSV header to file (if new) or to stdout
+    if args.output:
+        if not Path(args.output).exists():
+            try:
+                with open(args.output, "w", encoding="utf-8") as f:
+                    f.write("Site\tTitle\tMetadata\n")
+                logger.info("Created new TSV file %s with header", args.output)
+            except Exception as e:  # pylint: disable=broad-except
+                logger.error("Error creating TSV file %s: %s", args.output, str(e))
+                print(f"Error creating output file: {str(e)}", file=sys.stderr)
+                return 1
+    else:
+        print("Site\tTitle\tMetadata")
+
+    # Import formatting helper for stdout mode
+    from data_extractor import format_metadata_as_string
 
     # Extract and export each site incrementally
     sites_with_data = 0
@@ -199,15 +220,23 @@ def main():
 
         version = site_config["version"]
         logger.info("Processing %s (version: %s)", site, version)
-        print(f"Processing: {site}...", end=" ", flush=True)
+        print(f"Processing: {site}...", end=" ", flush=True, file=out)
 
         try:
             # Extract metadata for this site
             title, metadata = extract_site_metadata(site, version, args.wayback_server, args.timeout)
 
-            # Export immediately to TSV
-            export_site_to_tsv(site, title, metadata, args.output)
-            print("✓")
+            if args.output:
+                # Append to file incrementally
+                export_site_to_tsv(site, title, metadata, args.output)
+            else:
+                # Stream TSV row to stdout
+                metadata_str = format_metadata_as_string(metadata)
+                title_escaped = title.replace("\t", "\\t").replace("\n", "\\n")
+                metadata_escaped = metadata_str.replace("\t", "\\t").replace("\n", "\\n")
+                print(f"{site}\t{title_escaped}\t{metadata_escaped}")
+
+            print("✓", file=out)
 
             # Count sites with data
             if title or len(metadata) > 0:
@@ -215,7 +244,7 @@ def main():
 
         except Exception as e:  # pylint: disable=broad-except
             logger.error("Error processing %s: %s", site, str(e))
-            print(f"✗ (error: {str(e)})")
+            print(f"✗ (error: {str(e)})", file=out)
 
     # Summary
     logger.info(
@@ -223,9 +252,10 @@ def main():
         sites_with_data,
         len(archive_config),
     )
-    print("\n✓ Extraction complete!")
-    print(f"  Sites processed: {sites_with_data}/{len(archive_config)}")
-    print(f"  Data saved to: {args.output}")
+    print("\n✓ Extraction complete!", file=out)
+    print(f"  Sites processed: {sites_with_data}/{len(archive_config)}", file=out)
+    if args.output:
+        print(f"  Data saved to: {args.output}", file=out)
 
     return 0
 
