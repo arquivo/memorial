@@ -29,7 +29,7 @@ def get_message_by_lang(response_data, lang):
     """
     # Decode if bytes
     if isinstance(response_data, bytes):
-        html = response_data.decode('utf-8')
+        html = response_data.decode("utf-8")
     else:
         html = str(response_data)
 
@@ -75,15 +75,15 @@ async def test_default_message_status_200(client):
     When a site is configured with status_code 200, it should show
     "O site foi desactivado." (PT) and "The site has been disabled." (EN).
     """
-    with with_test_config({
-        "explicit-200-site.example.com": {
-            "version": "20200101000000",
-            "status_code": 200,
+    with with_test_config(
+        {
+            "explicit-200-site.example.com": {
+                "version": "20200101000000",
+                "status_code": 200,
+            }
         }
-    }):
-        response = await request_host(
-            client, "/", "explicit-200-site.example.com", expected_status=200
-        )
+    ):
+        response = await request_host(client, "/", "explicit-200-site.example.com", expected_status=200)
 
         data = await response.data
         message_pt = get_message_by_lang(data, "pt")
@@ -103,15 +103,15 @@ async def test_default_message_status_502(client):
     When a site is configured with status_code 502, it should show
     "O site está temporariamente indisponível." (PT) and "The site is temporarily unavailable." (EN).
     """
-    with with_test_config({
-        "temp-down.example.com": {
-            "version": "20200101000000",
-            "status_code": 502,
+    with with_test_config(
+        {
+            "temp-down.example.com": {
+                "version": "20200101000000",
+                "status_code": 502,
+            }
         }
-    }):
-        response = await request_host(
-            client, "/", "temp-down.example.com", expected_status=502
-        )
+    ):
+        response = await request_host(client, "/", "temp-down.example.com", expected_status=502)
 
         data = await response.data
         message_pt = get_message_by_lang(data, "pt")
@@ -119,10 +119,12 @@ async def test_default_message_status_502(client):
 
         assert message_pt is not None, "Portuguese message should be present"
         assert message_en is not None, "English message should be present"
-        assert "temporariamente" in message_pt.lower() or "indisponível" in message_pt.lower(), \
-            f"Expected 'temporariamente indisponível' in PT message, got: {message_pt}"
-        assert "temporarily" in message_en.lower() or "unavailable" in message_en.lower(), \
-            f"Expected 'temporarily unavailable' in EN message, got: {message_en}"
+        assert (
+            "temporariamente" in message_pt.lower() or "indisponível" in message_pt.lower()
+        ), f"Expected 'temporariamente indisponível' in PT message, got: {message_pt}"
+        assert (
+            "temporarily" in message_en.lower() or "unavailable" in message_en.lower()
+        ), f"Expected 'temporarily unavailable' in EN message, got: {message_en}"
 
 
 @pytest.mark.asyncio
@@ -136,17 +138,17 @@ async def test_custom_message_overrides_default_200(client):
     custom_pt = "Site customizado para status 200"
     custom_en = "Custom site for status 200"
 
-    with with_test_config({
-        "custom-site.example.com": {
-            "version": "20200101000000",
-            "message_pt": custom_pt,
-            "message_en": custom_en,
-            # No explicit status_code, defaults to 200
+    with with_test_config(
+        {
+            "custom-site.example.com": {
+                "version": "20200101000000",
+                "message_pt": custom_pt,
+                "message_en": custom_en,
+                # No explicit status_code, defaults to 200
+            }
         }
-    }):
-        response = await request_host(
-            client, "/", "custom-site.example.com", expected_status=200
-        )
+    ):
+        response = await request_host(client, "/", "custom-site.example.com", expected_status=200)
 
         data = await response.data
         message_pt = get_message_by_lang(data, "pt")
@@ -167,17 +169,17 @@ async def test_custom_message_overrides_default_502(client):
     custom_pt = "Site temporariamente em manutenção"
     custom_en = "Site under maintenance"
 
-    with with_test_config({
-        "maintenance-site.example.com": {
-            "version": "20200101000000",
-            "status_code": 502,
-            "message_pt": custom_pt,
-            "message_en": custom_en,
+    with with_test_config(
+        {
+            "maintenance-site.example.com": {
+                "version": "20200101000000",
+                "status_code": 502,
+                "message_pt": custom_pt,
+                "message_en": custom_en,
+            }
         }
-    }):
-        response = await request_host(
-            client, "/", "maintenance-site.example.com", expected_status=502
-        )
+    ):
+        response = await request_host(client, "/", "maintenance-site.example.com", expected_status=502)
 
         data = await response.data
         message_pt = get_message_by_lang(data, "pt")
@@ -197,25 +199,26 @@ async def test_partial_custom_message_pt_only(client):
     """
     custom_pt = "Apenas português customizado"
 
-    with with_test_config({
-        "partial-site.example.com": {
-            "version": "20200101000000",
-            "status_code": 502,
-            "message_pt": custom_pt,
-            # message_en is not set, should use default for 502
+    with with_test_config(
+        {
+            "partial-site.example.com": {
+                "version": "20200101000000",
+                "status_code": 502,
+                "message_pt": custom_pt,
+                # message_en is not set, should use default for 502
+            }
         }
-    }):
-        response = await request_host(
-            client, "/", "partial-site.example.com", expected_status=502
-        )
+    ):
+        response = await request_host(client, "/", "partial-site.example.com", expected_status=502)
 
         data = await response.data
         message_pt = get_message_by_lang(data, "pt")
         message_en = get_message_by_lang(data, "en")
 
         assert message_pt == custom_pt, f"Expected custom PT message, got: {message_pt}"
-        assert "temporarily" in message_en.lower() or "unavailable" in message_en.lower(), \
-            f"Expected default 502 EN message, got: {message_en}"
+        assert (
+            "temporarily" in message_en.lower() or "unavailable" in message_en.lower()
+        ), f"Expected default 502 EN message, got: {message_en}"
 
 
 @pytest.mark.asyncio
@@ -228,24 +231,25 @@ async def test_partial_custom_message_en_only(client):
     """
     custom_en = "Only English customized"
 
-    with with_test_config({
-        "partial-en-site.example.com": {
-            "version": "20200101000000",
-            "status_code": 502,
-            "message_en": custom_en,
-            # message_pt is not set, should use default for 502
+    with with_test_config(
+        {
+            "partial-en-site.example.com": {
+                "version": "20200101000000",
+                "status_code": 502,
+                "message_en": custom_en,
+                # message_pt is not set, should use default for 502
+            }
         }
-    }):
-        response = await request_host(
-            client, "/", "partial-en-site.example.com", expected_status=502
-        )
+    ):
+        response = await request_host(client, "/", "partial-en-site.example.com", expected_status=502)
 
         data = await response.data
         message_pt = get_message_by_lang(data, "pt")
         message_en = get_message_by_lang(data, "en")
 
-        assert "temporariamente" in message_pt.lower() or "indisponível" in message_pt.lower(), \
-            f"Expected default 502 PT message, got: {message_pt}"
+        assert (
+            "temporariamente" in message_pt.lower() or "indisponível" in message_pt.lower()
+        ), f"Expected default 502 PT message, got: {message_pt}"
         assert message_en == custom_en, f"Expected custom EN message, got: {message_en}"
 
 
@@ -257,24 +261,22 @@ async def test_http_status_code_response(client):
     Verify that sites with status_code 502 return 502 status code,
     while unconfigured sites return 200.
     """
-    with with_test_config({
-        "status-200-site.example.com": {
-            "version": "20200101000000",
-            # Defaults to status_code 200
-        },
-        "status-502-site.example.com": {
-            "version": "20200101000000",
-            "status_code": 502,
+    with with_test_config(
+        {
+            "status-200-site.example.com": {
+                "version": "20200101000000",
+                # Defaults to status_code 200
+            },
+            "status-502-site.example.com": {
+                "version": "20200101000000",
+                "status_code": 502,
+            },
         }
-    }):
+    ):
         # Test 200 status code
-        response_200 = await request_host(
-            client, "/", "status-200-site.example.com", expected_status=200
-        )
+        response_200 = await request_host(client, "/", "status-200-site.example.com", expected_status=200)
         assert response_200.status_code == 200
 
         # Test 502 status code
-        response_502 = await request_host(
-            client, "/", "status-502-site.example.com", expected_status=502
-        )
+        response_502 = await request_host(client, "/", "status-502-site.example.com", expected_status=502)
         assert response_502.status_code == 502

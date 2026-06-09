@@ -17,11 +17,13 @@ async def test_favicon_redirect_with_version(client):
     """
     Test that favicon requests redirect to Arquivo.pt with the correct version.
     """
-    with with_test_config({
-        "favicon-test.com": {
-            "version": "20200117175504",
+    with with_test_config(
+        {
+            "favicon-test.com": {
+                "version": "20200117175504",
+            }
         }
-    }):
+    ):
         response = await client.get("/favicon.ico", headers={"Host": "favicon-test.com"})
         assert response.status_code == 302  # Redirect status
         location = response.headers.get("Location", "")
@@ -66,7 +68,3 @@ async def test_favicon_unconfigured_site(client):
     assert response.status_code == 302
     location = response.headers.get("Location", "")
     assert "arquivo.pt" in location
-
-
-
-

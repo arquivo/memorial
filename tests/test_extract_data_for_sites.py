@@ -33,10 +33,13 @@ def mock_title():
 @pytest.fixture
 def mock_data():
     """Fixture providing sample extracted data (title and metadata)."""
-    return ("Example Site Title", [
-        '<meta name="description" content="Test description"/>',
-        '<meta name="keywords" content="test, keywords"/>',
-    ])
+    return (
+        "Example Site Title",
+        [
+            '<meta name="description" content="Test description"/>',
+            '<meta name="keywords" content="test, keywords"/>',
+        ],
+    )
 
 
 @pytest.fixture
@@ -153,9 +156,7 @@ class TestSingleSiteExtraction:
 
     def test_single_site_missing_version_error(self, capsys):
         """Test error when --site provided without --version."""
-        with patch.object(
-            sys, "argv", ["extract_data_for_sites.py", "--site", "example.com"]
-        ):
+        with patch.object(sys, "argv", ["extract_data_for_sites.py", "--site", "example.com"]):
             from extract_data_for_sites import main
 
             with pytest.raises(SystemExit) as exc_info:
@@ -315,9 +316,7 @@ class TestErrorHandling:
 
     def test_version_without_site_error(self, capsys):
         """Test error when --version provided without --site."""
-        with patch.object(
-            sys, "argv", ["extract_data_for_sites.py", "--version", "20200101120000"]
-        ):
+        with patch.object(sys, "argv", ["extract_data_for_sites.py", "--version", "20200101120000"]):
             from extract_data_for_sites import main
 
             with pytest.raises(SystemExit) as exc_info:

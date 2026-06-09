@@ -23,11 +23,7 @@ async def test_site_image_with_custom_logo_url(client):
     Test that custom logo URL from config is used when provided.
     Custom logo URLs trigger a redirect to the provided URL.
     """
-    with with_test_config({
-        "logo-test.com": {
-            "logo": "https://example.com/custom-logo.png"
-        }
-    }):
+    with with_test_config({"logo-test.com": {"logo": "https://example.com/custom-logo.png"}}):
         response = await client.get("/memorial-site-image", headers={"Host": "logo-test.com"})
         # Currently returns 500 due to await quart_redirect issue
         # Once fixed, should be 302
@@ -41,11 +37,7 @@ async def test_site_image_with_local_logo_path(client):
     """
     with patch("memorial.os.path.isdir") as mock_isdir:
         mock_isdir.return_value = False  # Simulate images folder doesn't exist
-        with with_test_config({
-            "local-logo.com": {
-                "logo": "/static/img/custom-logo.png"
-            }
-        }):
+        with with_test_config({"local-logo.com": {"logo": "/static/img/custom-logo.png"}}):
             response = await client.get("/memorial-site-image", headers={"Host": "local-logo.com"})
             # Should attempt to serve the file
             assert response.status_code in [200, 404]
@@ -140,7 +132,7 @@ async def test_site_image_folder_does_not_exist(client):
                     "ARCHIVE_CONFIG": {"test-site.com": {}},
                     "DEFAULT_LOGO": "default_logo.png",
                     "IMAGES_FOLDER": "/nonexistent/folder",
-                }
+                },
             ):
                 await client.get("/memorial-site-image", headers={"Host": "test-site.com"})
 
@@ -170,7 +162,7 @@ async def test_site_image_folder_exists_no_matching_files(client):
                     "ARCHIVE_CONFIG": {"test-site.com": {}},
                     "DEFAULT_LOGO": "default_logo.png",
                     "IMAGES_FOLDER": "/static/img",
-                }
+                },
             ):
                 await client.get("/memorial-site-image", headers={"Host": "test-site.com"})
 
@@ -201,7 +193,7 @@ async def test_site_image_listdir_raises_exception(client):
                     "ARCHIVE_CONFIG": {"test-site.com": {}},
                     "DEFAULT_LOGO": "default_logo.png",
                     "IMAGES_FOLDER": "/static/img",
-                }
+                },
             ):
                 # Should not raise an exception, should gracefully fall back
                 response = await client.get("/memorial-site-image", headers={"Host": "test-site.com"})
@@ -240,7 +232,7 @@ async def test_site_image_real_filesystem_integration(client):
                 "ARCHIVE_CONFIG": {"integration-test.com": {}},
                 "IMAGES_FOLDER": temp_dir,
                 "DEFAULT_LOGO": "default_logo.png",
-            }
+            },
         ):
             # Call without mocking os.path.isdir - uses real filesystem
             response = await client.get("/memorial-site-image", headers={"Host": "integration-test.com"})
@@ -273,14 +265,10 @@ async def test_site_image_line_logo_with_images_folder_path(client):
             with patch.dict(
                 "memorial.app.config",
                 {
-                    "ARCHIVE_CONFIG": {
-                        "line262test.com": {
-                            "logo": "custom-logo.png"  # Local filename
-                        }
-                    },
+                    "ARCHIVE_CONFIG": {"line262test.com": {"logo": "custom-logo.png"}},  # Local filename
                     "IMAGES_FOLDER": "/static/img",
                     "DEFAULT_LOGO": "default.png",
-                }
+                },
             ):
                 response = await client.get("/memorial-site-image", headers={"Host": "line262test.com"})
 
@@ -288,4 +276,3 @@ async def test_site_image_line_logo_with_images_folder_path(client):
                 mock_send.assert_called()
                 # Should use the default logo since we're using mocks and no logo handling for local paths
                 assert response.status_code == 200
-

@@ -48,9 +48,7 @@ def fix_not_closed_metatags(tag) -> str:
     return fix_tag
 
 
-def get_archived_page_content(
-    wayback_url: str, timeout: int = 10
-) -> Optional[bytes]:
+def get_archived_page_content(wayback_url: str, timeout: int = 10) -> Optional[bytes]:
     """Fetch content from an archived page on Arquivo.pt.
 
     Attempts to fetch the requested URL from the Wayback Machine using a synchronous
@@ -69,9 +67,7 @@ def get_archived_page_content(
         if response.status_code == 200:
             return response.content
         else:
-            logger.warning(
-                "Failed to fetch %s: HTTP %s", wayback_url, response.status_code
-            )
+            logger.warning("Failed to fetch %s: HTTP %s", wayback_url, response.status_code)
             return None
     except httpx.TimeoutException:
         logger.error("Timeout fetching %s after %s seconds", wayback_url, timeout)
@@ -211,9 +207,7 @@ def extract_metadata_for_configured_sites(
         version = site_config["version"]
         logger.info("Processing %s (version: %s)", site, version)
 
-        title, metadata = extract_site_metadata(
-            site, version, wayback_noframe_server, timeout
-        )
+        title, metadata = extract_site_metadata(site, version, wayback_noframe_server, timeout)
         results[site] = (title, metadata)
 
     return results
@@ -243,9 +237,7 @@ def format_metadata_as_string(metadata_list: list[str]) -> str:
     return f"[ {', '.join(metadata_list)} ]"
 
 
-def export_site_to_tsv(
-    site: str, title: str, metadata_list: list[str], output_file: str
-) -> None:
+def export_site_to_tsv(site: str, title: str, metadata_list: list[str], output_file: str) -> None:
     """Export a single site's data to TSV file (append mode).
 
     Appends a single site's extracted data to a TSV file. Does not write headers.
@@ -277,9 +269,7 @@ def export_site_to_tsv(
         print(f"Error appending to TSV: {str(e)}")
 
 
-def export_to_tsv(
-    results: dict[str, tuple[str, list[str]]], output_file: str, append: bool = False
-) -> None:
+def export_to_tsv(results: dict[str, tuple[str, list[str]]], output_file: str, append: bool = False) -> None:
     """Export extracted site data to a TSV file.
 
     Creates a TSV file with three columns (or appends without header):
@@ -312,9 +302,7 @@ def export_to_tsv(
 
                 # Escape tabs and newlines in both title and metadata
                 title = title.replace("\t", "\\t").replace("\n", "\\n")
-                metadata_str = metadata_str.replace("\t", "\\t").replace(
-                    "\n", "\\n"
-                )
+                metadata_str = metadata_str.replace("\t", "\\t").replace("\n", "\\n")
 
                 f.write(f"{site}\t{title}\t{metadata_str}\n")
 

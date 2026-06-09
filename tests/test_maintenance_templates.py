@@ -23,12 +23,12 @@ def maintenance_folder():
     """Fixture providing a clean maintenance folder for tests."""
     templates_folder = Path(__file__).parent.parent / "templates" / "maintenance"
     templates_folder.mkdir(parents=True, exist_ok=True)
-    
+
     # Track which files existed before the test
     existing_files = set(templates_folder.glob("*.html"))
-    
+
     yield templates_folder
-    
+
     # Cleanup: remove only html files created during the test, not pre-existing ones
     current_files = set(templates_folder.glob("*.html"))
     for html_file in current_files - existing_files:
@@ -131,9 +131,7 @@ class TestMaintenancePageRendering:
                 }
             }
         ):
-            response = await request_host(
-                client, "/", "maint-test502.example.com", expected_status=502
-            )
+            response = await request_host(client, "/", "maint-test502.example.com", expected_status=502)
             assert response.status_code == 502
 
     @pytest.mark.asyncio
@@ -147,9 +145,7 @@ class TestMaintenancePageRendering:
                 }
             }
         ):
-            response = await request_host(
-                client, "/", "maint-test200.example.com", expected_status=200
-            )
+            response = await request_host(client, "/", "maint-test200.example.com", expected_status=200)
             assert response.status_code == 200
 
     @pytest.mark.asyncio
@@ -163,9 +159,7 @@ class TestMaintenancePageRendering:
                 }
             }
         ):
-            response = await request_host(
-                client, "/", "maint-notemplate.example.com", expected_status=502
-            )
+            response = await request_host(client, "/", "maint-notemplate.example.com", expected_status=502)
             html = await response.data
             # Should still render successfully with default template
             assert b"Arquivo.pt Memorial" in html or b"Arquivo" in html
@@ -181,9 +175,7 @@ class TestMaintenancePageRendering:
                 }
             }
         ):
-            response = await request_host(
-                client, "/", "maint-test503.example.com", expected_status=503
-            )
+            response = await request_host(client, "/", "maint-test503.example.com", expected_status=503)
             assert response.status_code == 503
 
     @pytest.mark.asyncio
@@ -197,9 +189,7 @@ class TestMaintenancePageRendering:
                 }
             }
         ):
-            response = await request_host(
-                client, "/", "maint-test504.example.com", expected_status=504
-            )
+            response = await request_host(client, "/", "maint-test504.example.com", expected_status=504)
             assert response.status_code == 504
 
     @pytest.mark.asyncio
@@ -215,9 +205,7 @@ class TestMaintenancePageRendering:
                 }
             }
         ):
-            response = await request_host(
-                client, "/", "maint-custom.example.com", expected_status=502
-            )
+            response = await request_host(client, "/", "maint-custom.example.com", expected_status=502)
             html = await response.data
             assert custom_msg.encode() in html
 
@@ -232,15 +220,10 @@ class TestMaintenancePageRendering:
                 }
             }
         ):
-            response = await request_host(
-                client, "/", "maint-default-msg.example.com", expected_status=502
-            )
+            response = await request_host(client, "/", "maint-default-msg.example.com", expected_status=502)
             html = await response.data
             # Should contain the default 502 message
-            assert (
-                b"temporariamente indispon\xc3\xadvel" in html
-                or b"temporarily unavailable" in html
-            )
+            assert b"temporariamente indispon\xc3\xadvel" in html or b"temporarily unavailable" in html
 
     @pytest.mark.asyncio
     async def test_200_status_different_message(self, client):
@@ -253,10 +236,7 @@ class TestMaintenancePageRendering:
                 }
             }
         ):
-            response = await request_host(
-                client, "/", "maint-code200.example.com", expected_status=200
-            )
+            response = await request_host(client, "/", "maint-code200.example.com", expected_status=200)
             html = await response.data
             # Should contain the default 200 message (site has been disabled, not temporarily unavailable)
             assert b"desactivado" in html or b"disabled" in html
-

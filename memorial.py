@@ -54,27 +54,27 @@ if os.environ.get("MEMORIAL_STRIP_PORT", "").lower() in ("true", "1", "yes"):
 # - button_message: Text for the redirect button
 DEFAULT_MESSAGES = {
     200: {
-        'pt': {
-            'message': 'O site foi desactivado.',
-            'message_before_button': 'O <a href="https://arquivo.pt/memorial" target="_blank">Memorial do Arquivo.pt</a> preservou o seu conteúdo.',
-            'button_message': 'Ver no Arquivo.pt',
+        "pt": {
+            "message": "O site foi desactivado.",
+            "message_before_button": 'O <a href="https://arquivo.pt/memorial" target="_blank">Memorial do Arquivo.pt</a> preservou o seu conteúdo.',
+            "button_message": "Ver no Arquivo.pt",
         },
-        'en': {
-            'message': 'The site has been disabled.',
-            'message_before_button': '<a href="https://arquivo.pt/memorialen" target="_blank">Arquivo.pt Memorial</a> preserved its content.',
-            'button_message': 'Browse in Arquivo.pt',
+        "en": {
+            "message": "The site has been disabled.",
+            "message_before_button": '<a href="https://arquivo.pt/memorialen" target="_blank">Arquivo.pt Memorial</a> preserved its content.',
+            "button_message": "Browse in Arquivo.pt",
         },
     },
     502: {
-        'pt': {
-            'message': 'O site está temporariamente indisponível.',
-            'message_before_button': 'O <a href="https://arquivo.pt/memorial" target="_blank">Memorial do Arquivo.pt</a> preservou o seu conteúdo.',
-            'button_message': 'Ver no Arquivo.pt',
+        "pt": {
+            "message": "O site está temporariamente indisponível.",
+            "message_before_button": 'O <a href="https://arquivo.pt/memorial" target="_blank">Memorial do Arquivo.pt</a> preservou o seu conteúdo.',
+            "button_message": "Ver no Arquivo.pt",
         },
-        'en': {
-            'message': 'The site is temporarily unavailable.',
-            'message_before_button': '<a href="https://arquivo.pt/memorialen" target="_blank">Arquivo.pt Memorial</a> preserved its content.',
-            'button_message': 'Browse in Arquivo.pt',
+        "en": {
+            "message": "The site is temporarily unavailable.",
+            "message_before_button": '<a href="https://arquivo.pt/memorialen" target="_blank">Arquivo.pt Memorial</a> preserved its content.',
+            "button_message": "Browse in Arquivo.pt",
         },
     },
 }
@@ -291,6 +291,7 @@ def get_maintenance_template(host: str) -> str:
     logger.info("No maintenance template found for host: %s, using default", host)
     return "redirect_default.html"
 
+
 # favicon.ico redirect to archived version
 # to http://arquivo.pt/noFrame/replay/<host>/favicon.ico
 @app.route("/favicon.ico")
@@ -311,6 +312,7 @@ async def favicon():
     favicon_url += f"{host}/favicon.ico"
 
     return quart_redirect(favicon_url, code=302)
+
 
 @app.route("/memorial-site-image")
 async def site_image():
@@ -411,7 +413,9 @@ async def redirect(path):
         link_pt = host_config.get("link_pt", link_pt)
         link_en = host_config.get("link_en", link_en)
         link_to_noFrame = host_config.get("link_to_noFrame", link_to_noFrame)
-        should_extract_metadata = host_config.get("extract_metadata", should_extract_metadata)  # Per-host metadata extraction
+        should_extract_metadata = host_config.get(
+            "extract_metadata", should_extract_metadata
+        )  # Per-host metadata extraction
         configured_title = host_config.get("title", configured_title)  # Static title for this site
         configured_metadata = host_config.get("metadata", configured_metadata)  # Static metadata for this site
         status_code = host_config.get("status_code", archived_site_status_code)  # HTTP status code
@@ -431,15 +435,15 @@ async def redirect(path):
     default_messages_for_status = DEFAULT_MESSAGES.get(status_code, DEFAULT_MESSAGES[200])
 
     if message_pt is None:
-        message_pt = default_messages_for_status['pt']['message']
+        message_pt = default_messages_for_status["pt"]["message"]
     if message_en is None:
-        message_en = default_messages_for_status['en']['message']
+        message_en = default_messages_for_status["en"]["message"]
 
     # message_before_button and button_message are always from DEFAULT_MESSAGES
-    message_before_button_pt = default_messages_for_status['pt']['message_before_button']
-    message_before_button_en = default_messages_for_status['en']['message_before_button']
-    button_message_pt = default_messages_for_status['pt']['button_message']
-    button_message_en = default_messages_for_status['en']['button_message']
+    message_before_button_pt = default_messages_for_status["pt"]["message_before_button"]
+    message_before_button_en = default_messages_for_status["en"]["message_before_button"]
+    button_message_pt = default_messages_for_status["pt"]["button_message"]
+    button_message_en = default_messages_for_status["en"]["button_message"]
 
     # Construct Wayback Machine URLs
     # If a specific version timestamp is configured, use it; otherwise use latest

@@ -59,8 +59,6 @@ async def test_both_www_and_non_www_not_configured(client):
         assert response.status_code == 200
 
 
-
-
 # Query Parameters Tests: Verify query string parameters are preserved in redirects
 # Tests: parameter preservation, special characters, empty values, path+query combinations
 # ==============================================================================
@@ -85,7 +83,9 @@ async def test_query_parameters_with_special_characters(client):
     Test that special characters in query parameters are handled correctly.
     """
     with with_test_config({"special-chars.com": {"status_code": 200}}):
-        response = await request_host(client, "/?search=hello%20world&filter=test%2Bvalue", "special-chars.com", expected_status=200)
+        response = await request_host(
+            client, "/?search=hello%20world&filter=test%2Bvalue", "special-chars.com", expected_status=200
+        )
         assert response.status_code == 200
 
 
@@ -107,7 +107,3 @@ async def test_path_with_query_parameters(client):
     with with_test_config({"path-query.com": {"status_code": 200}}):
         response = await request_host(client, "/page/path?id=123&name=test", "path-query.com", expected_status=200)
         assert response.status_code == 200
-
-
-
-

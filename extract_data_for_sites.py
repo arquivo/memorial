@@ -130,9 +130,7 @@ def main():
         print(f"Wayback server: {args.wayback_server}")
         print("-" * 70)
 
-        title, metadata = extract_site_metadata(
-            args.site, args.version, args.wayback_server, args.timeout
-        )
+        title, metadata = extract_site_metadata(args.site, args.version, args.wayback_server, args.timeout)
 
         # Print results
         print(f"\n✓ Site Title: {title}")
@@ -155,9 +153,7 @@ def main():
     try:
         if args.config:
             # Load custom config file
-            spec = __import__("importlib.util").util.spec_from_file_location(
-                "config", args.config
-            )
+            spec = __import__("importlib.util").util.spec_from_file_location("config", args.config)
             config = __import__("importlib.util").util.module_from_spec(spec)
             spec.loader.exec_module(config)
             archive_config = config.ARCHIVE_CONFIG
@@ -167,9 +163,7 @@ def main():
 
             archive_config = ARCHIVE_CONFIG
 
-        logger.info(
-            "Loaded configuration with %d sites", len(archive_config)
-        )
+        logger.info("Loaded configuration with %d sites", len(archive_config))
 
     except ImportError as e:
         logger.error("Failed to import config: %s", str(e))
@@ -209,9 +203,7 @@ def main():
 
         try:
             # Extract metadata for this site
-            title, metadata = extract_site_metadata(
-                site, version, args.wayback_server, args.timeout
-            )
+            title, metadata = extract_site_metadata(site, version, args.wayback_server, args.timeout)
 
             # Export immediately to TSV
             export_site_to_tsv(site, title, metadata, args.output)
