@@ -1,18 +1,24 @@
 # Memorial
 
-> Arquivo.pt Memorial service to serve preserved web pages
+[Arquivo.pt Memorial](https://arquivo.pt/memorial) service to serve preserved web pages.
 
-Memorial is a Quart-based async web application that serves as a redirection service for preserved websites. It provides a user-friendly landing page with metadata extraction from archived pages, helping users access content preserved by [Arquivo.pt](https://arquivo.pt) (Portuguese Web Archive).
+Non technical documentation about the service is available on [https://arquivo.pt/memorial](https://arquivo.pt/memorial).
+
+Memorial is a Quart-based async web application that serves as a redirection service for preserved websites. It provides a user-friendly landing page with optionally metadata extraction from archived pages (or pre-computed), helping users access content preserved by [Arquivo.pt](https://arquivo.pt) (Portuguese Web Archive).
 
 ## Features
 
-- 🚀 **Async/ASGI** - Built on Quart for true async concurrency
-- 🌐 Automatic redirection to preserved versions of websites
-- 📝 Metadata extraction from archived pages (titles, descriptions, keywords)
-- 🎨 Customizable UI changes per domain
-- 🌍 Multi-language support (Portuguese/English)
-- 🐳 Docker support for easy deployment
-- ✅ Comprehensive test suite with async support
+- 🚀 **Async/ASGI** - Built on Quart + Hypercorn for true async concurrency
+- 🌐 **Automatic redirection** to preserved versions of websites on Arquivo.pt
+- 📝 **Metadata extraction** from archived pages (titles, descriptions, keywords)
+- 🎨 **Customizable UI per domain** - custom messages, logos, button colors, and languages
+- 🌍 **Multi-language support** (Portuguese/English)
+- 🔒 **Status-code-based responses** - configurable HTTP status codes (200, 502, 503, 504)
+- 📋 **Three-part message system** - primary message, context message before button, and button label; each independently configurable per domain and language
+- 🛠️ **Maintenance page templates** - domain-specific HTML templates with hierarchical fallback (subdomain → domain → default)
+- 🖼️ **Site image serving** - serves per-domain screenshots from a configurable directory
+- 🐳 **Docker support** - production-ready Docker image and Compose file
+- 🧪 **Comprehensive test suite** - 158 tests covering async routing, metadata, templates, and CLI tools
 
 ## Requirements
 
@@ -52,7 +58,7 @@ That's it! The Makefile handles virtual environment creation automatically.
 
 **Using Hypercorn (Production-like):**
 ```bash
-hypercorn memorial:app --bind 0.0.0.0:8080
+hypercorn memorial:app --bind 0.0.0.0:8000
 # or with config file
 hypercorn -c hypercorn.toml memorial:app
 ```
@@ -62,7 +68,7 @@ hypercorn -c hypercorn.toml memorial:app
 python memorial.py
 ```
 
-The application will be available at `http://localhost:8080`
+The application will be available at `http://localhost:8000`
 
 ### Configuration
 
@@ -148,6 +154,112 @@ ARCHIVE_CONFIG = {
 
 The application will automatically serve `templates/maintenance/example_com.html` for requests to this domain, with a 502 status code.
 
+#### Full Configuration Example
+
+Below is a single entry showing every supported key, with explanations:
+
+```python
+ARCHIVE_CONFIG = {
+    # -----------------------------------------------------------------------
+    # Domain key: must match the incoming Host header exactly (no "www.").
+    # Requests for "www.example.com" are automatically normalised to "example.com".
+    # -----------------------------------------------------------------------
+    "example.com": {
+
+        # --- Archived version timestamp (required) -------------------------
+        # 14-digit YYYYMMDDHHmmss string that pins the Wayback Machine snapshot.
+        # If omitted, Wayback will serve the most recent archived version.
+        "version": "20230101120000",
+
+        # --- HTTP status code returned to the browser (default: 200) -------
+        # 200  – site is permanently offline/disabled (normal memorial page)
+        # 502  – site is temporarily unavailable (Bad Gateway)
+        # 503  – site is under scheduled maintenance (Service Unavailable)
+        # 504  – gateway timeout
+        # For 502/503/504 Memorial also looks for a domain-specific maintenance
+        # template in templates/maintenance/ (see Maintenance Pages section).
+        "status_code": 200,
+
+        # --- Default UI language (default: "pt") ---------------------------
+        # Controls which language block is shown first.
+        # Accepted values: "pt" (Portuguese) | "en" (English)
+        "default_language": "pt",
+
+        # --- Primary message shown to the visitor --------------------------
+        # Appears as the headline on the memorial landing page.
+        # Falls back to the status-code default in DEFAULT_MESSAGES if omitted.
+        "message_pt": "O site example.com foi desactivado.",
+        "message_en": "The site example.com has been shut down.",
+
+        # --- Custom logo ---------------------------------------------------
+        # Three accepted forms:
+        #   1. Filename only – served from the IMAGES_FOLDER directory
+        #      (dots in domain replaced by underscores is the convention)
+        #   2. Absolute URL  – the browser is redirected to the URL
+        #   3. Protocol-relative URL starting with "//"
+        # If omitted, the default Arquivo.pt logo is used.
+        "logo": "example_com.png",
+
+        # --- Wayback Machine link mode (default: False) --------------------
+        # False – link points to the framed Wayback interface
+        #         (https://arquivo.pt/wayback/<version>/<url>)
+        # True  – link points to the cleaner noFrame replay interface
+        #         (https://arquivo.pt/noFrame/replay/<version>/<url>)
+        "link_to_noFrame": False,
+
+        # --- Custom button colour ------------------------------------------
+        # Any valid CSS colour value (hex, rgb, named colour).
+        # If omitted, the template's default colour is used.
+        "button_color": "#005A8E",
+
+        # --- Extra links shown alongside the main redirect button ----------
+        # Typically used to point to a successor or related site.
+        # If both are provided, the one matching default_language is shown first.
+        "link_pt": "https://new-site.pt",
+        "link_en": "https://new-site.com",
+
+        # --- Custom Jinja2 template ----------------------------------------
+        # Path relative to the templates/ folder.
+        # Useful when a domain needs a fully bespoke layout.
+        # If omitted, Memorial falls back to the maintenance template lookup
+        # (for 5xx codes) or "redirect_default.html".
+        "template": "redirect_default.html",
+
+        # --- Metadata extraction control (default: inherits EXTRACT_METADATA) ---
+        # True  – fetch the archived page at request time and parse its
+        #         <title>, <meta> and <link> tags dynamically.
+        # False – use the static "title" and "metadata" keys below (faster).
+        # Omit  – fall back to the global EXTRACT_METADATA app config flag.
+        "extract_metadata": False,
+
+        # --- Static title (used when extract_metadata is False) ------------
+        # Displayed in the <title> element and on the landing page.
+        "title": "Example Site – archived",
+
+        # --- Static metadata tags (used when extract_metadata is False) ----
+        # List of pre-computed <meta> and <link> tag strings.
+        # These are injected verbatim into the <head> of the landing page.
+        # Obtain them by running:
+        #   python extract_data_for_sites.py --site example.com --version 20230101120000
+        "metadata": [
+            '<meta name="description" content="An example archived website."/>',
+            '<meta name="keywords" content="example, archive, arquivo"/>',
+            '<link rel="shortcut icon" href="https://arquivo.pt/noFrame/replay/20230101120000oe_/http://example.com/favicon.ico"/>',
+        ],
+    },
+}
+```
+
+**Key interactions to keep in mind:**
+
+| Situation | Recommended settings |
+|---|---|
+| Site permanently offline | `status_code: 200`, `extract_metadata: False`, provide `title` + `metadata` |
+| Site temporarily down | `status_code: 502`, add `templates/maintenance/example_com.html` |
+| Live metadata preferred | `extract_metadata: True`, omit `title` / `metadata` |
+| English-first audience | `default_language: "en"`, provide both `message_pt` and `message_en` |
+| External successor link | Add `link_pt` and/or `link_en` pointing to the new URL |
+
 ## Development
 
 ### Setup for Development
@@ -184,7 +296,7 @@ make lint            # Check code with ruff
 make check           # Run all quality checks
 
 # Run application
-make run             # Production-like (uWSGI)
+make run             # Production-like (Hypercorn)
 make run-dev         # Development server
 
 # Cleanup
@@ -570,29 +682,43 @@ The Memorial web application (memorial.py) can use metadata extracted by this mo
 
 ```
 memorial/
-├── memorial.py           # Main Quart async application
-├── config.py            # Site configuration
-├── data_extractor.py # Data extraction utility library
-├── extract_data_for_sites.py  # CLI tool for metadata extraction
-├── example_metadata_extraction.py # Examples demonstrating metadata utilities
-├── pyproject.toml       # Project metadata and dependencies
-├── setup.py             # Backwards compatibility setup file
-├── Makefile             # Development automation tasks
-├── hypercorn.toml       # Hypercorn ASGI server configuration
-├── Dockerfile           # Docker container definition
-├── README.md            # This file
-├── METADATA_EXTRACTION.md # Detailed metadata extraction documentation
-├── static/              # Static assets (CSS, images, robots.txt)
-├── templates/           # Jinja2 templates
-└── tests/               # Test suite (76 async tests, 98% coverage)
-    ├── conftest.py                      # Shared fixtures and helpers
-    ├── test_favicon.py                  # Favicon endpoint tests (4 tests)
-    ├── test_site_image.py               # Site image endpoint tests (11 tests)
-    ├── test_normalization_and_params.py # WWW normalization & query params (8 tests)
-    ├── test_url_construction.py         # URL helpers and construction (9 tests)
-    ├── test_edge_cases.py               # Edge cases and error conditions (9 tests)
-    ├── test_redirect_core.py            # Core redirect functionality (35 tests)
-    └── test_basic.py.archive            # Original monolithic test file (archived)
+├── memorial.py                  # Main Quart async application
+├── config.py                    # Site configuration (ARCHIVE_CONFIG)
+├── data_extractor.py            # Data extraction utility library
+├── extract_data_for_sites.py    # CLI tool for metadata extraction
+├── hypercorn_config.py          # Hypercorn ASGI server configuration
+├── uwsgi.ini                    # Legacy uWSGI configuration (kept for reference)
+├── pyproject.toml               # Project metadata and dependencies
+├── setup.py                     # Backwards compatibility setup file
+├── requirements.txt             # Pinned production dependencies
+├── dev-requirements.txt         # Pinned development dependencies
+├── Makefile                     # Development automation tasks
+├── docker-compose.yml           # Docker Compose service definition
+├── Dockerfile                   # Docker container definition
+├── data.tsv                     # Pre-extracted site metadata (title + meta tags)
+├── metadata.tsv                 # Supplementary metadata export
+├── README.md                    # This file
+├── static/                      # Static assets (robots.txt, images)
+│   └── img/
+├── templates/
+│   ├── redirect_default.html    # Default redirect/maintenance template
+│   └── maintenance/             # Domain-specific maintenance templates
+│       ├── educast_fccn_pt.html
+│       ├── fccn_pt.html
+│       └── nau_edu_pt.html
+└── tests/                       # Test suite (158 tests)
+    ├── conftest.py                          # Shared fixtures and helpers
+    ├── test_redirect_core.py                # Core redirect routing and config
+    ├── test_edge_cases.py                   # Error conditions and edge cases
+    ├── test_favicon.py                      # /favicon.ico endpoint
+    ├── test_site_image.py                   # /memorial-site-image endpoint
+    ├── test_normalization_and_params.py     # WWW normalization & query params
+    ├── test_url_construction.py             # URL construction helpers
+    ├── test_maintenance_templates.py        # Maintenance template lookup & fallback
+    ├── test_status_code_messages.py         # Status-code-based default messages
+    ├── test_multi_part_messages.py          # Three-part message system
+    ├── test_data_extractor.py               # data_extractor.py unit tests
+    └── test_extract_data_for_sites.py       # CLI tool tests
 ```
 
 ### Test Organization
@@ -602,15 +728,20 @@ The test suite has been split into focused, manageable files organized by featur
 **Shared Configuration** (`conftest.py`)
 - Mock setup for httpx.AsyncClient
 - Pytest fixtures (client fixture)
-- Helper functions (request_host, get_title, get_metadata, with_test_config)
+- Helper functions (`request_host`, `get_title`, `get_metadata`, `with_test_config`)
 
 **Feature-Specific Test Files**
-- `test_favicon.py` - /favicon.ico endpoint with version handling and www normalization
-- `test_site_image.py` - /memorial-site-image endpoint with custom logos and directory lookups  
+- `test_redirect_core.py` - Core redirect routing, metadata extraction, configuration precedence
+- `test_edge_cases.py` - Error conditions, timeouts, malformed input, multi-site configs
+- `test_favicon.py` - `/favicon.ico` endpoint with version handling and www normalization
+- `test_site_image.py` - `/memorial-site-image` endpoint with custom logos and directory lookups
 - `test_normalization_and_params.py` - WWW prefix handling and query parameter preservation
 - `test_url_construction.py` - URL construction helpers and Wayback URL generation
-- `test_edge_cases.py` - Error conditions, timeouts, malformed input, multi-site configs
-- `test_redirect_core.py` - Core redirect routing, metadata extraction, configuration precedence
+- `test_maintenance_templates.py` - Maintenance page template lookup and hierarchical fallback chain
+- `test_status_code_messages.py` - Status-code-based default messages (200/502/503/504)
+- `test_multi_part_messages.py` - Three-part message rendering (primary, before-button, button label)
+- `test_data_extractor.py` - Unit tests for `data_extractor.py` library functions
+- `test_extract_data_for_sites.py` - CLI tool argument parsing, bulk/single extraction, TSV export
 
 ## Docker Deployment
 
@@ -627,19 +758,6 @@ docker compose up -d
 docker compose stop
 ```
 
-### Build and Run with Docker
-
-```bash
-# Build the Docker image
-docker build -t memorial .
-
-# Run the container
-docker run -p 127.0.0.1:8080:8080 memorial
-
-# Run with custom configuration
-docker run -p 8080:8080 -v /path/to/config.py:/app/config.py memorial
-```
-
 ### Testing
 
 Test the memorial service with a site configured in `config.py`:
@@ -649,7 +767,7 @@ Test the memorial service with a site configured in `config.py`:
 curl -v --resolve senior3045.ipportalegre.pt:80:127.0.0.1 http://senior3045.ipportalegre.pt
 
 # Or test directly with localhost
-curl -H "Host: senior3045.ipportalegre.pt" http://127.0.0.1:8080
+curl -H "Host: senior3045.ipportalegre.pt" http://127.0.0.1:8000
 
 # Check specific paths
 curl -v --resolve senior3045.ipportalegre.pt:80:127.0.0.1 http://senior3045.ipportalegre.pt/about
