@@ -640,10 +640,12 @@ async def test_metadata_extraction_with_different_hosts(client):
     mock_client_instance.__aenter__ = AsyncMock(return_value=mock_client_instance)
     mock_client_instance.__aexit__ = AsyncMock(return_value=None)
 
-    with with_test_config({
-        "host-with-metadata.example.com": {"extract_metadata": True},
-        "host-without-metadata.example.com": {"extract_metadata": False},
-    }):
+    with with_test_config(
+        {
+            "host-with-metadata.example.com": {"extract_metadata": True},
+            "host-without-metadata.example.com": {"extract_metadata": False},
+        }
+    ):
         with patch.dict("memorial.app.config", {"EXTRACT_METADATA": False}, clear=False):
             with patch("memorial.httpx.AsyncClient", return_value=mock_client_instance):
                 # Host with metadata extraction enabled
@@ -664,16 +666,18 @@ async def test_configured_title_and_metadata(client):
     """
     Test that configured title and metadata are used when extract_metadata is False.
     """
-    with with_test_config({
-        "configured-site.example.com": {
-            "title": "Configured Site Title",
-            "metadata": [
-                '<meta name="description" content="Configured description"/>',
-                '<meta name="keywords" content="configured, test"/>',
-            ],
-            "extract_metadata": False,
+    with with_test_config(
+        {
+            "configured-site.example.com": {
+                "title": "Configured Site Title",
+                "metadata": [
+                    '<meta name="description" content="Configured description"/>',
+                    '<meta name="keywords" content="configured, test"/>',
+                ],
+                "extract_metadata": False,
+            }
         }
-    }):
+    ):
         with patch.dict("memorial.app.config", {"EXTRACT_METADATA": False}, clear=False):
             response = await request_host(client, "/", "configured-site.example.com", expected_status=200)
             html_content = (await response.data).decode("utf-8")
@@ -714,13 +718,15 @@ async def test_configured_metadata_ignored_when_extraction_enabled(client):
     mock_client_instance.__aenter__ = AsyncMock(return_value=mock_client_instance)
     mock_client_instance.__aexit__ = AsyncMock(return_value=None)
 
-    with with_test_config({
-        "configured-but-extracted.example.com": {
-            "title": "Configured Title (Should Be Ignored)",
-            "metadata": ['<meta name="description" content="Configured (ignored)"/>'],
-            "extract_metadata": True,  # Enable extraction
+    with with_test_config(
+        {
+            "configured-but-extracted.example.com": {
+                "title": "Configured Title (Should Be Ignored)",
+                "metadata": ['<meta name="description" content="Configured (ignored)"/>'],
+                "extract_metadata": True,  # Enable extraction
+            }
         }
-    }):
+    ):
         with patch.dict("memorial.app.config", {"EXTRACT_METADATA": False}, clear=False):
             with patch("memorial.httpx.AsyncClient", return_value=mock_client_instance):
                 response = await request_host(client, "/", "configured-but-extracted.example.com", expected_status=200)
@@ -741,12 +747,14 @@ async def test_no_configured_metadata_defaults_to_empty(client):
     Test that when no title or metadata is configured and extraction is disabled,
     the page renders with empty title and metadata.
     """
-    with with_test_config({
-        "no-metadata-site.example.com": {
-            "extract_metadata": False,
-            # No title or metadata configured
+    with with_test_config(
+        {
+            "no-metadata-site.example.com": {
+                "extract_metadata": False,
+                # No title or metadata configured
+            }
         }
-    }):
+    ):
         with patch.dict("memorial.app.config", {"EXTRACT_METADATA": False}, clear=False):
             response = await request_host(client, "/", "no-metadata-site.example.com", expected_status=200)
             html_content = (await response.data).decode("utf-8")
@@ -763,12 +771,14 @@ async def test_configured_title_only(client):
     """
     Test that a site can have configured title without metadata.
     """
-    with with_test_config({
-        "title-only.example.com": {
-            "title": "Title Only Site",
-            "extract_metadata": False,
+    with with_test_config(
+        {
+            "title-only.example.com": {
+                "title": "Title Only Site",
+                "extract_metadata": False,
+            }
         }
-    }):
+    ):
         with patch.dict("memorial.app.config", {"EXTRACT_METADATA": False}, clear=False):
             response = await request_host(client, "/", "title-only.example.com", expected_status=200)
             html_content = (await response.data).decode("utf-8")
@@ -782,12 +792,14 @@ async def test_configured_metadata_only(client):
     """
     Test that a site can have configured metadata without title.
     """
-    with with_test_config({
-        "metadata-only.example.com": {
-            "metadata": ['<meta name="author" content="Test Author"/>'],
-            "extract_metadata": False,
+    with with_test_config(
+        {
+            "metadata-only.example.com": {
+                "metadata": ['<meta name="author" content="Test Author"/>'],
+                "extract_metadata": False,
+            }
         }
-    }):
+    ):
         with patch.dict("memorial.app.config", {"EXTRACT_METADATA": False}, clear=False):
             response = await request_host(client, "/", "metadata-only.example.com", expected_status=200)
             html_content = (await response.data).decode("utf-8")
@@ -834,12 +846,7 @@ async def test_strip_port_various_ports(client):
     """
     Test that STRIP_PORT works with various port numbers (8080, 3000, 5000, etc.).
     """
-    with with_test_config({
-        "testsite.com": {
-            "status_code": 200,
-            "message_pt": "Test site with various ports"
-        }
-    }):
+    with with_test_config({"testsite.com": {"status_code": 200, "message_pt": "Test site with various ports"}}):
         with patch.dict("memorial.app.config", {"STRIP_PORT": True}, clear=False):
             # Test different port numbers
             for port in ["8080", "3000", "5000", "8888", "9000"]:
@@ -892,13 +899,9 @@ async def test_strip_port_with_specific_version(client):
     """
     Test that STRIP_PORT works with sites that have specific version timestamps configured.
     """
-    with with_test_config({
-        "versioned-site.com": {
-            "version": "20200117175504",
-            "status_code": 200,
-            "message_pt": "Versioned site"
-        }
-    }):
+    with with_test_config(
+        {"versioned-site.com": {"version": "20200117175504", "status_code": 200, "message_pt": "Versioned site"}}
+    ):
         with patch.dict("memorial.app.config", {"STRIP_PORT": True}, clear=False):
             response = await request_host(client, "/", "versioned-site.com:8080", expected_status=200)
             assert response.status_code == 200
@@ -920,7 +923,3 @@ async def test_strip_port_preserves_original_url(client):
             # The original URL with port should appear somewhere in the response
             # (Used for the redirect URL to Arquivo.pt)
             assert "preserve-url.com:8080" in html_content or "preserve-url.com" in html_content
-
-
-
-

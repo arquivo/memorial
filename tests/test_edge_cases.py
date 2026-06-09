@@ -67,13 +67,15 @@ async def test_language_specific_content(client):
     """
     Test that language-specific messages are rendered correctly.
     """
-    with with_test_config({
-        "i18n-test.com": {
-            "message_pt": "Mensagem em português",
-            "message_en": "Message in English",
-            "default_language": "pt",
+    with with_test_config(
+        {
+            "i18n-test.com": {
+                "message_pt": "Mensagem em português",
+                "message_en": "Message in English",
+                "default_language": "pt",
+            }
         }
-    }):
+    ):
         response = await request_host(client, "/", "i18n-test.com", expected_status=200)
         html_content = (await response.data).decode("utf-8")
         # Both messages should be present (one hidden by default)
@@ -86,11 +88,13 @@ async def test_custom_button_color(client):
     """
     Test that custom button color is applied.
     """
-    with with_test_config({
-        "colored-button.com": {
-            "button_color": "#FF5733",
+    with with_test_config(
+        {
+            "colored-button.com": {
+                "button_color": "#FF5733",
+            }
         }
-    }):
+    ):
         response = await request_host(client, "/", "colored-button.com", expected_status=200)
         html_content = (await response.data).decode("utf-8")
         assert "#FF5733" in html_content
@@ -101,12 +105,14 @@ async def test_custom_links_for_languages(client):
     """
     Test that custom links for different languages are applied.
     """
-    with with_test_config({
-        "custom-links.com": {
-            "link_pt": "https://example.com/pt",
-            "link_en": "https://example.com/en",
+    with with_test_config(
+        {
+            "custom-links.com": {
+                "link_pt": "https://example.com/pt",
+                "link_en": "https://example.com/en",
+            }
         }
-    }):
+    ):
         response = await request_host(client, "/", "custom-links.com", expected_status=200)
         html_content = (await response.data).decode("utf-8")
         assert "https://example.com/pt" in html_content
@@ -132,10 +138,7 @@ async def test_httpx_timeout_configuration(client):
     with patch("memorial.httpx.AsyncClient") as mock_async_client_class:
         mock_async_client_class.return_value = mock_client_instance
 
-        with patch.dict("memorial.app.config", {
-            "WAYBACK_REQUEST_TIMEOUT": 10,
-            "EXTRACT_METADATA": True
-        }, clear=False):
+        with patch.dict("memorial.app.config", {"WAYBACK_REQUEST_TIMEOUT": 10, "EXTRACT_METADATA": True}, clear=False):
             with with_test_config({"timeout-test.com": {}}):
                 response = await request_host(client, "/", "timeout-test.com", expected_status=200)
                 assert response.status_code == 200
@@ -148,24 +151,26 @@ async def test_multiple_sites_different_configs(client):
     """
     Test that multiple sites can be configured with completely different configurations.
     """
-    with with_test_config({
-        "site-a.com": {
-            "status_code": 200,
-            "message_pt": "Site A",
-            "default_language": "pt",
-            "version": "20190101000000",
-        },
-        "site-b.com": {
-            "status_code": 410,
-            "message_en": "Site B - Gone",
-            "default_language": "en",
-        },
-        "site-c.com": {
-            "status_code": 503,
-            "extract_metadata": True,
-            "version": "20210601000000",
-        },
-    }):
+    with with_test_config(
+        {
+            "site-a.com": {
+                "status_code": 200,
+                "message_pt": "Site A",
+                "default_language": "pt",
+                "version": "20190101000000",
+            },
+            "site-b.com": {
+                "status_code": 410,
+                "message_en": "Site B - Gone",
+                "default_language": "en",
+            },
+            "site-c.com": {
+                "status_code": 503,
+                "extract_metadata": True,
+                "version": "20210601000000",
+            },
+        }
+    ):
         # Test site A
         response_a = await request_host(client, "/", "site-a.com", expected_status=200)
         assert "Site A" in (await response_a.data).decode("utf-8")

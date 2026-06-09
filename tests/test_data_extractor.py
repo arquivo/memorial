@@ -248,13 +248,17 @@ class TestExportSiteToTsv:
     def test_export_site_to_tsv_creates_file(self, tmp_path):
         """Test that export_site_to_tsv creates a TSV file."""
         output_file = tmp_path / "test_output.tsv"
-        export_site_to_tsv("example.com", "Example Site", ['<meta name="description" content="Example"/>'], str(output_file))
+        export_site_to_tsv(
+            "example.com", "Example Site", ['<meta name="description" content="Example"/>'], str(output_file)
+        )
         assert output_file.exists()
 
     def test_export_site_to_tsv_no_header(self, tmp_path):
         """Test that export_site_to_tsv doesn't write header."""
         output_file = tmp_path / "test_output.tsv"
-        export_site_to_tsv("example.com", "Example Site", ['<meta name="description" content="Example"/>'], str(output_file))
+        export_site_to_tsv(
+            "example.com", "Example Site", ['<meta name="description" content="Example"/>'], str(output_file)
+        )
 
         with open(output_file, encoding="utf-8") as f:
             lines = f.readlines()
