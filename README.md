@@ -407,16 +407,28 @@ Memorial includes comprehensive utilities to extract and export metadata from ar
 
 ### Quick Start
 
-#### Extract for all configured sites and export to TSV:
+#### Extract for all configured sites (TSV to stdout):
 
 ```bash
 python extract_data_for_sites.py
 ```
 
-This creates a `data.tsv` file with three columns:
+Output is written to **stdout** as TSV (tab-separated), so you can pipe or redirect it:
+
+```bash
+# Save to a file
+python extract_data_for_sites.py > data.tsv
+
+# Or write directly to a named file
+python extract_data_for_sites.py --output data.tsv
+```
+
+Progress and status messages are always written to **stderr**, keeping stdout clean for piping.
+
+The TSV has three columns:
 - Column 1: Site hostname (e.g., `example.com`)
 - Column 2: Page title
-- Column 3: Extracted metadata tags (semicolon-separated)
+- Column 3: Extracted metadata tags (formatted as a Python list string)
 
 #### Extract for a specific site:
 
@@ -603,27 +615,79 @@ python extract_data_for_sites.py --help
 
 ### Workflow: Adding a New Site
 
-1. **Test metadata extraction** before adding to config:
+The recommended flow is: extract metadata → inspect it → paste it into `config.py`.
+
+#### 1. Extract metadata (to stdout)
+
+**Locally:**
 ```bash
 python extract_data_for_sites.py --site newsite.com --version 20230101120000
 ```
 
-2. **Review the extracted title and metadata** - if useful, proceed to step 3
+**Using the published Docker image (no local Python required):**
+```bash
+docker run --rm arquivo/memorial \
+  python extract_data_for_sites.py \
+  --site newsite.com \
+  --version 20230101120000
+```
 
-3. **Add site to `config.py`:**
+Both commands print a human-readable summary to the terminal. The TSV row is written to stdout, progress messages to stderr.
+
+To capture just the TSV output to stdout:
+```bash
+# Locally
+python extract_data_for_sites.py --site newsite.com --version 20230101120000
+
+# Docker
+docker run --rm arquivo/memorial \
+  python extract_data_for_sites.py \
+  --site newsite.com --version 20230101120000
+```
+
+To save directly with `--output` instead:
+```bash
+# Locally
+python extract_data_for_sites.py --site newsite.com --version 20230101120000 --output newsite.tsv
+
+# Docker (mount a local directory to retrieve the file)
+docker run --rm -v "$PWD":/data arquivo/memorial \
+  python extract_data_for_sites.py \
+  --site newsite.com --version 20230101120000 \
+  --output /data/newsite.tsv
+```
+
+#### 2. Review the extracted title and metadata
+
+Inspect the output. If the title and meta tags look correct, continue to step 3.
+
+#### 3. Add site to `config.py`
+
+Paste the extracted values into `ARCHIVE_CONFIG`:
+
 ```python
 ARCHIVE_CONFIG = {
     # ... existing sites ...
     "newsite.com": {
         "version": "20230101120000",
         "message_pt": "Custom Portuguese message",
+        "title": "Extracted Title Here",
+        "metadata": [
+            '<meta name="description" content="Extracted description"/>',
+        ],
     }
 }
 ```
 
-4. **Extract data for all sites:**
+#### 4. (Optional) Re-extract all configured sites and save to TSV
+
 ```bash
-python extract_data_for_sites.py --output data_updated.tsv
+# Locally
+python extract_data_for_sites.py --output data.tsv
+
+# Docker
+docker run --rm -v "$PWD":/data arquivo/memorial \
+  python extract_data_for_sites.py --output /data/data.tsv
 ```
 
 ### Error Handling
