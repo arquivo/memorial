@@ -325,7 +325,7 @@ async def site_image():
     host_image_normalized = host.replace(".", "_")
 
     # read the 'IMAGES_FOLDER' configuration variable to get the path to the images folder
-    images_folder = app.config.get("IMAGES_FOLDER", "/static/img")
+    images_folder = app.config.get("IMAGES_FOLDER", "../memorial-site-images/img")
 
     logo = None
     if host_config:
