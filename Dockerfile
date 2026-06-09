@@ -17,15 +17,14 @@ RUN pip install --upgrade pip && \
 # Copy application code
 COPY . .
 
-# Expose the http port
-ARG HTTP_PORT=8080
-ENV HTTP_PORT=$HTTP_PORT
-EXPOSE $HTTP_PORT
-
 # Create non-root user for security
 RUN useradd -m -u 1000 memorial && \
     chown -R memorial:memorial /app
 USER memorial
 
+# Health check
+HEALTHCHECK --interval=10s --timeout=10s --retries=3 --start-period=10s \
+    CMD bash -c "echo > /dev/tcp/localhost/8000"
+
 # Startup hypercorn
-CMD ["hypercorn", "--config", "hypercorn.toml", "memorial:app"]
+CMD ["hypercorn", "--config", "file:/app/hypercorn_config.py", "memorial:app"]
