@@ -35,7 +35,6 @@ install-dev: venv-check ## Install development dependencies (testing, linting, f
 	@echo "  You can now run: make ci, make test, make lint, make format"
 .PHONY: install-dev
 
-# Testing
 test: venv-check ## Run tests
 	@$(PYTHON) -c "import pytest" 2>/dev/null || \
 		(echo "Error: pytest not found. Run 'make install-dev' first." && exit 1)
@@ -48,34 +47,24 @@ test-cov: venv-check ## Run tests with coverage report
 	$(PYTHON) -m pytest --cov=. --cov-report=term-missing --cov-report=html
 .PHONY: test-cov
 
-# Code Quality
 lint: venv-check ## Run linting with ruff
 	@$(PYTHON) -c "import ruff" 2>/dev/null || \
 		(echo "Error: ruff not found. Run 'make install-dev' first." && exit 1)
 	$(PYTHON) -m ruff check .
-.PHONY: lint
-
-lint-fix: venv-check ## Run linting with ruff and auto-fix issues
-	@$(PYTHON) -c "import ruff" 2>/dev/null || \
-		(echo "Error: ruff not found. Run 'make install-dev' first." && exit 1)
-	$(PYTHON) -m ruff check . --fix
-.PHONY: lint-fix
-
-format: venv-check ## Format code with black
-	@$(PYTHON) -c "import black" 2>/dev/null || \
-		(echo "Error: black not found. Run 'make install-dev' first." && exit 1)
-	$(PYTHON) -m black .
-.PHONY: format
-
-format-check: venv-check ## Check code formatting without modifying files
 	@$(PYTHON) -c "import black" 2>/dev/null || \
 		(echo "Error: black not found. Run 'make install-dev' first." && exit 1)
 	$(PYTHON) -m black --check .
-.PHONY: format-check
-
-check: format-check lint ## Run all code quality checks (format + lint)
 	@echo "✓ All code quality checks passed"
-.PHONY: check
+.PHONY: lint
+
+lint-fix: venv-check ## Auto fix linting issues with ruff and black
+	@$(PYTHON) -c "import ruff" 2>/dev/null || \
+		(echo "Error: ruff not found. Run 'make install-dev' first." && exit 1)
+	$(PYTHON) -m ruff check . --fix
+	@$(PYTHON) -c "import black" 2>/dev/null || \
+		(echo "Error: black not found. Run 'make install-dev' first." && exit 1)
+	$(PYTHON) -m black .
+.PHONY: lint-fix
 
 # Running locally
 run: venv-check ## Run application with Hypercorn (production-like)
@@ -118,7 +107,7 @@ docker-compose-build: ## Build services with docker-compose
 .PHONY: docker-compose-build
 
 # CI/CD - Run all checks
-ci: format-check lint test ## Run all CI checks (format, lint, test)
+ci: lint test ## Run all CI checks (lint, test)
 	@echo ""
 	@echo "=================================="
 	@echo "✓ All CI checks passed!"
