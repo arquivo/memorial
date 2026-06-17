@@ -348,8 +348,7 @@ async def site_image():
         logger.info("No image file found for %s", host_image_normalized)
 
     if not image_filename:
-        return await send_from_directory("static/img",
-            app.config.get("DEFAULT_LOGO", "arquivo_pt_2024-preto.png"))
+        return await send_from_directory("static/img", app.config.get("DEFAULT_LOGO", "arquivo_pt_2024-preto.png"))
 
     logger.info("Serving image folder: %s file: %s", images_folder, image_filename)
     return await send_from_directory(images_folder, image_filename)
