@@ -12,6 +12,7 @@ from unittest.mock import patch
 from bs4 import BeautifulSoup
 
 from data_extractor import (
+    escape_for_tsv,
     export_site_to_tsv,
     export_to_tsv,
     extract_metadata_from_html,
@@ -19,6 +20,25 @@ from data_extractor import (
     fix_not_closed_metatags,
     format_metadata_as_string,
 )
+
+
+class TestEscapeForTsv:
+    """Test suite for escape_for_tsv function."""
+
+    def test_escapes_tab_and_newline(self):
+        assert escape_for_tsv("a\tb\nc") == "a\\tb\\nc"
+
+    def test_normalizes_crlf_line_endings(self):
+        """Old FrontPage-authored archived pages use \\r\\n line endings; a lone \\r
+        left unescaped shows up as a literal ^M in the TSV output."""
+        result = escape_for_tsv("New Page 1\r\n")
+        assert "\r" not in result
+        assert result == "New Page 1\\n"
+
+    def test_normalizes_lone_carriage_return(self):
+        result = escape_for_tsv("Title with\ra stray CR")
+        assert "\r" not in result
+        assert result == "Title with\\na stray CR"
 
 
 class TestFormatMetadataAsString:
@@ -302,6 +322,19 @@ class TestExportSiteToTsv:
         # Tabs and newlines should be escaped
         assert "\\t" in content
         assert "\\n" in content
+
+    def test_export_site_to_tsv_title_strips_carriage_return(self, tmp_path):
+        """Regression test: a title with a trailing \\r\\n (as seen on old
+        FrontPage-authored archived pages) must not leave a raw \\r in the TSV,
+        which renders as ^M in terminals/editors."""
+        output_file = tmp_path / "test_output.tsv"
+        export_site_to_tsv("enec.fc.ul.pt", "New Page 1\r\n", [], str(output_file))
+
+        with open(output_file, encoding="utf-8") as f:
+            content = f.read()
+
+        assert "\r" not in content
+        assert "New Page 1\\n" in content
 
 
 class TestExportToTsv:

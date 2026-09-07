@@ -213,6 +213,24 @@ def extract_metadata_for_configured_sites(
     return results
 
 
+def escape_for_tsv(text: str) -> str:
+    """Normalize line endings and escape tabs/newlines for a single TSV column.
+
+    Archived pages (especially older ones) often use "\\r\\n" or lone "\\r" line
+    endings. Escaping only "\\n" leaves stray "\\r" bytes in the output, which show
+    up as "^M" in terminals/editors. Normalize all line endings to "\\n" first, then
+    escape.
+
+    Args:
+        text: Raw text to prepare for a TSV column
+
+    Returns:
+        str: Text safe to place in a single TSV column (no literal tabs/newlines)
+    """
+    text = text.replace("\r\n", "\n").replace("\r", "\n")
+    return text.replace("\t", "\\t").replace("\n", "\\n")
+
+
 def format_metadata_as_string(metadata_list: list[str]) -> str:
     """
     Format metadata list as a single string for TSV export.
@@ -256,8 +274,8 @@ def export_site_to_tsv(site: str, title: str, metadata_list: list[str], output_f
         metadata_str = format_metadata_as_string(metadata_list)
 
         # Escape tabs and newlines in both title and metadata
-        title_escaped = title.replace("\t", "\\t").replace("\n", "\\n")
-        metadata_str_escaped = metadata_str.replace("\t", "\\t").replace("\n", "\\n")
+        title_escaped = escape_for_tsv(title)
+        metadata_str_escaped = escape_for_tsv(metadata_str)
 
         with open(output_file, "a", encoding="utf-8") as f:
             f.write(f"{site}\t{title_escaped}\t{metadata_str_escaped}\n")
@@ -301,8 +319,8 @@ def export_to_tsv(results: dict[str, tuple[str, list[str]]], output_file: str, a
                 metadata_str = format_metadata_as_string(metadata_list)
 
                 # Escape tabs and newlines in both title and metadata
-                title = title.replace("\t", "\\t").replace("\n", "\\n")
-                metadata_str = metadata_str.replace("\t", "\\t").replace("\n", "\\n")
+                title = escape_for_tsv(title)
+                metadata_str = escape_for_tsv(metadata_str)
 
                 f.write(f"{site}\t{title}\t{metadata_str}\n")
 
