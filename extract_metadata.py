@@ -42,6 +42,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from data_extractor import (
+    escape_for_tsv,
     export_site_to_tsv,
     export_to_tsv,
     extract_site_metadata,
@@ -151,8 +152,8 @@ def main():
             from data_extractor import format_metadata_as_string
 
             metadata_str = format_metadata_as_string(metadata)
-            title_escaped = title.replace("\t", "\\t").replace("\n", "\\n")
-            metadata_escaped = metadata_str.replace("\t", "\\t").replace("\n", "\\n")
+            title_escaped = escape_for_tsv(title)
+            metadata_escaped = escape_for_tsv(metadata_str)
             print("Site\tTitle\tMetadata")
             print(f"{args.site}\t{title_escaped}\t{metadata_escaped}")
 
@@ -232,8 +233,8 @@ def main():
             else:
                 # Stream TSV row to stdout
                 metadata_str = format_metadata_as_string(metadata)
-                title_escaped = title.replace("\t", "\\t").replace("\n", "\\n")
-                metadata_escaped = metadata_str.replace("\t", "\\t").replace("\n", "\\n")
+                title_escaped = escape_for_tsv(title)
+                metadata_escaped = escape_for_tsv(metadata_str)
                 print(f"{site}\t{title_escaped}\t{metadata_escaped}")
 
             print("✓", file=out)
