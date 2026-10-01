@@ -378,6 +378,13 @@ async def redirect(path):
     wayback_server_url = app.config.get("WAYBACK_SERVER", "https://arquivo.pt/wayback/")
     wayback_noframe_server_url = get_wayback_noframe_server_url()
 
+    # Google Tag Manager configuration - can be overridden in config
+    # gtm_auth/gtm_preview select a specific GTM environment (e.g. Latest/DEV);
+    # when unset, the container serves its published (production) version
+    gtm_id = app.config.get("GOOGLE_TAGMANAGER_ID", "GTM-5SZHXPRP")
+    gtm_auth = app.config.get("GOOGLE_TAGMANAGER_AUTH", "")
+    gtm_preview = app.config.get("GOOGLE_TAGMANAGER_PREVIEW", "")
+
     template = None  # Template to use for this host (default is redirect_default.html)
     default_language = "pt"
     message_pt = None
@@ -493,6 +500,9 @@ async def redirect(path):
             link_pt=link_pt,  # Additional Portuguese links
             link_en=link_en,  # Additional English links
             args=request.args.items(),  # Query string parameters
+            gtm_id=gtm_id,  # Google Tag Manager container ID
+            gtm_auth=gtm_auth,  # Google Tag Manager environment auth token
+            gtm_preview=gtm_preview,  # Google Tag Manager environment preview name
         ),
         status_code,  # Return configured HTTP status code
     )
