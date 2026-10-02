@@ -7,6 +7,7 @@ Tests cover:
 - export_to_tsv function
 """
 
+import json
 from unittest.mock import patch
 
 from bs4 import BeautifulSoup
@@ -47,13 +48,13 @@ class TestFormatMetadataAsString:
     def test_empty_metadata_list(self):
         """Test formatting an empty metadata list."""
         result = format_metadata_as_string([])
-        assert result == "[  ]"
+        assert result == "[]"
 
     def test_single_metadata_item(self):
         """Test formatting a single metadata item."""
         metadata = ['<meta name="description" content="Test description"/>']
         result = format_metadata_as_string(metadata)
-        assert result == "[ '''<meta name=\"description\" content=\"Test description\"/>''' ]"
+        assert result == r'["<meta name=\"description\" content=\"Test description\"/>"]'
 
     def test_multiple_metadata_items(self):
         """Test formatting multiple metadata items."""
@@ -63,8 +64,8 @@ class TestFormatMetadataAsString:
         ]
         result = format_metadata_as_string(metadata)
         expected = (
-            "[ '''<meta name=\"description\" content=\"Test description\"/>''', "
-            "'''<meta name=\"keywords\" content=\"test, keywords\"/>''' ]"
+            r'["<meta name=\"description\" content=\"Test description\"/>", '
+            r'"<meta name=\"keywords\" content=\"test, keywords\"/>"]'
         )
         assert result == expected
 
@@ -72,8 +73,7 @@ class TestFormatMetadataAsString:
         """Test formatting metadata with special characters."""
         metadata = ['<meta name="description" content="My \'special\' example"/>']
         result = format_metadata_as_string(metadata)
-        assert "'''" in result  # Triple quotes should wrap the tag
-        assert '<meta name="description" content="My \'special\' example"/>' in result
+        assert json.loads(result) == metadata
 
     def test_metadata_with_quotes(self):
         """Test formatting metadata containing quotes."""
@@ -82,9 +82,7 @@ class TestFormatMetadataAsString:
             '<meta name="author" content="\'John Doe\'"/>',
         ]
         result = format_metadata_as_string(metadata)
-        assert "[ " in result
-        assert " ]" in result
-        assert result.count("'''") == 4  # 2 tags, each with opening and closing triple quotes
+        assert json.loads(result) == metadata
 
     def test_metadata_preserves_order(self):
         """Test that metadata order is preserved."""
@@ -104,16 +102,15 @@ class TestFormatMetadataAsString:
         """Test formatting metadata containing newlines."""
         metadata = ['<meta name="description" content="Line1\nLine2"/>']
         result = format_metadata_as_string(metadata)
-        # The function should preserve content as-is, escaping happens during TSV export
-        assert "'''" in result
-        assert "Line1\nLine2" in result
+        assert "Line1\\nLine2" in result
+        assert json.loads(result) == metadata
 
     def test_metadata_with_tabs(self):
         """Test formatting metadata containing tabs."""
         metadata = ['<meta name="description" content="Col1\tCol2"/>']
         result = format_metadata_as_string(metadata)
-        assert "'''" in result
-        assert "Col1\tCol2" in result
+        assert "Col1\\tCol2" in result
+        assert json.loads(result) == metadata
 
     def test_link_tags_in_metadata(self):
         """Test formatting link tags as metadata."""
@@ -122,22 +119,25 @@ class TestFormatMetadataAsString:
             '<link rel="shortcut icon" href="https://example.com/favicon.ico"/>',
         ]
         result = format_metadata_as_string(metadata)
-        assert result.count("'''") == 4
+        assert json.loads(result) == metadata
         assert "author" in result
         assert "favicon" in result
 
-    def test_formatted_output_is_valid_list_syntax(self):
-        """Test that output can be evaluated as Python list syntax."""
+    def test_formatted_output_is_valid_json(self):
+        """Test that output can be decoded as a JSON array."""
         metadata = [
             '<meta name="description" content="Test"/>',
             '<meta name="keywords" content="test, keywords"/>',
         ]
         result = format_metadata_as_string(metadata)
-        # Remove outer brackets and spaces to get list-like content
-        assert result.startswith("[ ")
-        assert result.endswith(" ]")
-        # Count separating commas (should be 1 between 2 items, but the content has a comma too)
-        assert result.count("'''") == 4  # 2 tags, each wrapped in triple quotes
+        assert json.loads(result) == metadata
+
+    def test_metadata_preserves_unicode(self):
+        """Test that non-ASCII text stays readable in the JSON output."""
+        metadata = ['<link title="X EEDAA \u00bb Feed de coment\u00e1rios" rel="alternate"/>']
+        result = format_metadata_as_string(metadata)
+        assert "X EEDAA \u00bb Feed de coment\u00e1rios" in result
+        assert json.loads(result) == metadata
 
 
 class TestFixNotClosedMetatags:

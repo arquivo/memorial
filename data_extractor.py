@@ -15,6 +15,7 @@ Usage:
         export_to_tsv(results, "metadata.tsv")
 """
 
+import json
 import logging
 from typing import Optional
 
@@ -233,26 +234,17 @@ def escape_for_tsv(text: str) -> str:
 
 def format_metadata_as_string(metadata_list: list[str]) -> str:
     """
-    Format metadata list as a single string for TSV export.
+    Serialize metadata as a JSON array for TSV export.
 
-    The export needs to be compatible with both TSV format and Python because
-    the metadata is to be read back into Python for further processing.
-
-    Joins metadata tags using the specified separator and escapes special characters for TSV.
+    Escapes quotes, backslashes, and control characters while preserving Unicode text.
 
     Args:
         metadata_list: List of metadata tag strings
 
     Returns:
-        str: Formatted string suitable for TSV column
-
-    Example:
-        >>> metadata = ['<meta name="description" content="My 'special' example"/>', '<meta name="keywords" content="test"/>']
-        >>> print(format_metadata_as_string(metadata))
-        [ '''<meta name="description" content="My 'special' example"/>''', '''<meta name="keywords" content="test"/>''']
+        str: JSON array string suitable for a TSV column
     """
-    metadata_list = [f"'''{tag}'''" for tag in metadata_list]
-    return f"[ {', '.join(metadata_list)} ]"
+    return json.dumps(metadata_list, ensure_ascii=False)
 
 
 def export_site_to_tsv(site: str, title: str, metadata_list: list[str], output_file: str) -> None:
