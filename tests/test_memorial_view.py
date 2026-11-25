@@ -15,7 +15,7 @@ import pytest
 from bs4 import BeautifulSoup
 from conftest import get_title, request_host, with_test_config
 
-from memorial import app
+from memorial import app, parse_host_list
 
 SITE_CONFIG = {
     "example.pt": {
@@ -176,3 +176,16 @@ async def test_view_hosts_configuration(client):
 
             assert "Mensagem do example.pt" in str(local_soup)
             assert "Mensagem do example.pt" not in str(arquivo_soup)
+
+
+@pytest.mark.parametrize(
+    "value, expected",
+    [
+        ("localhost", ["localhost"]),
+        ("localhost, Arquivo.pt ,", ["localhost", "arquivo.pt"]),
+        ("", []),
+    ],
+)
+def test_parse_host_list(value, expected):
+    """The MEMORIAL_VIEW_HOSTS environment variable is a comma separated list of host names."""
+    assert parse_host_list(value) == expected

@@ -88,7 +88,7 @@ Configure archived sites in [`config.py`](config.py). Each domain can have:
 - `WAYBACK_SERVER`: Wayback server URL (default: `https://arquivo.pt/wayback/`)
 - `WAYBACK_NOFRAME_SERVER`: NoFrame server URL (default: `https://arquivo.pt/noFrame/replay/`)
 - `WAYBACK_REQUEST_TIMEOUT`: Request timeout in seconds (default: 3)
-- `MEMORIAL_VIEW_HOSTS`: Domains that serve the memorial site previews (default: `["arquivo.pt", "preprod.arquivo.pt", "dev.arquivo.pt"]`)
+- `MEMORIAL_VIEW_HOSTS`: Comma separated domains that serve the memorial site previews (default: `arquivo.pt,preprod.arquivo.pt,dev.arquivo.pt`), also settable as a list in the configuration file
 
 ### Preview on Arquivo.pt
 
@@ -406,8 +406,8 @@ Open your browser on those pages use an incognito window because the browser cou
 - http://xpto.fccn.pt:5000
 - http://www.fccn.pt:5000
 
-To preview those sites as on Arquivo.pt, add `localhost` to `MEMORIAL_VIEW_HOSTS` in a custom configuration
-file and open, for example, http://localhost:5000/memorial/educast.fccn.pt/view.
+To preview those sites as on Arquivo.pt, start the application with `MEMORIAL_VIEW_HOSTS=localhost` and open,
+for example, http://localhost:5000/memorial/educast.fccn.pt:5000/view.
 
 
 ## Metadata Extraction

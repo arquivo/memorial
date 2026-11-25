@@ -47,6 +47,17 @@ if "MEMORIAL_CONFIGURATION" in os.environ:
 if os.environ.get("MEMORIAL_STRIP_PORT", "").lower() in ("true", "1", "yes"):
     app.config["STRIP_PORT"] = True
 
+
+def parse_host_list(value: str) -> list[str]:
+    """Parse a comma separated list of host names (e.g., "localhost, arquivo.pt")."""
+    return [host.strip().lower() for host in value.split(",") if host.strip()]
+
+
+# Configure the domains that preview memorial sites on /memorial/<site>/view
+# e.g., MEMORIAL_VIEW_HOSTS=localhost for local development
+if "MEMORIAL_VIEW_HOSTS" in os.environ:
+    app.config["MEMORIAL_VIEW_HOSTS"] = parse_host_list(os.environ["MEMORIAL_VIEW_HOSTS"])
+
 # Arquivo.pt domains where /memorial/<site>/view previews the landing page of a memorial site
 # Can be overridden with the MEMORIAL_VIEW_HOSTS configuration
 DEFAULT_MEMORIAL_VIEW_HOSTS = ["arquivo.pt", "preprod.arquivo.pt", "dev.arquivo.pt"]
