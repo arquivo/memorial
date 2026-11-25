@@ -7,10 +7,11 @@ helping users access content preserved by Arquivo.pt (Portuguese Web Archive).
 
 import logging
 import os
+import re
 
 import httpx
 from bs4 import BeautifulSoup
-from quart import Quart, render_template, request, send_from_directory
+from quart import Quart, abort, render_template, request, send_from_directory, url_for
 from quart import redirect as quart_redirect
 
 from data_extractor import (
@@ -45,6 +46,13 @@ if "MEMORIAL_CONFIGURATION" in os.environ:
 # while using production config files without port specifications
 if os.environ.get("MEMORIAL_STRIP_PORT", "").lower() in ("true", "1", "yes"):
     app.config["STRIP_PORT"] = True
+
+# Arquivo.pt domains where /memorial/<site>/view previews the landing page of a memorial site
+# Can be overridden with the MEMORIAL_VIEW_HOSTS configuration
+DEFAULT_MEMORIAL_VIEW_HOSTS = ["arquivo.pt", "preprod.arquivo.pt", "dev.arquivo.pt"]
+
+# A <site> on the preview routes must look like a host name, optionally with a port
+SITE_PATTERN = re.compile(r"^[a-z0-9.-]+(:[0-9]+)?$")
 
 # Default messages based on HTTP status code
 # These are used when a site is not configured with custom messages
@@ -292,21 +300,21 @@ def get_maintenance_template(host: str) -> str:
     return "redirect_default.html"
 
 
-# favicon.ico redirect to archived version
-# to http://arquivo.pt/noFrame/replay/<host>/favicon.ico
-@app.route("/favicon.ico")
-async def favicon():
-    """Redirect requests for favicon.ico to the archived version."""
-    host, host_config = get_host_configuration(request.host)
+def favicon_redirect(request_host: str):
+    """Redirect to the archived favicon.ico of the site served on request_host.
+
+    Redirects to http://arquivo.pt/noFrame/replay/<version>/<host>/favicon.ico
+
+    Args:
+        request_host: The host of the memorial site (e.g., "www.example.com")
+    """
+    host, host_config = get_host_configuration(request_host)
 
     version = None
-    favicon_url = None
     if host_config:
         version = host_config.get("version", None)
-        favicon_url = host_config.get("favicon", None)
 
-    wayback_noframe_server_url = get_wayback_noframe_server_url()
-    favicon_url = wayback_noframe_server_url
+    favicon_url = get_wayback_noframe_server_url()
     if version:
         favicon_url += f"{version}/"
     favicon_url += f"{host}/favicon.ico"
@@ -314,10 +322,19 @@ async def favicon():
     return quart_redirect(favicon_url, code=302)
 
 
-@app.route("/memorial-site-image")
-async def site_image():
-    """Serves an image for the site"""
-    host, host_config = get_host_configuration(request.host)
+@app.route("/favicon.ico")
+async def favicon():
+    """Redirect requests for favicon.ico to the archived version."""
+    return favicon_redirect(request.host)
+
+
+async def serve_site_image(request_host: str):
+    """Serves the image of the site served on request_host.
+
+    Args:
+        request_host: The host of the memorial site (e.g., "www.example.com")
+    """
+    host, host_config = get_host_configuration(request_host)
 
     # Image files follow a naming convention where domain names
     # have dots (.) replaced with underscores (_)
@@ -354,25 +371,33 @@ async def site_image():
     return await send_from_directory(images_folder, image_filename)
 
 
-@app.route("/", defaults={"path": ""})
-@app.route("/<path:path>")
-async def redirect(path):
-    """Main handler for all routes - generates memorial landing page.
+@app.route("/memorial-site-image")
+async def site_image():
+    """Serves an image for the site"""
+    return await serve_site_image(request.host)
+
+
+async def render_memorial_page(request_host: str, page_url: str, site_image_url: str, favicon_url: str):
+    """Generate the memorial landing page of the site served on request_host.
 
     Creates a landing page that informs visitors the site is archived and
     provides a link to view it in the Arquivo.pt Wayback Machine. The page
     can be customized per-domain with specific messages, logos, and versions.
 
-    This is an async route handler that uses non-blocking HTTP requests
-    for better performance when fetching metadata from the Wayback Machine.
+    Uses non-blocking HTTP requests for better performance when fetching
+    metadata from the Wayback Machine.
 
     Args:
-        path: The requested path (captured from URL)
+        request_host: The host of the memorial site (e.g., "www.example.com")
+        page_url: The URL of the requested page on the memorial site
+        site_image_url: The URL of the site image shown on the page
+        favicon_url: The URL of the favicon of the page
 
     Returns:
-        Rendered HTML template with metadata and redirect information
+        Rendered HTML template with metadata and redirect information,
+        and the HTTP status code configured for the site
     """
-    host, host_config = get_host_configuration(request.host)
+    host, host_config = get_host_configuration(request_host)
 
     # Wayback Machine URLs - can be overridden in config
     wayback_server_url = app.config.get("WAYBACK_SERVER", "https://arquivo.pt/wayback/")
@@ -405,9 +430,8 @@ async def redirect(path):
     status_code = 502  # HTTP status code (200=OK, 502=Bad Gateway, etc.)
     archived_site_status_code = 200  # HTTP status code (200=OK, 502=Bad Gateway, etc.)
 
-    # Look up custom configuration for this specific host
+    # Custom configuration for this specific host
     # Configuration is defined in config.py ARCHIVE_CONFIG dictionary
-    host_config = app.config["ARCHIVE_CONFIG"].get(host, None)
     if host_config is not None:
         # Override defaults with host-specific settings
         template = host_config.get("template", None)  # Optional custom template for this host
@@ -458,8 +482,8 @@ async def redirect(path):
     # Or latest version without timestamp (e.g., /example.com) - Wayback will serve the latest archived version
     _version = f"{version}/" if version else ""
 
-    redirect_url_wayback = f"{wayback_server_url}{_version}{request.base_url}"
-    redirect_url_noFrame = f"{wayback_noframe_server_url}{_version}{request.base_url}"
+    redirect_url_wayback = f"{wayback_server_url}{_version}{page_url}"
+    redirect_url_noFrame = f"{wayback_noframe_server_url}{_version}{page_url}"
     redirect_url_home = f"{wayback_noframe_server_url}{_version}{host}"
 
     # Choose between noFrame (cleaner) or regular Wayback interface
@@ -497,6 +521,8 @@ async def redirect(path):
             button_message_en=button_message_en,  # Button text (from DEFAULT_MESSAGES)
             button_color=button_color,  # Custom button styling
             logo=logo,  # Custom logo URL
+            site_image_url=site_image_url,  # URL of the site image
+            favicon_url=favicon_url,  # URL of the page favicon
             link_pt=link_pt,  # Additional Portuguese links
             link_en=link_en,  # Additional English links
             args=request.args.items(),  # Query string parameters
@@ -506,6 +532,80 @@ async def redirect(path):
         ),
         status_code,  # Return configured HTTP status code
     )
+
+
+@app.route("/", defaults={"path": ""})
+@app.route("/<path:path>")
+async def redirect(path):
+    """Main handler for all routes - generates memorial landing page.
+
+    Args:
+        path: The requested path (captured from URL)
+
+    Returns:
+        Rendered HTML template with metadata and redirect information
+    """
+    return await render_memorial_page(
+        request.host,
+        request.base_url,
+        url_for("site_image"),
+        url_for("favicon"),
+    )
+
+
+def is_memorial_view_host(request_host: str) -> bool:
+    """Whether request_host is an Arquivo.pt domain that previews memorial sites.
+
+    Args:
+        request_host: The host from the request (e.g., "www.arquivo.pt:443")
+    """
+    host = request_host.split(":")[0].lower()
+    if host.startswith("www."):
+        host = host[4:]
+    return host in app.config.get("MEMORIAL_VIEW_HOSTS", DEFAULT_MEMORIAL_VIEW_HOSTS)
+
+
+def get_preview_site(site: str) -> str:
+    """Normalize the <site> of a preview route, aborting with 404 if it is not a host name."""
+    site = site.lower()
+    if not SITE_PATTERN.match(site):
+        abort(404)
+    return site
+
+
+@app.route("/memorial/<site>/view")
+async def memorial_view(site):
+    """Preview the memorial landing page of a site on an Arquivo.pt domain.
+
+    On arquivo.pt/memorial/<site>/view, shows the same page and HTTP status code
+    as the home page of the memorial site served on <site>. On other hosts,
+    it is a regular path of a memorial site.
+    """
+    if not is_memorial_view_host(request.host):
+        return await redirect(f"memorial/{site}/view")
+    site = get_preview_site(site)
+    return await render_memorial_page(
+        site,
+        f"{request.scheme}://{site}/",
+        url_for("memorial_view_site_image", site=site),
+        url_for("memorial_view_favicon", site=site),
+    )
+
+
+@app.route("/memorial/<site>/memorial-site-image")
+async def memorial_view_site_image(site):
+    """Serve the site image of the memorial landing page preview."""
+    if not is_memorial_view_host(request.host):
+        return await redirect(f"memorial/{site}/memorial-site-image")
+    return await serve_site_image(get_preview_site(site))
+
+
+@app.route("/memorial/<site>/favicon.ico")
+async def memorial_view_favicon(site):
+    """Redirect to the archived favicon.ico of the memorial landing page preview."""
+    if not is_memorial_view_host(request.host):
+        return await redirect(f"memorial/{site}/favicon.ico")
+    return favicon_redirect(get_preview_site(site))
 
 
 if __name__ == "__main__":

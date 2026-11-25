@@ -4,6 +4,7 @@
     {{ title|safe if title is not none }}
      <meta name="viewport" content="width=device-width, initial-scale=1">
      <meta name="robots" content="index, follow">
+     <link rel="icon" href="{{ favicon_url }}">
      {% for meta in metatags %}
         {{ meta|safe }}
     {% endfor %}
@@ -220,7 +221,7 @@
 
         <!-- starts img container -->
         <div id="img-container" class="containers">
-            <img src="{{ url_for('site_image') }}">
+            <img src="{{ site_image_url }}">
         </div>
         <!-- ends img container -->
 
