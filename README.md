@@ -17,6 +17,7 @@ Memorial is a Quart-based async web application that serves as a redirection ser
 - 📋 **Three-part message system** - primary message, context message before button, and button label; each independently configurable per domain and language
 - 🛠️ **Maintenance page templates** - domain-specific HTML templates with hierarchical fallback (subdomain → domain → default)
 - 🖼️ **Site image serving** - serves per-domain screenshots from a configurable directory
+- 👀 **Preview on Arquivo.pt** - `arquivo.pt/memorial/<site>/view` shows the landing page of a memorial site
 - 🐳 **Docker support** - production-ready Docker image and Compose file
 - 🧪 **Comprehensive test suite** - 158 tests covering async routing, metadata, templates, and CLI tools
 
@@ -87,6 +88,18 @@ Configure archived sites in [`config.py`](config.py). Each domain can have:
 - `WAYBACK_SERVER`: Wayback server URL (default: `https://arquivo.pt/wayback/`)
 - `WAYBACK_NOFRAME_SERVER`: NoFrame server URL (default: `https://arquivo.pt/noFrame/replay/`)
 - `WAYBACK_REQUEST_TIMEOUT`: Request timeout in seconds (default: 3)
+- `MEMORIAL_VIEW_HOSTS`: Comma separated domains that serve the memorial site previews (default: `arquivo.pt,preprod.arquivo.pt,dev.arquivo.pt`), also settable as a list in the configuration file
+
+### Preview on Arquivo.pt
+
+On the domains listed in `MEMORIAL_VIEW_HOSTS`, `/memorial/<site>/view` shows the landing page of the
+memorial site served on `<site>`, with the same template, messages and HTTP status code as its home page.
+Sites without configuration show the default page, like an unconfigured domain.
+
+The page loads the site image and favicon from `/memorial/<site>/memorial-site-image` and
+`/memorial/<site>/favicon.ico`. On other domains, these paths are regular paths of the memorial site.
+
+The reverse proxy of Arquivo.pt must send these paths to Memorial, keeping the original `Host` header.
 
 ### Maintenance Pages (502/503/504 Status Codes)
 
@@ -329,6 +342,7 @@ pytest tests/test_normalization_and_params.py   # Normalization & query params
 pytest tests/test_url_construction.py           # URL helpers
 pytest tests/test_edge_cases.py                 # Edge cases
 pytest tests/test_redirect_core.py              # Core redirect logic
+pytest tests/test_memorial_view.py              # Preview on Arquivo.pt
 
 # Run tests matching a pattern
 pytest -k favicon -v     # Run all tests matching "favicon"
@@ -391,6 +405,9 @@ Open your browser on those pages use an incognito window because the browser cou
 - http://educast.fccn.pt:5000
 - http://xpto.fccn.pt:5000
 - http://www.fccn.pt:5000
+
+To preview those sites as on Arquivo.pt, start the application with `MEMORIAL_VIEW_HOSTS=localhost` and open,
+for example, http://localhost:5000/memorial/educast.fccn.pt:5000/view.
 
 
 ## Metadata Extraction
@@ -813,7 +830,7 @@ The test suite has been split into focused, manageable files organized by featur
 
 ```bash
 # Build and start the service
-docker compose build && docker compose up
+docker compose up --build
 
 # Or run in background
 docker compose up -d
