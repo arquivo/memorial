@@ -830,7 +830,7 @@ The test suite has been split into focused, manageable files organized by featur
 
 ```bash
 # Build and start the service
-docker compose build && docker compose up
+docker compose up --build
 
 # Or run in background
 docker compose up -d
